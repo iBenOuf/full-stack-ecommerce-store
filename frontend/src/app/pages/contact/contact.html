@@ -1,0 +1,66 @@
+<div class="contact-page">
+
+  <!-- Header -->
+  <section class="contact-hero">
+    <p class="contact-eyebrow">We'd Love to Hear From You</p>
+    <h1 class="contact-title">Get in <em>Touch</em></h1>
+    <p class="contact-subtitle">
+      Have a question about your order, our products, or just want to say hello?
+      We're here to help.
+    </p>
+  </section>
+
+  <!-- Contact Cards -->
+  <section class="contact-cards">
+    @if (siteConfig?.footerSection?.contactEmail) {
+      <div class="contact-card">
+        <div class="contact-card-icon">✉</div>
+        <h3>Email Us</h3>
+        <p>Drop us a line anytime, we aim to respond within 24 hours.</p>
+        <a [href]="'mailto:' + siteConfig!.footerSection.contactEmail" class="contact-link">
+          {{ siteConfig!.footerSection.contactEmail }}
+        </a>
+      </div>
+    }
+
+    @if (siteConfig?.footerSection?.contactPhone) {
+      <div class="contact-card">
+        <div class="contact-card-icon">☎</div>
+        <h3>Call Us</h3>
+        <p>Available Sunday – Thursday, 9am – 6pm.</p>
+        <a [href]="'tel:' + siteConfig!.footerSection.contactPhone" class="contact-link">
+          {{ siteConfig!.footerSection.contactPhone }}
+        </a>
+      </div>
+    }
+
+    <div class="contact-card">
+      <div class="contact-card-icon">◎</div>
+      <h3>Visit Us</h3>
+      <p>{{ siteConfig?.footerSection?.footerText || 'Our showroom is open by appointment.' }}</p>
+    </div>
+  </section>
+
+  <!-- Social Links -->
+  @if (siteConfig?.footerSection?.socialLinks?.length) {
+    <section class="contact-social">
+      <p class="about-eyebrow">Follow Along</p>
+      <h2 class="contact-social-title">Find Us on <em>Social Media</em></h2>
+      <div class="social-links">
+        @for (s of siteConfig!.footerSection.socialLinks; track s.name) {
+          <a [href]="s.url" target="_blank" rel="noopener noreferrer" class="social-link">
+            <span class="social-icon">{{ getSocialIcon(s.name) }}</span>
+            <span class="social-name">{{ s.name | titlecase }}</span>
+          </a>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- FAQ Link -->
+  <section class="contact-faq">
+    <p>Got a quick question?</p>
+    <a routerLink="/faq" class="btn-outline">View our FAQs</a>
+  </section>
+
+</div>

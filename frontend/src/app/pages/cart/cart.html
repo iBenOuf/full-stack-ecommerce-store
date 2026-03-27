@@ -1,0 +1,130 @@
+<div class="cart-wrapper">
+  <div class="cart-header">
+    <h1 class="cart-title">Your <em>Cart</em></h1>
+    @if (cartItems.length > 0) {
+      <p class="cart-count">{{ totalQuantity }} item{{ totalQuantity > 1 ? 's' : '' }}</p>
+    }
+  </div>
+
+  @if (isLoading) {
+    <div class="cart-layout">
+      <div class="cart-items">
+        @for (s of skeletons; track s) {
+          <div class="cart-item-skeleton">
+            <div class="skeleton" style="width: 100px; height: 133px; flex-shrink: 0"></div>
+            <div class="skeleton-info">
+              <div class="skeleton" style="width: 60%; height: 12px"></div>
+              <div class="skeleton" style="width: 40%; height: 18px; margin-top: 8px"></div>
+              <div class="skeleton" style="width: 30%; height: 12px; margin-top: 8px"></div>
+            </div>
+          </div>
+        }
+      </div>
+      <div class="cart-summary-skeleton">
+        <div class="skeleton" style="height: 200px"></div>
+      </div>
+    </div>
+  } @else if (cartItems.length === 0) {
+    <div class="cart-empty">
+      <div class="empty-icon">∅</div>
+      <h2>Your cart is empty</h2>
+      <p>Looks like you haven't added anything yet</p>
+      <a routerLink="/shop" class="btn-primary">Continue Shopping</a>
+    </div>
+  } @else {
+    <div class="cart-layout">
+      <!-- Items -->
+      <div class="cart-items">
+        @for (item of cartItems; track item.productId) {
+          <div class="cart-item">
+            <div class="item-img" [routerLink]="['/product', item.product?.slug]">
+              @if (item.product) {
+                <img
+                  [src]="staticFilesURL + 'products/' + item.product.imageUrl"
+                  [alt]="item.product.name"
+                  (error)="$event.target.style.display = 'none'"
+                />
+              }
+            </div>
+
+            <div class="item-details">
+              <div class="item-top">
+                <div>
+                  @if (item.product) {
+                    <p class="item-cat">{{ item.product.subcategory.name }}</p>
+                    <h3 class="item-name" [routerLink]="['/product', item.product.slug]">
+                      {{ item.product.name }}
+                    </h3>
+                  } @else {
+                    <p class="item-name loading-text">Loading...</p>
+                  }
+                </div>
+                <button class="btn-remove" (click)="removeItem(item)" title="Remove">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div class="item-bottom">
+                <div class="qty-ctrl">
+                  <button class="qty-btn" (click)="decrease(item)" [disabled]="item.quantity <= 1">
+                    −
+                  </button>
+                  <span class="qty-val">{{ item.quantity }}</span>
+                  <button
+                    class="qty-btn"
+                    (click)="increase(item)"
+                    [disabled]="item.product && item.quantity >= item.product.stockQuantity"
+                  >
+                    +
+                  </button>
+                </div>
+                <p class="item-price">
+                  @if (item.product) {
+                    ${{ item.unitPrice * item.quantity }}
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+        }
+
+        <div class="cart-actions">
+          <a routerLink="/shop" class="btn-continue">← Continue Shopping</a>
+          <button class="btn-clear" (click)="clearCart()">Clear Cart</button>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="cart-summary">
+        <h2 class="summary-title">Order Summary</h2>
+
+        <div class="summary-lines">
+          <div class="summary-line">
+            <span>Subtotal</span>
+            <span>${{ subtotal }}</span>
+          </div>
+          <div class="summary-line">
+            <span>Shipping</span>
+            <span>Free</span>
+          </div>
+        </div>
+
+        <div class="summary-total">
+          <span>Total</span>
+          <span>${{ subtotal }}</span>
+        </div>
+
+        <a routerLink="/checkout" class="btn-checkout">Proceed to Checkout</a>
+
+        <div class="secure-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          Secure checkout
+        </div>
+      </div>
+    </div>
+  }
+</div>

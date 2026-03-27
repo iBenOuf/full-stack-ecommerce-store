@@ -1,0 +1,170 @@
+<div class="admin-page category-page">
+  <div class="page-header">
+    <div>
+      <h2>Manage Subcategories</h2>
+      <p>Organize deeper product classifications under main categories.</p>
+    </div>
+    <button class="btn btn-primary" (click)="openAddModal()">+ Add Subcategory</button>
+  </div>
+
+  <div class="table-container">
+    @if (isLoading) {
+      <div class="loading-state">Loading subcategories...</div>
+    } @else {
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Parent Category</th>
+            <th>Slug</th>
+            <th>Status</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (sub of subcategories; track sub._id) {
+            <tr>
+              <td>
+                <img
+                  [src]="staticFilesURL + 'subcategories/' + sub.image"
+                  alt="{{ sub.name }}"
+                  class="cat-thumb"
+                  (error)="$event.target.src = 'assets/images/placeholder.png'"
+                />
+              </td>
+              <td class="font-medium">{{ sub.name }}</td>
+              <td>
+                <span class="parent-badge">{{ getCategoryName(sub.category) }}</span>
+              </td>
+              <td class="text-muted">{{ sub.slug }}</td>
+              <td>
+                <span
+                  class="status-pill"
+                  [class.active]="!sub.isDeleted"
+                  [class.inactive]="sub.isDeleted"
+                >
+                  {{ sub.isDeleted ? 'Deleted' : 'Active' }}
+                </span>
+              </td>
+              <td class="text-right actions-cell">
+                <button
+                  class="btn-icon edit"
+                  title="Edit"
+                  (click)="openEditModal(sub)"
+                  [disabled]="isDeleting"
+                >
+                  ✏️
+                </button>
+                @if (!sub.isDeleted) {
+                  <button
+                    class="btn-icon delete"
+                    title="Delete"
+                    (click)="deleteSubcategory(sub._id)"
+                    [disabled]="isDeleting"
+                  >
+                    🗑️
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+          @if (subcategories.length === 0) {
+            <tr>
+              <td colspan="6" class="text-center py-4 text-muted">No subcategories found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  <!-- Modal -->
+  @if (showModal) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>{{ editingId ? 'Edit Subcategory' : 'Add New Subcategory' }}</h3>
+          <button class="close-btn" (click)="closeModal()">×</button>
+        </div>
+
+        <form [formGroup]="subcatForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label>Subcategory Name</label>
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control"
+              placeholder="e.g. T-Shirts"
+            />
+            @if (subcatForm.get('name')?.invalid && subcatForm.get('name')?.touched) {
+              <span class="error-msg">Name is required (min 2 characters)</span>
+            }
+          </div>
+          <div class="form-group">
+            <label>Subcategory Slug</label>
+            <input
+              type="text"
+              formControlName="slug"
+              class="form-control"
+              placeholder="e.g. t-shirts"
+            />
+            @if (subcatForm.get('slug')?.invalid && subcatForm.get('slug')?.touched) {
+              <span class="error-msg">Slug is required</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Parent Category</label>
+            <select formControlName="category" class="form-control">
+              <option value="" disabled>Select a parent category</option>
+              @for (cat of categories; track cat._id) {
+                <!-- Only show active categories to assign to -->
+                @if (!cat.isDeleted || (editingId && subcatForm.value.category === cat._id)) {
+                  <option [value]="cat._id">
+                    {{ cat.name }} {{ cat.isDeleted ? '(Deleted)' : '' }}
+                  </option>
+                }
+              }
+            </select>
+            @if (subcatForm.get('category')?.invalid && subcatForm.get('category')?.touched) {
+              <span class="error-msg">Parent category is required</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Subcategory Image {{ !editingId ? '*' : '' }}</label>
+            <div class="image-upload-wrapper" (click)="imageInput.click()">
+              @if (previewUrl) {
+                <img [src]="previewUrl" alt="Preview" class="image-preview" />
+              } @else {
+                <div class="upload-placeholder">
+                  <span>📷 Click to upload image</span>
+                  <small>Max 2MB (JPG, PNG)</small>
+                </div>
+              }
+            </div>
+            <input
+              type="file"
+              #imageInput
+              class="hidden-input"
+              accept="image/*"
+              (change)="onFileSelected($event)"
+            />
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="subcatForm.invalid || isSaving || (!editingId && !selectedFile)"
+            >
+              {{ isSaving ? 'Saving...' : editingId ? 'Update Subcategory' : 'Create Subcategory' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

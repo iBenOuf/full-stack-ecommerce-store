@@ -1,0 +1,19 @@
+<div class="product-card" [routerLink]="'/product/' + product.slug">
+  <div class="product-img">
+    @if (product.stockQuantity === 0) {
+      <span class="product-tag">Sold Out</span>
+    } @else if (product.stockQuantity <= 5) {
+      <span class="product-tag low">Low Stock</span>
+    }
+    <img
+      [src]="staticFilesURL + 'products/' + product.imageUrl"
+      [alt]="product.name"
+      (error)="$event.target.style.display = 'none'"
+    />
+  </div>
+  <p class="product-cat">{{ product.subcategory.name }}</p>
+  <h3 class="product-name">{{ product.name }}</h3>
+  <div class="product-price">
+    <span class="price-new">${{ product.price }}</span>
+  </div>
+</div>

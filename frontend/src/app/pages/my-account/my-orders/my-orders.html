@@ -1,0 +1,115 @@
+<h2 class="section-title">Order <em>History</em></h2>
+<p class="section-sub">Track and manage your orders</p>
+
+@if (isLoading) {
+  <div class="orders-skeleton">
+    @for (s of skeletons; track $index) {
+      <div class="skeleton-row">
+        <div class="skeleton" style="width: 120px; height: 12px"></div>
+        <div class="skeleton" style="width: 80px; height: 12px"></div>
+        <div class="skeleton" style="width: 60px; height: 12px"></div>
+        <div class="skeleton" style="width: 70px; height: 24px"></div>
+      </div>
+    }
+  </div>
+} @else if (orders.length === 0) {
+  <div class="empty-orders">
+    <div class="empty-icon">∅</div>
+    <p>You haven't placed any orders yet.</p>
+    <a routerLink="/shop" class="btn-primary">Start Shopping</a>
+  </div>
+} @else {
+  <table class="orders-table">
+    <thead>
+      <tr>
+        <th>Order</th>
+        <th>Date</th>
+        <th>Items</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (order of orders; track $index) {
+        <tr [class.expanded]="expandedOrderId === order._id">
+          <td>
+            <span class="order-id">#{{ order._id.slice(-6).toUpperCase() }}</span>
+          </td>
+          <td>{{ formatDate(order.createdAt) }}</td>
+          <td>{{ order.items.length }} item{{ order.items.length > 1 ? 's' : '' }}</td>
+          <td>${{ getOrderTotal(order) }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="'status-' + getStatusClass(order.status)">
+              {{ getStatusLabel(order.status) }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button class="btn-expand" (click)="toggleExpand(order._id)">
+              {{ expandedOrderId === order._id ? 'Hide' : 'Details' }}
+            </button>
+            <button
+              class="btn-primary"
+              style="padding: 6px 16px"
+              (click)="reorder(order._id)"
+              [disabled]="isReordering"
+            >
+              Re-Order
+            </button>
+            @if (order.status === 'pending') {
+              <button class="btn-cancel" (click)="cancelOrder(order._id)">Cancel</button>
+            }
+          </td>
+        </tr>
+
+        @if (expandedOrderId === order._id) {
+          <tr class="order-detail-row">
+            <td colspan="6">
+              <div class="order-detail">
+                <div class="order-detail-cols">
+                  <div>
+                    <p class="detail-label">Shipping Address</p>
+                    <p class="detail-value">
+                      {{ order.shippingAddress.street }}<br />
+                      {{ order.shippingAddress.city }}, {{ order.shippingAddress.governorate }}
+                    </p>
+                    <p class="detail-label" style="margin-top: 12px">Delivery Phone</p>
+                    <p class="detail-value">{{ order.deliveryPhone }}</p>
+                  </div>
+                  <div>
+                    <p class="detail-label">Items</p>
+                    <div class="order-items">
+                      @for (item of order.items; track $index) {
+                        <div class="order-item">
+                          <div class="item-img">
+                            <img
+                              [src]="staticFilesURL + 'products/' + item.product.imageUrl"
+                              [alt]="item.product.name"
+                              (error)="$event.target.style.display = 'none'"
+                            />
+                          </div>
+                          <div class="item-info">
+                            <p class="item-name">{{ item.product.name }}</p>
+                            <p class="item-meta">
+                              Qty: {{ item.quantity }} &nbsp;·&nbsp; ${{ item.unitPrice }} each
+                            </p>
+                          </div>
+                          <p class="item-total">${{ item.quantity * item.unitPrice }}</p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <div class="order-summary">
+                  <span>Order Total</span>
+                  <span class="summary-total">${{ getOrderTotal(order) }}</span>
+                </div>
+              </div>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+}

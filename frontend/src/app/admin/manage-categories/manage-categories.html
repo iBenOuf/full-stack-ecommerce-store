@@ -1,0 +1,142 @@
+<div class="admin-page category-page">
+  <div class="page-header">
+    <div>
+      <h2>Manage Categories</h2>
+      <p>Create, edit, and organize product categories.</p>
+    </div>
+    <button class="btn btn-primary" (click)="openAddModal()">+ Add Category</button>
+  </div>
+
+  <div class="table-container">
+    @if (isLoading) {
+      <div class="loading-state">Loading categories...</div>
+    } @else {
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Slug</th>
+            <th>Status</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cat of categories; track cat._id) {
+            <tr>
+              <td>
+                <img
+                  [src]="staticFilesURL + 'categories/' + cat.imageUrl"
+                  alt="{{ cat.name }}"
+                  class="cat-thumb"
+                  (error)="$event.target.src = 'assets/images/placeholder.png'"
+                />
+              </td>
+              <td class="font-medium">{{ cat.name }}</td>
+              <td class="text-muted">{{ cat.slug }}</td>
+              <td>
+                <span
+                  class="status-pill"
+                  [class.active]="!cat.isDeleted"
+                  [class.inactive]="cat.isDeleted"
+                >
+                  {{ cat.isDeleted ? 'Deleted' : 'Active' }}
+                </span>
+              </td>
+              <td class="text-right actions-cell">
+                <button class="btn-icon edit" (click)="openEditModal(cat)" [disabled]="isDeleting">
+                  ✏️
+                </button>
+                @if (!cat.isDeleted) {
+                  <button
+                    class="btn-icon delete"
+                    (click)="deleteCategory(cat._id)"
+                    [disabled]="isDeleting"
+                  >
+                    🗑️
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+          @if (categories.length === 0) {
+            <tr>
+              <td colspan="5" class="text-center py-4 text-muted">No categories found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  <!-- Modal -->
+  @if (showModal) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>{{ editingId ? 'Edit Category' : 'Add New Category' }}</h3>
+          <button class="close-btn" (click)="closeModal()">×</button>
+        </div>
+
+        <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label>Category Name</label>
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control"
+              placeholder="e.g. Menswear"
+            />
+            @if (categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched) {
+              <span class="error-msg">Name is required (min 2 characters)</span>
+            }
+          </div>
+          <div class="form-group">
+            <label>Category Slug</label>
+            <input
+              type="text"
+              formControlName="slug"
+              class="form-control"
+              placeholder="e.g. menswear"
+            />
+            @if (categoryForm.get('slug')?.invalid && categoryForm.get('slug')?.touched) {
+              <span class="error-msg">Slug is required (min 2 characters)</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Category Image {{ !editingId ? '*' : '' }}</label>
+            <div class="image-upload-wrapper" (click)="imageInput.click()">
+              @if (previewUrl) {
+                <img [src]="previewUrl" alt="Preview" class="image-preview" />
+              } @else {
+                <div class="upload-placeholder">
+                  <span>📷 Click to upload image</span>
+                  <small>Max 2MB (JPG, PNG)</small>
+                </div>
+              }
+            </div>
+            <input
+              type="file"
+              #imageInput
+              class="hidden-input"
+              accept="image/*"
+              (change)="onFileSelected($event)"
+            />
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="categoryForm.invalid || isSaving || (!editingId && !selectedFile)"
+            >
+              {{ isSaving ? 'Saving...' : editingId ? 'Update Category' : 'Create Category' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

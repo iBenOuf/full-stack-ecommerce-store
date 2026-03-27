@@ -1,0 +1,130 @@
+<h2 class="section-title">My <em>Addresses</em></h2>
+<p class="section-sub">Manage your delivery addresses</p>
+
+@if (isLoading) {
+  <div class="addresses-grid">
+    @for (s of skeletons; track s) {
+      <div class="address-skeleton">
+        <div class="skeleton" style="width: 60%; height: 12px"></div>
+        <div class="skeleton" style="width: 80%; height: 14px; margin-top: 12px"></div>
+        <div class="skeleton" style="width: 70%; height: 14px; margin-top: 6px"></div>
+      </div>
+    }
+  </div>
+} @else {
+  <div class="addresses-grid">
+    @for (address of addresses; track $index) {
+      <div class="address-card" [class.default]="address.isDefault">
+        @if (address.isDefault) {
+          <span class="default-badge">Default</span>
+        }
+        <p class="address-label">{{ address.label }}</p>
+        <p class="address-text">
+          {{ address.street }}<br />
+          {{ address.city }}, {{ address.governorate }}
+        </p>
+        <div class="address-actions">
+          @if (!address.isDefault) {
+            <button (click)="setDefault(address._id)">Set as default</button>
+          }
+          <button (click)="openEdit(address)">Edit</button>
+          <button class="danger" (click)="deleteAddress(address._id)">Remove</button>
+        </div>
+      </div>
+    }
+
+    <button class="add-address" (click)="openAdd()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <line x1="12" y1="5" x2="12" y2="19" />
+        <line x1="5" y1="12" x2="19" y2="12" />
+      </svg>
+      Add new address
+    </button>
+  </div>
+}
+
+<!-- Add / Edit Modal -->
+@if (showModal) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ editingAddress ? 'Edit Address' : 'New Address' }}</h3>
+        <button class="modal-close" (click)="closeModal()">×</button>
+      </div>
+
+      <form [formGroup]="addressForm" (ngSubmit)="onSubmit()">
+        <div class="field">
+          <label for="label">Label</label>
+          <input
+            id="label"
+            type="text"
+            formControlName="label"
+            placeholder="Home, Work..."
+            [class.invalid]="addressForm.get('label')?.invalid && addressForm.get('label')?.touched"
+          />
+          @if (addressForm.get('label')?.invalid && addressForm.get('label')?.touched) {
+            <span class="field-error">Required</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="street">Street address</label>
+          <input
+            id="street"
+            type="text"
+            formControlName="street"
+            [class.invalid]="
+              addressForm.get('street')?.invalid && addressForm.get('street')?.touched
+            "
+          />
+          @if (addressForm.get('street')?.invalid && addressForm.get('street')?.touched) {
+            <span class="field-error">Required</span>
+          }
+        </div>
+
+        <div class="fields-row">
+          <div class="field">
+            <label for="city">City</label>
+            <input
+              id="city"
+              type="text"
+              formControlName="city"
+              [class.invalid]="addressForm.get('city')?.invalid && addressForm.get('city')?.touched"
+            />
+            @if (addressForm.get('city')?.invalid && addressForm.get('city')?.touched) {
+              <span class="field-error">Required</span>
+            }
+          </div>
+          <div class="field">
+            <label for="governorate">Governorate</label>
+            <input
+              id="governorate"
+              type="text"
+              formControlName="governorate"
+              [class.invalid]="
+                addressForm.get('governorate')?.invalid && addressForm.get('governorate')?.touched
+              "
+            />
+            @if (
+              addressForm.get('governorate')?.invalid && addressForm.get('governorate')?.touched
+            ) {
+              <span class="field-error">Required</span>
+            }
+          </div>
+        </div>
+
+        <label class="default-toggle">
+          <input type="checkbox" formControlName="isDefault" />
+          <span>Set as default address</span>
+        </label>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary" [disabled]="isSaving">
+            {{ isSaving ? 'Saving...' : editingAddress ? 'Update Address' : 'Add Address' }}
+          </button>
+          <button type="button" class="btn-secondary" (click)="closeModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

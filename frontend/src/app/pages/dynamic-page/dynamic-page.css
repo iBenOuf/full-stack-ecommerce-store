@@ -1,0 +1,96 @@
+.dynamic-page {
+  padding: 80px 24px;
+  background-color: var(--bg-main);
+  min-height: 70vh;
+}
+
+.page-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 56px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 32px;
+}
+
+.page-header h1 {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: var(--charcoal);
+  margin: 0;
+}
+
+.page-content {
+  color: var(--text-main);
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.page-content h1,
+.page-content h2,
+.page-content h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--charcoal);
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.page-content p {
+  margin-bottom: 1.5rem;
+  color: var(--text-light);
+}
+
+.page-content ul,
+.page-content ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+  color: var(--text-light);
+}
+
+.page-content li {
+  margin-bottom: 0.5rem;
+}
+
+.page-content a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.page-content a:hover {
+  color: var(--charcoal);
+}
+
+.page-content blockquote {
+  border-left: 4px solid var(--accent);
+  margin: 2rem 0;
+  padding: 1rem 2rem;
+  background: white;
+  font-style: italic;
+  color: var(--charcoal);
+}
+
+.loading-state {
+  text-align: center;
+  padding: 64px 0;
+  color: var(--text-light);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  margin: 0 auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

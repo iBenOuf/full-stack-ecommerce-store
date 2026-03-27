@@ -1,0 +1,177 @@
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">{{ siteConfig?.heroSection?.heroSlogan || 'Slogan Loading...' }}</p>
+
+    <h1 class="hero-title">
+      {{ siteConfig?.heroSection?.heroTitle?.line1 || 'Loading...' }}<br />
+      <em>{{ siteConfig?.heroSection?.heroTitle?.line2 || 'Loading...' }}</em
+      ><br />
+      {{ siteConfig?.heroSection?.heroTitle?.line3 || 'Loading...' }}
+    </h1>
+
+    <p class="hero-sub">
+      {{ siteConfig?.heroSection?.heroDescription || 'Description Loading...' }}
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" routerLink="/shop" [queryParams]="{ sort: 'createdAtDESC' }">
+        Shop New In
+      </button>
+      <button class="btn-outline" routerLink="/about">View Lookbook</button>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img [src]="staticFilesURL + siteConfig?.heroSection?.heroImage" alt="Collection Hero" />
+    <div class="hero-badge">
+      <span>Now Live</span>
+      <strong>{{ siteConfig?.heroSection?.season || 'Season Loading...' }}</strong>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-header">
+    <h2 class="section-title">New <em>Arrivals</em></h2>
+    <a routerLink="/shop" [queryParams]="{ sort: 'createdAtDESC' }" class="section-link"
+      >View all</a
+    >
+  </div>
+  <div class="products-grid">
+    @for (product of newArrivals; track $index) {
+      <app-product-card [product]="product"></app-product-card>
+    }
+  </div>
+</section>
+
+<section class="banner">
+  <div class="banner-text">
+    <p class="eyebrow">{{ siteConfig?.aboutSection?.aboutSlogan || 'Slogan Loading...' }}</p>
+
+    <h2>
+      {{ siteConfig?.aboutSection?.aboutTitle?.line1 || 'Loading...' }}
+      <em>{{ siteConfig?.aboutSection?.aboutTitle?.line2 || 'Loading...' }}</em>
+      {{ siteConfig?.aboutSection?.aboutTitle?.line3 || 'Loading...' }}
+    </h2>
+
+    <p>
+      {{ siteConfig?.aboutSection?.aboutDescription || 'Description Loading...' }}
+    </p>
+    <button class="btn-primary" routerLink="/about">Our Story</button>
+  </div>
+  <div class="banner-stats">
+    <div class="stat">
+      <div class="stat-num">
+        {{ siteConfig?.aboutSection?.analytics?.stat1?.value || 'Loading...' }}
+      </div>
+      <div class="stat-label">
+        {{ siteConfig?.aboutSection?.analytics?.stat1?.label || 'Loading...' }}
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">
+        {{ siteConfig?.aboutSection?.analytics?.stat2?.value || 'Loading...' }}
+      </div>
+      <div class="stat-label">
+        {{ siteConfig?.aboutSection?.analytics?.stat2?.label || 'Loading...' }}
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">
+        {{ siteConfig?.aboutSection?.analytics?.stat3?.value || 'Loading...' }}
+      </div>
+      <div class="stat-label">
+        {{ siteConfig?.aboutSection?.analytics?.stat3?.label || 'Loading...' }}
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">
+        {{ siteConfig?.aboutSection?.analytics?.stat4?.value || 'Loading...' }}
+      </div>
+      <div class="stat-label">
+        {{ siteConfig?.aboutSection?.analytics?.stat4?.label || 'Loading...' }}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-header">
+    <h2 class="section-title">Best <em>Sellers</em></h2>
+    <a routerLink="/shop" class="section-link">View all</a>
+  </div>
+  <div class="products-grid">
+    @for (product of bestSellers; track $index) {
+      <app-product-card [product]="product"></app-product-card>
+    }
+  </div>
+</section>
+
+<section class="testimonials">
+  <div class="section-header">
+    <h2 class="section-title">What they <em>say</em></h2>
+  </div>
+  <div class="testimonials-grid">
+    @for (t of testimonials; track t._id) {
+      <div class="testimonial-card">
+        <div class="stars">
+          @for (s of [1, 2, 3, 4, 5]; track $index) {
+            <div class="star" [class.filled]="$index < t.rating"></div>
+          }
+        </div>
+        <p class="testimonial-text">"{{ t.comment }}"</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">{{ getInitials(t) }}</div>
+          <div>
+            <div class="author-name">{{ getFullName(t) }}</div>
+            <div class="author-loc">Verified Customer</div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (isLoggedIn) {
+    <div class="review-form-wrap">
+      @if (submitted) {
+        <div class="review-success">
+          <div class="review-success-icon">✓</div>
+          <h3>Thank you for your review!</h3>
+          <p>Your testimonial is pending approval and will appear here soon.</p>
+        </div>
+      } @else {
+        <div class="review-form-inner">
+          <p class="review-eyebrow">Share Your Experience</p>
+          <h3 class="review-title">Leave a <em>review</em></h3>
+
+          <div class="review-stars">
+            @for (s of [1, 2, 3, 4, 5]; track s) {
+              <div
+                class="star review-star"
+                [class.filled]="s <= (hoveredStar || reviewRating)"
+                (mouseenter)="hoveredStar = s"
+                (mouseleave)="hoveredStar = 0"
+                (click)="setRating(s)"
+              ></div>
+            }
+          </div>
+
+          <textarea
+            class="review-textarea"
+            placeholder="Tell us about your experience..."
+            [(ngModel)]="reviewComment"
+            rows="4"
+            maxlength="500"
+          ></textarea>
+
+          <button
+            class="btn-primary review-submit"
+            (click)="submitTestimonial()"
+            [disabled]="isSubmitting"
+          >
+            {{ isSubmitting ? 'Submitting...' : 'Submit Review' }}
+          </button>
+        </div>
+      }
+    </div>
+  }
+</section>
+

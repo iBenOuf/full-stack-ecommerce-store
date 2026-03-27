@@ -1,0 +1,71 @@
+<div class="admin-page category-page">
+  <div class="page-header">
+    <div>
+      <h2>Manage Users</h2>
+      <p>View customers, manage roles, and control account access.</p>
+    </div>
+  </div>
+
+  <div class="table-container">
+    @if (isLoading) {
+      <div class="loading-state">Loading users...</div>
+    } @else {
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users; track user._id) {
+            <tr>
+              <td class="font-medium">
+                <div class="user-cell">
+                  <div class="user-avatar">{{ user.firstName.charAt(0) | uppercase }}{{ user.lastName.charAt(0) | uppercase }}</div>
+                  <span>{{ user.firstName }} {{ user.lastName }}</span>
+                </div>
+              </td>
+              <td class="text-muted">{{ user.email }}</td>
+              <td class="text-muted">{{ user.phone || 'N/A' }}</td>
+              <td>
+                <span class="role-badge" [class.admin]="user.role === 'admin' || user.role === 'moderator'">
+                  {{ user.role | titlecase }}
+                </span>
+              </td>
+              <td>
+                <div class="status-toggle-wrapper">
+                  <span class="status-indicator" [class.active]="user.isActive"></span>
+                  {{ user.isActive ? 'Active' : 'Suspended' }}
+                </div>
+              </td>
+              <td class="text-right actions-cell">
+                <button class="btn-icon" 
+                        [title]="user.isActive ? 'Suspend User' : 'Activate User'" 
+                        (click)="toggleStatus(user)" 
+                        [disabled]="isProcessing || user.role === 'admin'">
+                  {{ user.isActive ? '🚫' : '✅' }}
+                </button>
+                <button class="btn-icon delete" 
+                        title="Delete User" 
+                        (click)="deleteUser(user._id)" 
+                        [disabled]="isProcessing || user.role === 'admin'">
+                  🗑️
+                </button>
+              </td>
+            </tr>
+          }
+          @if (users.length === 0) {
+            <tr>
+              <td colspan="6" class="text-center py-4 text-muted">No users found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

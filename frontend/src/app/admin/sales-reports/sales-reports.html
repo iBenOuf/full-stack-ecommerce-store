@@ -1,0 +1,169 @@
+<div class="admin-page reports-page">
+  <!-- Header -->
+  <div class="reports-header">
+    <div>
+      <h2>Sales Reports</h2>
+      <p>Analyze revenue, order volume, top products, and category performance.</p>
+    </div>
+
+    <div class="report-filters">
+      <select [(ngModel)]="rangePreset" (change)="onPresetChange()">
+        <option value="7">Last 7 Days</option>
+        <option value="30">Last 30 Days</option>
+        <option value="90">Last 90 Days</option>
+        <option value="365">Last Year</option>
+        <option value="custom">Custom Range</option>
+      </select>
+
+      <div class="date-inputs">
+        <input type="date" [(ngModel)]="startDate" (change)="rangePreset = 'custom'" />
+        <span class="date-sep">to</span>
+        <input type="date" [(ngModel)]="endDate" (change)="rangePreset = 'custom'" />
+        <button class="btn btn-primary btn-sm" (click)="loadReport()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-state">Loading report data…</div>
+  } @else if (reportData) {
+
+    <!-- ── KPI Summary Cards ──────────────────────────────────── -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon revenue">💰</div>
+        <div class="kpi-body">
+          <span class="kpi-label">Total Revenue</span>
+          <span class="kpi-value">{{ reportData.summary.totalSales | currency }}</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon orders">📦</div>
+        <div class="kpi-body">
+          <span class="kpi-label">Total Orders</span>
+          <span class="kpi-value">{{ reportData.summary.totalOrders }}</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon aov">🧾</div>
+        <div class="kpi-body">
+          <span class="kpi-label">Avg. Order Value</span>
+          <span class="kpi-value">{{ getAOV() | currency }}</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon items">🛒</div>
+        <div class="kpi-body">
+          <span class="kpi-label">Items Sold</span>
+          <span class="kpi-value">{{ reportData.summary.totalItemsSold }}</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon customers">👥</div>
+        <div class="kpi-body">
+          <span class="kpi-label">Unique Customers</span>
+          <span class="kpi-value">{{ reportData.summary.totalCustomers }}</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon avg-items">📊</div>
+        <div class="kpi-body">
+          <span class="kpi-label">Avg. Items / Order</span>
+          <span class="kpi-value">{{ getAvgItems() | number:'1.1-1' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Daily Sales Trend ──────────────────────────────────── -->
+    <div class="report-panel">
+      <div class="panel-header">
+        <h3>Daily Sales Trend</h3>
+        <span class="panel-subtitle">Revenue per day for selected period</span>
+      </div>
+      <div class="trend-container">
+        @if (!reportData.salesTrends || reportData.salesTrends.length === 0) {
+          <p class="empty-msg">No sales data in this period</p>
+        } @else {
+          <div class="trend-chart">
+            @for (trend of reportData.salesTrends; track trend._id) {
+              <div class="trend-col">
+                <div class="trend-val">{{ trend.dailySales | currency:'USD':'symbol':'1.0-0' }}</div>
+                <div class="trend-bar-wrap">
+                  <div class="trend-bar" [style.height.%]="getTrendBarHeight(trend.dailySales)"></div>
+                </div>
+                <div class="trend-orders">{{ trend.orderCount }} ord.</div>
+                <div class="trend-date">{{ trend._id | date:'MMM d' }}</div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- ── Row: Top Products + Category Breakdown ─────────────── -->
+    <div class="report-row">
+
+      <!-- Top Products -->
+      <div class="report-panel flex-2">
+        <div class="panel-header">
+          <h3>Top Selling Products</h3>
+        </div>
+        <div class="table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Product</th>
+                <th class="text-right">Units Sold</th>
+                <th class="text-right">Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (tp of reportData.topProducts; track tp._id; let i = $index) {
+                <tr>
+                  <td class="rank-cell">{{ i + 1 }}</td>
+                  <td class="font-medium">{{ tp.name }}</td>
+                  <td class="text-right">{{ tp.totalSold }}</td>
+                  <td class="text-right text-success">{{ tp.revenue | currency }}</td>
+                </tr>
+              }
+              @if (reportData.topProducts.length === 0) {
+                <tr>
+                  <td colspan="4" class="empty-td">No product sales in this period</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Category Breakdown -->
+      <div class="report-panel flex-1">
+        <div class="panel-header">
+          <h3>Revenue by Category</h3>
+        </div>
+        <div class="category-breakdown">
+          @if (reportData.categoryDistribution.length === 0) {
+            <p class="empty-msg">No data available</p>
+          } @else {
+            @for (cat of reportData.categoryDistribution; track cat.name) {
+              <div class="cat-row">
+                <div class="cat-info">
+                  <span class="cat-name">{{ cat.name }}</span>
+                  <span class="cat-meta">{{ cat.count }} orders · {{ cat.revenue | currency }}</span>
+                </div>
+                <div class="cat-bar-container">
+                  <div class="cat-bar" [style.width.%]="getCategoryShare(cat)"></div>
+                </div>
+                <span class="cat-pct">{{ getCategoryShare(cat) | number:'1.0-1' }}%</span>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    </div>
+
+  } @else {
+    <div class="loading-state">No data available. Adjust dates and try again.</div>
+  }
+</div>

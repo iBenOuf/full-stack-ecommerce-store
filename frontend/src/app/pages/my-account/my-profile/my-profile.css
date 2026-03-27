@@ -1,0 +1,193 @@
+.fields-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.field {
+  margin-bottom: 28px;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.field input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--charcoal);
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.field input:focus {
+  border-bottom-color: var(--charcoal);
+}
+
+.field input.invalid {
+  border-bottom-color: #c0392b;
+}
+
+.field-error {
+  display: block;
+  font-size: 11px;
+  color: #c0392b;
+  margin-top: 6px;
+}
+
+.field-static {
+  font-size: 14px;
+  color: var(--muted);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-weight: 300;
+  margin: 0;
+}
+
+.gender-field {
+  max-width: 340px;
+}
+
+.gender-group {
+  display: flex;
+}
+
+.gender-opt {
+  flex: 1;
+  position: relative;
+}
+
+.gender-opt input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.gender-opt label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 0;
+}
+
+.gender-opt:first-child label {
+  border-right: none;
+}
+
+.gender-opt input:checked + label {
+  background: var(--charcoal);
+  color: #fff;
+  border-color: var(--charcoal);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn-primary {
+  background: var(--charcoal);
+  color: #fff;
+  padding: 14px 36px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #2e2e2e;
+}
+
+.btn-primary:disabled {
+  background: var(--border);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--charcoal);
+  padding: 14px 36px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--charcoal);
+}
+
+/* ── Danger Zone ─────────────────────────────────────── */
+.danger-zone {
+  margin-top: 48px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+}
+
+.danger-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 300;
+  color: var(--charcoal);
+  margin-bottom: 4px;
+}
+
+.danger-sub {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+/* ── Skeleton ─────────────────────────────────────────── */
+.profile-skeleton {
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--border) 25%, #f0ece6 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  display: block;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

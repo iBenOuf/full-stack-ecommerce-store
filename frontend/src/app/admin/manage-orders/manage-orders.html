@@ -1,0 +1,153 @@
+<div class="admin-page category-page">
+  <div class="page-header">
+    <div>
+      <h2>Manage Orders</h2>
+      <p>Track order fulfillment, update shipping statuses, and view customer purchases.</p>
+    </div>
+  </div>
+
+  <div class="table-container">
+    @if (isLoading) {
+      <div class="loading-state">Loading orders...</div>
+    } @else {
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th class="text-right">Update Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders; track order._id) {
+            <tr class="order-row" (click)="toggleExpand(order._id)" [class.expanded]="expandedOrderId === order._id">
+              <td class="expand-cell">
+                <span class="expand-icon">{{ expandedOrderId === order._id ? '▾' : '▸' }}</span>
+              </td>
+              <td class="font-medium text-muted">#{{ order._id.substring(order._id.length - 8).toUpperCase() }}</td>
+              <td>
+                <div class="customer-info">
+                  <span class="font-medium">{{ getCustomerName(order.user) }}</span>
+                  <span class="text-small text-muted">{{ order.deliveryPhone }}</span>
+                </div>
+              </td>
+              <td class="text-muted">{{ order.createdAt | date:'shortDate' }}</td>
+              <td class="text-muted">{{ order.items.length }} item{{ order.items.length !== 1 ? 's' : '' }}</td>
+              <td class="font-medium">{{ calculateTotal(order) | currency }}</td>
+              <td>
+                <span class="status-pill status-{{ order.status }}">
+                  {{ formatStatus(order.status) | titlecase }}
+                </span>
+              </td>
+              <td class="text-right" (click)="$event.stopPropagation()">
+                <select
+                  [disabled]="isProcessing || order.status === 'canceled_by_client'"
+                  [ngModel]="order.status"
+                  (ngModelChange)="updateStatus(order, $event)"
+                  class="status-select">
+                  @if (order.status === 'canceled_by_client') {
+                    <option disabled value="canceled_by_client">Canceled By Client</option>
+                  }
+                  @for (opt of statusOptions; track opt) {
+                    <option [value]="opt">{{ formatStatus(opt) | titlecase }}</option>
+                  }
+                </select>
+              </td>
+            </tr>
+
+            @if (expandedOrderId === order._id) {
+              <tr class="detail-row">
+                <td colspan="8">
+                  <div class="order-detail-panel">
+
+                    <!-- Left: Customer & Shipping -->
+                    <div class="detail-section">
+                      <h4 class="detail-section-title">📦 Shipping Details</h4>
+                      <div class="detail-grid">
+                        <div class="detail-item">
+                          <span class="detail-label">Customer</span>
+                          <span class="detail-value">{{ getCustomerName(order.user) }}</span>
+                        </div>
+                        @if (getCustomerEmail(order.user)) {
+                          <div class="detail-item">
+                            <span class="detail-label">Email</span>
+                            <span class="detail-value">{{ getCustomerEmail(order.user) }}</span>
+                          </div>
+                        }
+                        <div class="detail-item">
+                          <span class="detail-label">Phone</span>
+                          <span class="detail-value">{{ order.deliveryPhone }}</span>
+                        </div>
+                        <div class="detail-item">
+                          <span class="detail-label">Street</span>
+                          <span class="detail-value">{{ order.shippingAddress.street }}</span>
+                        </div>
+                        <div class="detail-item">
+                          <span class="detail-label">City</span>
+                          <span class="detail-value">{{ order.shippingAddress.city }}</span>
+                        </div>
+                        <div class="detail-item">
+                          <span class="detail-label">Governorate</span>
+                          <span class="detail-value">{{ order.shippingAddress.governorate }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Right: Order Items -->
+                    <div class="detail-section detail-items-section">
+                      <h4 class="detail-section-title">🛍️ Order Items</h4>
+                      <div class="order-items-list">
+                        @for (item of order.items; track item.product._id) {
+                          <div class="order-item-row">
+                            <img
+                              [src]="staticFilesURL + 'products/' + item.product.imageUrl"
+                              [alt]="item.product.name"
+                              class="order-item-img"
+                              (error)="$event.target.style.display='none'"
+                            />
+                            <div class="order-item-info">
+                              <span class="order-item-name">{{ item.product.name }}</span>
+                              <span class="order-item-meta text-muted">Qty: {{ item.quantity }} × {{ item.unitPrice | currency }}</span>
+                            </div>
+                            <span class="order-item-total font-medium">{{ item.quantity * item.unitPrice | currency }}</span>
+                          </div>
+                        }
+                      </div>
+
+                      <!-- Totals Summary -->
+                      <div class="order-totals">
+                        <div class="total-line">
+                          <span class="text-muted">Subtotal</span>
+                          <span>{{ calculateSubtotal(order) | currency }}</span>
+                        </div>
+                        <div class="total-line">
+                          <span class="text-muted">Shipping</span>
+                          <span>Free</span>
+                        </div>
+                        <div class="total-line grand-total">
+                          <span class="font-medium">Total</span>
+                          <span class="font-medium">{{ calculateTotal(order) | currency }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+          @if (orders.length === 0) {
+            <tr>
+              <td colspan="8" class="text-center py-4 text-muted">No orders found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

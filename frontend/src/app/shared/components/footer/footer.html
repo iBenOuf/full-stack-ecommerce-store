@@ -1,0 +1,67 @@
+<footer>
+  <div class="footer-top">
+    <div class="brand-col">
+      <div class="logo">
+        {{ siteConfig?.siteName || 'Site Name Loading...' }}
+      </div>
+      <p>
+        {{ siteConfig?.footerSection?.footerText || 'Site Description Loading...' }}
+      </p>
+      <!-- <div class="newsletter">
+        <p class="newsletter-label">Join our world</p>
+        <div class="newsletter-form">
+          <input type="email" placeholder="Your email address" />
+          <button type="button">Subscribe</button>
+        </div>
+      </div> -->
+    </div>
+
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <a routerLink="/shop" [queryParams]="{ sort: 'createdAtDESC' }">New Arrivals</a>
+      @for (category of categories; track $index) {
+        <a routerLink="/shop" [queryParams]="{ categorySlug: category.slug }">{{
+          category.name
+        }}</a>
+      }
+      <a routerLink="/shop">Collections</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Help</h4>
+      <a routerLink="/my-account/orders">Track My Order</a>
+      <a routerLink="/faq">FAQs</a>
+      <a routerLink="/contact">Contact Us</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a routerLink="/about">About Us</a>
+      <a routerLink="/p/privacy-policy">Privacy Policy</a>
+      <a routerLink="/p/terms-of-service">Terms of Service</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>
+      {{ siteConfig?.footerSection?.copyrightText || 'Site Copyright Text Loading...' }}
+      <!-- © {{ currentYear }} {{ siteConfig?.siteName || 'Site Name Loading...' }}. All rights reserved. -->
+    </p>
+    <div class="social-links">
+      @for (link of siteConfig?.footerSection?.socialLinks; track link.name) {
+        <a [href]="link.url" target="_blank">{{ link.name | uppercase }}</a>
+      }
+      @if (!siteConfig?.footerSection?.socialLinks?.length) {
+        <span class="no-social-links">No Social Links Available</span>
+      }
+    </div>
+    <div class="payment-icons">
+      @for (paymentMethod of siteConfig?.footerSection?.paymentMethods; track paymentMethod.name) {
+        <span class="pay-badge">{{ paymentMethod.name | uppercase }}</span>
+      }
+      @if (!siteConfig?.footerSection?.paymentMethods?.length) {
+        <span class="no-payment-methods">No Payment Methods Available</span>
+      }
+    </div>
+  </div>
+</footer>

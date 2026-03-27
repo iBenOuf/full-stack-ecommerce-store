@@ -1,0 +1,67 @@
+<div class="admin-page">
+  <div class="admin-header">
+    <h2>Manage Testimonials</h2>
+    <p>Review customer feedback, approve testimonials for the homepage, or reject/delete them.</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-state">Loading testimonials...</div>
+  } @else if (testimonials.length === 0) {
+    <div class="empty-state">No testimonials found.</div>
+  } @else {
+    <div class="table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Rating</th>
+            <th>Comment</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of testimonials; track t._id) {
+            <tr>
+              <td>
+                <div class="user-info">
+                  <span class="user-name">{{ getFullName(t) }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="rating-badge">
+                  {{ t.rating }} ★
+                </div>
+              </td>
+              <td>
+                <p class="comment-text">{{ t.comment }}</p>
+              </td>
+              <td>
+                <span class="status-badge" [ngClass]="t.status">{{ t.status }}</span>
+              </td>
+              <td>{{ t.createdAt | date:'mediumDate' }}</td>
+              <td class="actions-cell">
+                <div class="action-buttons">
+                  @if (t.status !== 'approved') {
+                    <button class="btn-action success" (click)="updateStatus(t._id, 'approved')" title="Approve">
+                      ✓ Approve
+                    </button>
+                  }
+                  @if (t.status !== 'rejected') {
+                    <button class="btn-action warning" (click)="updateStatus(t._id, 'rejected')" title="Reject">
+                      ✗ Reject
+                    </button>
+                  }
+                  <button class="btn-action danger" (click)="deleteTestimonial(t._id)" title="Delete">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

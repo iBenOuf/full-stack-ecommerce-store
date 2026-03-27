@@ -1,0 +1,290 @@
+.addresses-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* ── Address Card ─────────────────────────────────────── */
+.address-card {
+  border: 1px solid var(--border);
+  padding: 24px;
+  position: relative;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+
+.address-card.default {
+  border-color: var(--accent);
+}
+
+.default-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--accent);
+  color: var(--charcoal);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+}
+
+.address-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--charcoal);
+  margin-bottom: 8px;
+}
+
+.address-text {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.address-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.address-actions button {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--muted);
+  transition: color 0.2s;
+  padding: 0;
+}
+
+.address-actions button:hover {
+  color: var(--charcoal);
+}
+
+.address-actions button.danger:hover {
+  color: #c0392b;
+}
+
+/* ── Add Button ──────────────────────────────────────── */
+.add-address {
+  border: 1px dashed var(--border);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: transparent;
+  font-family: var(--font-body);
+  width: 100%;
+}
+
+.add-address:hover {
+  border-color: var(--charcoal);
+  color: var(--charcoal);
+}
+
+.add-address svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Skeleton ─────────────────────────────────────────── */
+.address-skeleton {
+  border: 1px solid var(--border);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--border) 25%, #f0ece6 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  display: block;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Modal ───────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 26, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal {
+  background: var(--cream);
+  width: 100%;
+  max-width: 520px;
+  padding: 40px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.modal-header h3 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--charcoal);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: var(--charcoal);
+}
+
+/* ── Form Fields ─────────────────────────────────────── */
+.fields-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.field {
+  margin-bottom: 24px;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.field input[type='text'],
+.field input[type='tel'] {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--charcoal);
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.field input:focus {
+  border-bottom-color: var(--charcoal);
+}
+
+.field input.invalid {
+  border-bottom-color: #c0392b;
+}
+
+.field-error {
+  display: block;
+  font-size: 11px;
+  color: #c0392b;
+  margin-top: 6px;
+}
+
+.default-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  margin-bottom: 32px;
+  font-weight: 300;
+}
+
+.default-toggle input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--charcoal);
+  cursor: pointer;
+}
+
+/* ── Modal Actions ───────────────────────────────────── */
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-primary {
+  background: var(--charcoal);
+  color: #fff;
+  padding: 14px 36px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #2e2e2e;
+}
+
+.btn-primary:disabled {
+  background: var(--border);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--charcoal);
+  padding: 14px 36px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--charcoal);
+}

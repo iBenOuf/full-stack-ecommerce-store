@@ -1,0 +1,65 @@
+<div class="about-page">
+
+  <!-- Hero Banner -->
+  <section class="about-hero">
+    <div class="about-hero-inner">
+      <p class="about-eyebrow">{{ siteConfig?.aboutSection?.aboutSlogan || 'Our Story' }}</p>
+      <h1 class="about-hero-title">
+        {{ siteConfig?.aboutSection?.aboutTitle?.line1 || '' }}
+        <em>{{ siteConfig?.aboutSection?.aboutTitle?.line2 || 'About Us' }}</em>
+        {{ siteConfig?.aboutSection?.aboutTitle?.line3 || '' }}
+      </h1>
+      <p class="about-hero-desc">
+        {{ siteConfig?.aboutSection?.aboutDescription || 'We are passionate about bringing you the finest fashion.' }}
+      </p>
+      <a routerLink="/shop" class="btn-primary">Shop the Collection</a>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="about-stats">
+    <div class="stat-item">
+      <div class="stat-number">{{ siteConfig?.aboutSection?.analytics?.stat1?.value || '—' }}</div>
+      <div class="stat-label">{{ siteConfig?.aboutSection?.analytics?.stat1?.label || 'Customers' }}</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">{{ siteConfig?.aboutSection?.analytics?.stat2?.value || '—' }}</div>
+      <div class="stat-label">{{ siteConfig?.aboutSection?.analytics?.stat2?.label || 'Products' }}</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">{{ siteConfig?.aboutSection?.analytics?.stat3?.value || '—' }}</div>
+      <div class="stat-label">{{ siteConfig?.aboutSection?.analytics?.stat3?.label || 'Countries' }}</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">{{ siteConfig?.aboutSection?.analytics?.stat4?.value || '—' }}</div>
+      <div class="stat-label">{{ siteConfig?.aboutSection?.analytics?.stat4?.label || 'Years' }}</div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="about-values">
+    <div class="values-header">
+      <p class="about-eyebrow">What We Stand For</p>
+      <h2 class="values-title">Our <em>Core Values</em></h2>
+    </div>
+    <div class="values-grid">
+      @for (v of values; track v.title) {
+        <div class="value-card">
+          <div class="value-icon">{{ v.icon }}</div>
+          <h3 class="value-title">{{ v.title }}</h3>
+          <p class="value-desc">{{ v.desc }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="about-cta">
+    <h2>Ready to explore our <em>collection?</em></h2>
+    <div class="cta-actions">
+      <a routerLink="/shop" class="btn-primary">Shop Now</a>
+      <a routerLink="/contact" class="btn-outline">Get in Touch</a>
+    </div>
+  </section>
+
+</div>

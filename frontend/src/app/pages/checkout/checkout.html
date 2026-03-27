@@ -1,0 +1,185 @@
+<div class="checkout-wrapper">
+  <div class="checkout-header">
+    <h1 class="checkout-title">Check<em>out</em></h1>
+  </div>
+
+  @if (isMergingCart) {
+    <div class="merging-overlay">
+      <div class="merging-spinner"></div>
+      <p>Preparing your cart...</p>
+    </div>
+  } @else if (cartItems.length === 0) {
+    <div class="cart-empty">
+      <p>Your cart is empty.</p>
+      <a routerLink="/shop" class="btn-primary">Continue Shopping</a>
+    </div>
+  } @else {
+    <div class="checkout-layout">
+      <!-- Left: Form -->
+      <div class="checkout-form-col">
+        <!-- Shipping Address -->
+        <section class="checkout-section">
+          <h2 class="checkout-section-title">Shipping Address</h2>
+
+          <!-- Saved addresses -->
+          @if (savedAddresses.length > 0) {
+            <div class="saved-addresses">
+              @for (address of savedAddresses; track address._id) {
+                <div
+                  class="saved-address-card"
+                  [class.selected]="selectedAddressId === address._id"
+                  (click)="selectSavedAddress(address)"
+                >
+                  <div class="saved-address-radio">
+                    <div class="radio-dot"></div>
+                  </div>
+                  <div class="saved-address-info">
+                    <p class="saved-address-label">{{ address.label }}</p>
+                    <p class="saved-address-text">
+                      {{ address.street }}, {{ address.city }}, {{ address.governorate }}
+                    </p>
+                  </div>
+                  @if (address.isDefault) {
+                    <span class="default-tag">Default</span>
+                  }
+                </div>
+              }
+              <button class="btn-new-address" (click)="useNewAddress()">
+                + Enter a different address
+              </button>
+            </div>
+          }
+
+          <!-- Manual address form -->
+          @if (showAddressForm) {
+            <form [formGroup]="addressForm" class="address-form">
+              <div class="fields-row">
+                <div class="field">
+                  <label>Street address</label>
+                  <input
+                    type="text"
+                    formControlName="street"
+                    [class.invalid]="
+                      addressForm.get('street')?.invalid && addressForm.get('street')?.touched
+                    "
+                  />
+                  @if (addressForm.get('street')?.invalid && addressForm.get('street')?.touched) {
+                    <span class="field-error">Required</span>
+                  }
+                </div>
+              </div>
+              <div class="fields-row two-col">
+                <div class="field">
+                  <label>City</label>
+                  <input
+                    type="text"
+                    formControlName="city"
+                    [class.invalid]="
+                      addressForm.get('city')?.invalid && addressForm.get('city')?.touched
+                    "
+                  />
+                  @if (addressForm.get('city')?.invalid && addressForm.get('city')?.touched) {
+                    <span class="field-error">Required</span>
+                  }
+                </div>
+                <div class="field">
+                  <label>Governorate</label>
+                  <input
+                    type="text"
+                    formControlName="governorate"
+                    [class.invalid]="
+                      addressForm.get('governorate')?.invalid &&
+                      addressForm.get('governorate')?.touched
+                    "
+                  />
+                  @if (
+                    addressForm.get('governorate')?.invalid &&
+                    addressForm.get('governorate')?.touched
+                  ) {
+                    <span class="field-error">Required</span>
+                  }
+                </div>
+              </div>
+            </form>
+          }
+        </section>
+
+        <!-- Delivery Phone -->
+        <section class="checkout-section">
+          <h2 class="checkout-section-title">Delivery Phone</h2>
+          <form [formGroup]="phoneForm">
+            <div class="field">
+              <input
+                type="tel"
+                formControlName="deliveryPhone"
+                placeholder="e.g. 01012345678"
+                [class.invalid]="
+                  phoneForm.get('deliveryPhone')?.invalid && phoneForm.get('deliveryPhone')?.touched
+                "
+              />
+              @if (
+                phoneForm.get('deliveryPhone')?.invalid && phoneForm.get('deliveryPhone')?.touched
+              ) {
+                <span class="field-error">Required</span>
+              }
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <!-- Right: Order Summary -->
+      <div class="checkout-summary-col">
+        <div class="checkout-summary">
+          <h2 class="summary-title">Order Summary</h2>
+
+          <div class="summary-items">
+            @for (item of cartItems; track item._id) {
+              <div class="summary-item">
+                <div class="summary-item-img">
+                  <img
+                    [src]="staticFilesURL + 'products/' + item.imageUrl"
+                    [alt]="item.name"
+                    (error)="$event.target.style.display = 'none'"
+                  />
+                  <span class="item-qty-badge">{{ getItemQuantity(item._id) }}</span>
+                </div>
+                <div class="summary-item-info">
+                  <p class="summary-item-name">{{ item.name }}</p>
+                  <p class="summary-item-price">${{ item.price }}</p>
+                </div>
+                <p class="summary-item-total">${{ item.price * getItemQuantity(item._id) }}</p>
+              </div>
+            }
+          </div>
+
+          <div class="summary-lines">
+            <div class="summary-line">
+              <span>Subtotal</span>
+              <span>${{ subtotal }}</span>
+            </div>
+            <div class="summary-line">
+              <span>Shipping</span>
+              <span>{{ subtotal >= 150 ? 'Free' : '$10' }}</span>
+            </div>
+          </div>
+
+          <div class="summary-total">
+            <span>Total</span>
+            <span>${{ total }}</span>
+          </div>
+
+          <button class="btn-place-order" [disabled]="isPlacingOrder" (click)="placeOrder()">
+            {{ isPlacingOrder ? 'Placing Order...' : 'Place Order' }}
+          </button>
+
+          <div class="secure-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            Secure checkout
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

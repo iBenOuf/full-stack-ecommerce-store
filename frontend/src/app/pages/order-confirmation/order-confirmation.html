@@ -1,0 +1,116 @@
+@if (isLoading) {
+  <div class="oc-loading">
+    <div class="oc-spinner"></div>
+    <p>Retrieving your order...</p>
+  </div>
+} @else if (order) {
+  <div class="oc-wrapper">
+    <!-- Hero -->
+    <div class="oc-hero">
+      <p class="oc-eyebrow">Order Confirmed</p>
+      <h1 class="oc-title">Thank you for your <em>order</em></h1>
+      <p class="oc-sub">Your Maison & Co pieces are being prepared. We'll be in touch shortly.</p>
+    </div>
+
+    <!-- Meta strip -->
+    <div class="oc-meta">
+      <div class="oc-meta-item">
+        <span class="oc-meta-label">Order Number</span>
+        <span class="oc-meta-value">#{{ order._id.slice(-8).toUpperCase() }}</span>
+      </div>
+      <div class="oc-meta-divider"></div>
+      <div class="oc-meta-item">
+        <span class="oc-meta-label">Date</span>
+        <span class="oc-meta-value">{{ order.createdAt | date: 'MMMM d, y' }}</span>
+      </div>
+      <div class="oc-meta-divider"></div>
+      <div class="oc-meta-item">
+        <span class="oc-meta-label">Status</span>
+        <span class="oc-status-badge">{{ order.status }}</span>
+      </div>
+      <div class="oc-meta-divider"></div>
+      <div class="oc-meta-item">
+        <span class="oc-meta-label">Total</span>
+        <span class="oc-meta-value">${{ total }}</span>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="oc-body">
+      <!-- Items col -->
+      <div class="oc-items-col">
+        <h2 class="oc-col-title">Items Ordered</h2>
+
+        <div class="oc-items">
+          @for (item of order.items; track item.product._id) {
+            <div class="oc-item">
+              <div class="oc-item-img">
+                <img
+                  [src]="staticFilesURL + 'products/' + item.product.imageUrl"
+                  [alt]="item.product.name"
+                  (error)="$event.target.style.display = 'none'"
+                />
+              </div>
+              <div class="oc-item-info">
+                <p class="oc-item-name">{{ item.product.name }}</p>
+                <p class="oc-item-qty">Qty: {{ item.quantity }}</p>
+              </div>
+              <p class="oc-item-price">${{ item.unitPrice * item.quantity }}</p>
+            </div>
+          }
+        </div>
+
+        <div class="oc-totals">
+          <div class="oc-total-line">
+            <span>Subtotal</span>
+            <span>${{ subtotal }}</span>
+          </div>
+          <div class="oc-total-line">
+            <span>Shipping</span>
+            <span>Free</span>
+          </div>
+          <div class="oc-total-line grand">
+            <span>Total</span>
+            <span>${{ total }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery col -->
+      <div class="oc-delivery-col">
+        <h2 class="oc-col-title">Delivery Details</h2>
+
+        <div class="oc-delivery-card">
+          <div class="oc-dl-row">
+            <span class="oc-dl-label">Address</span>
+            <span class="oc-dl-value">
+              {{ order.shippingAddress.street }}, {{ order.shippingAddress.city }},
+              {{ order.shippingAddress.governorate }}
+            </span>
+          </div>
+          <div class="oc-dl-row">
+            <span class="oc-dl-label">Phone</span>
+            <span class="oc-dl-value">{{ order.deliveryPhone }}</span>
+          </div>
+        </div>
+
+        <div class="oc-actions">
+          <a routerLink="/shop" class="btn-primary">Continue Shopping</a>
+          <a routerLink="/my-account/orders" class="btn-secondary">View My Orders</a>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="oc-fallback">
+    <p class="oc-eyebrow">Order Received</p>
+    <h1 class="oc-title" style="color: var(--charcoal)">Thank you for your <em>order</em></h1>
+    <p class="oc-sub" style="color: var(--muted)">
+      Your order has been placed. Check your orders page for details.
+    </p>
+    <div class="oc-actions" style="justify-content: center; margin-top: 40px">
+      <a routerLink="/my-account/orders" class="btn-primary">View My Orders</a>
+      <a routerLink="/shop" class="btn-secondary">Continue Shopping</a>
+    </div>
+  </div>
+}

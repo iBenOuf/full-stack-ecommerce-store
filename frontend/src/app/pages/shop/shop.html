@@ -1,0 +1,197 @@
+<div class="shop-wrapper">
+  <!-- Page Header -->
+  <div class="shop-header">
+    <h1 class="shop-title">The <em>Collection</em></h1>
+    <p class="shop-subtitle">Thoughtfully made, designed to last</p>
+  </div>
+
+  <div class="shop-layout">
+    <!-- Sidebar -->
+    <aside class="shop-sidebar">
+      <!-- Search -->
+      <div class="filter-group">
+        <div class="search-box">
+          <input
+            type="text"
+            placeholder="Search products..."
+            [value]="filterParams.filter || ''"
+            (input)="onSearch($event)"
+            class="search-input"
+          />
+          <svg
+            class="search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="filter-group">
+        <h3 class="filter-title">Categories</h3>
+        <ul class="filter-list">
+          <li>
+            <button
+              class="filter-item"
+              [class.active]="!filterParams.subcategorySlug"
+              (click)="clearCategoryFilter()"
+            >
+              All
+              <span class="filter-count">{{ totalProducts }}</span>
+            </button>
+          </li>
+          @for (category of categories; track $index) {
+            <li>
+              <button
+                class="filter-item filter-category"
+                [class.active]="activeCategoryId === category._id"
+                (click)="toggleCategory(category._id)"
+              >
+                {{ category.name }}
+                <svg
+                  class="chevron"
+                  [class.open]="activeCategoryId === category._id"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </button>
+              @if (activeCategoryId === category._id && getSubcategories(category._id).length > 0) {
+                <ul class="filter-sublist">
+                  @for (sub of getSubcategories(category._id); track $index) {
+                    <li>
+                      <button
+                        class="filter-item filter-sub"
+                        [class.active]="filterParams.subcategorySlug === sub.slug"
+                        (click)="setSubcategory(sub.slug)"
+                      >
+                        {{ sub.name }}
+                      </button>
+                    </li>
+                  }
+                </ul>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- In Stock -->
+      <div class="filter-group">
+        <h3 class="filter-title">Availability</h3>
+        <label class="toggle-label">
+          <span>In stock only</span>
+          <div class="toggle" [class.on]="filterParams.inStock" (click)="toggleInStock()">
+            <div class="toggle-knob"></div>
+          </div>
+        </label>
+      </div>
+
+      <!-- Clear filters -->
+      @if (hasActiveFilters()) {
+        <button class="clear-filters" (click)="clearAllFilters()">Clear all filters</button>
+      }
+    </aside>
+
+    <!-- Main Content -->
+    <div class="shop-main">
+      <!-- Toolbar -->
+      <div class="shop-toolbar">
+        <p class="results-count">
+          @if (isLoading) {
+            Loading...
+          } @else {
+            {{ totalProducts }} {{ totalProducts === 1 ? 'product' : 'products' }}
+          }
+        </p>
+        <div class="sort-box">
+          <select class="sort-select" (change)="onSort($event)">
+            <option value="createdAtDESC">Newest</option>
+            <option value="createdAtASC">Oldest</option>
+            <option value="priceASC">Price: Low to High</option>
+            <option value="priceDESC">Price: High to Low</option>
+            <option value="nameASC">Name: A–Z</option>
+            <option value="nameDESC">Name: Z–A</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Grid -->
+      @if (isLoading) {
+        <div class="products-grid">
+          @for (s of skeletons; track $index) {
+            <div class="product-skeleton">
+              <div class="skeleton skeleton-img"></div>
+              <div
+                class="skeleton skeleton-line"
+                style="width: 50%; height: 11px; margin-top: 12px"
+              ></div>
+              <div
+                class="skeleton skeleton-line"
+                style="width: 80%; height: 18px; margin-top: 8px"
+              ></div>
+              <div
+                class="skeleton skeleton-line"
+                style="width: 30%; height: 14px; margin-top: 6px"
+              ></div>
+            </div>
+          }
+        </div>
+      } @else if (products.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">∅</div>
+          <h3>No products found</h3>
+          <p>Try adjusting your filters or search term</p>
+          <button class="btn-primary" (click)="clearAllFilters()">Clear filters</button>
+        </div>
+      } @else {
+        <div class="products-grid">
+          @for (product of products; track $index) {
+            <app-product-card [product]="product" />
+          }
+        </div>
+      }
+
+      <!-- Pagination -->
+      @if (!isLoading && totalPages > 1) {
+        <div class="pagination">
+          <button
+            class="page-btn"
+            [disabled]="filterParams.page === 1"
+            (click)="goToPage(filterParams.page! - 1)"
+          >
+            ←
+          </button>
+          @for (page of getPageNumbers(); track $index) {
+            @if (page === -1) {
+              <span class="page-ellipsis">…</span>
+            } @else {
+              <button
+                class="page-btn"
+                [class.active]="page === filterParams.page"
+                (click)="goToPage(page)"
+              >
+                {{ page }}
+              </button>
+            }
+          }
+          <button
+            class="page-btn"
+            [disabled]="filterParams.page === totalPages"
+            (click)="goToPage(filterParams.page! + 1)"
+          >
+            →
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>

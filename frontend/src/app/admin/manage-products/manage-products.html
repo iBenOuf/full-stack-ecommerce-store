@@ -1,0 +1,268 @@
+<div class="admin-page category-page">
+  <div class="page-header">
+    <div>
+      <h2>Manage Products</h2>
+      <p>Add and manage inventory, pricing, and stock.</p>
+    </div>
+    <button class="btn btn-primary" (click)="openAddModal()">+ Add Product</button>
+  </div>
+
+  <div class="table-container">
+    @if (isLoading) {
+      <div class="loading-state">Loading products...</div>
+    } @else {
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Subcategory</th>
+            <th class="text-right">Price</th>
+            <th class="text-right">Stock</th>
+            <th>Status</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (prod of products; track prod._id) {
+            <tr>
+              <td>
+                <div class="product-cell">
+                  <img
+                    [src]="staticFilesURL + 'products/' + prod.imageUrl"
+                    alt="{{ prod.name }}"
+                    class="cat-thumb"
+                    (error)="$event.target.src = 'assets/images/placeholder.png'"
+                  />
+                  <div class="product-info">
+                    <span class="font-medium">{{ prod.name }}</span>
+                    <span class="text-muted text-small">{{ prod.slug }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="parent-badge">{{ getSubCatName(prod.subcategory) }}</span>
+              </td>
+              <td class="text-right font-medium">{{ prod.price | currency }}</td>
+              <td class="text-right">
+                <span class="stock-badge" [class.critical]="prod.stockQuantity < 5">
+                  {{ prod.stockQuantity }}
+                </span>
+              </td>
+              <td>
+                <span
+                  class="status-pill"
+                  [class.active]="!prod.isDeleted"
+                  [class.inactive]="prod.isDeleted"
+                >
+                  {{ prod.isDeleted ? 'Deleted' : 'Active' }}
+                </span>
+              </td>
+              <td class="text-right actions-cell">
+                <button
+                  class="btn-icon edit"
+                  title="Edit"
+                  (click)="openEditModal(prod)"
+                  [disabled]="isDeleting"
+                >
+                  ✏️
+                </button>
+                @if (!prod.isDeleted) {
+                  <button
+                    class="btn-icon delete"
+                    title="Delete"
+                    (click)="deleteProduct(prod._id)"
+                    [disabled]="isDeleting"
+                  >
+                    🗑️
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+          @if (products.length === 0) {
+            <tr>
+              <td colspan="6" class="text-center py-4 text-muted">No products found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      @if (totalPages > 1) {
+        <div class="pagination">
+          <button
+            class="page-btn"
+            [disabled]="currentPage === 1"
+            (click)="changePage(currentPage - 1)"
+          >
+            Previous
+          </button>
+          <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+          <button
+            class="page-btn"
+            [disabled]="currentPage === totalPages"
+            (click)="changePage(currentPage + 1)"
+          >
+            Next
+          </button>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Modal -->
+  @if (showModal) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content large" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>{{ editingId ? 'Edit Product' : 'Add New Product' }}</h3>
+          <button class="close-btn" (click)="closeModal()">×</button>
+        </div>
+
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label>Product Name</label>
+              <input
+                type="text"
+                formControlName="name"
+                class="form-control"
+                placeholder="e.g. Leather Jacket"
+              />
+              @if (productForm.get('name')?.invalid && productForm.get('name')?.touched) {
+                <span class="error-msg">Name is required (min 2 characters)</span>
+              }
+            </div>
+            <div class="form-group flex-2">
+              <label>Slug</label>
+              <input
+                type="text"
+                formControlName="slug"
+                class="form-control"
+                placeholder="e.g. leather-jacket"
+              />
+              @if (productForm.get('slug')?.invalid && productForm.get('slug')?.touched) {
+                <span class="error-msg">Slug is required (min 2 characters)</span>
+              }
+            </div>
+            <div class="form-group flex-1">
+              <label>Price</label>
+              <input
+                type="number"
+                formControlName="price"
+                class="form-control"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+              />
+              @if (productForm.get('price')?.invalid && productForm.get('price')?.touched) {
+                <span class="error-msg">Valid price required</span>
+              }
+            </div>
+            <div class="form-group flex-1">
+              <label>Stock</label>
+              <input
+                type="number"
+                formControlName="stockQuantity"
+                class="form-control"
+                placeholder="0"
+                min="0"
+                step="1"
+              />
+              @if (
+                productForm.get('stockQuantity')?.invalid &&
+                productForm.get('stockQuantity')?.touched
+              ) {
+                <span class="error-msg">Valid stock required</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label>Category</label>
+              <select formControlName="category" class="form-control">
+                <option value="" disabled>Select category</option>
+                @for (cat of categories; track cat._id) {
+                  @if (!cat.isDeleted || (editingId && productForm.value.category === cat._id)) {
+                    <option [value]="cat._id">
+                      {{ cat.name }} {{ cat.isDeleted ? '(Deleted)' : '' }}
+                    </option>
+                  }
+                }
+              </select>
+              @if (productForm.get('category')?.invalid && productForm.get('category')?.touched) {
+                <span class="error-msg">Category is required</span>
+              }
+            </div>
+            <div class="form-group flex-1">
+              <label>Subcategory</label>
+              <select formControlName="subcategory" class="form-control">
+                <option value="" disabled>Select subcategory</option>
+                @for (sub of filteredSubcategories; track sub._id) {
+                  @if (!sub.isDeleted || (editingId && productForm.value.subcategory === sub._id)) {
+                    <option [value]="sub._id">
+                      {{ sub.name }} {{ sub.isDeleted ? '(Deleted)' : '' }}
+                    </option>
+                  }
+                }
+              </select>
+              @if (
+                productForm.get('subcategory')?.invalid && productForm.get('subcategory')?.touched
+              ) {
+                <span class="error-msg">Subcategory is required</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea
+              formControlName="description"
+              class="form-control"
+              rows="3"
+              placeholder="Describe the product..."
+            ></textarea>
+            @if (
+              productForm.get('description')?.invalid && productForm.get('description')?.touched
+            ) {
+              <span class="error-msg">Description is required</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Product Image {{ !editingId ? '*' : '' }}</label>
+            <div class="image-upload-wrapper" (click)="imageInput.click()">
+              @if (previewUrl) {
+                <img [src]="previewUrl" alt="Preview" class="image-preview" />
+              } @else {
+                <div class="upload-placeholder">
+                  <span>📷 Click to upload image</span>
+                  <small>Max 2MB (JPG, PNG)</small>
+                </div>
+              }
+            </div>
+            <input
+              type="file"
+              #imageInput
+              class="hidden-input"
+              accept="image/*"
+              (change)="onFileSelected($event)"
+            />
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="productForm.invalid || isSaving || (!editingId && !selectedFile)"
+            >
+              {{ isSaving ? 'Saving...' : editingId ? 'Update Product' : 'Create Product' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

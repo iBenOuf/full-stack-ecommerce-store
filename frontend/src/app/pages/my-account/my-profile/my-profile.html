@@ -1,0 +1,139 @@
+@if (user) {
+  <h2 class="section-title">Personal <em>Info</em></h2>
+  <p class="section-sub">Update your personal details</p>
+
+  <form [formGroup]="profileForm" (ngSubmit)="onSave()">
+    <div class="fields-row">
+      <div class="field">
+        <label for="firstName">First name</label>
+        <input
+          id="firstName"
+          type="text"
+          formControlName="firstName"
+          [class.invalid]="
+            profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched
+          "
+        />
+        @if (profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched) {
+          <span class="field-error">Required</span>
+        }
+      </div>
+      <div class="field">
+        <label for="lastName">Last name</label>
+        <input
+          id="lastName"
+          type="text"
+          formControlName="lastName"
+          [class.invalid]="
+            profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched
+          "
+        />
+        @if (profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched) {
+          <span class="field-error">Required</span>
+        }
+      </div>
+    </div>
+
+    <div class="fields-row">
+      <div class="field">
+        <label>Email address</label>
+        <p class="field-static">{{ user.email }}</p>
+      </div>
+      <div class="field">
+        <label for="phone">Phone number</label>
+        <input
+          id="phone"
+          type="tel"
+          formControlName="phone"
+          [class.invalid]="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched"
+        />
+        @if (profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched) {
+          <span class="field-error">Required</span>
+        }
+      </div>
+    </div>
+
+    <div class="field gender-field">
+      <label>Gender</label>
+      <div class="gender-group">
+        <div class="gender-opt">
+          <input type="radio" id="female" formControlName="gender" value="female" />
+          <label for="female">Female</label>
+        </div>
+        <div class="gender-opt">
+          <input type="radio" id="male" formControlName="gender" value="male" />
+          <label for="male">Male</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="isSaving">
+        {{ isSaving ? 'Saving...' : 'Save Changes' }}
+      </button>
+      <button type="button" class="btn-secondary" (click)="onReset()">Cancel</button>
+    </div>
+  </form>
+
+  <div class="danger-zone">
+    <h3 class="danger-title">Password</h3>
+    <p class="danger-sub">Change your account password</p>
+
+    <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
+      <div class="fields-row">
+        <div class="field">
+          <label for="currentPassword">Current password</label>
+          <input
+            id="currentPassword"
+            type="password"
+            formControlName="currentPassword"
+            [class.invalid]="
+              passwordForm.get('currentPassword')?.invalid &&
+              passwordForm.get('currentPassword')?.touched
+            "
+          />
+          @if (
+            passwordForm.get('currentPassword')?.invalid &&
+            passwordForm.get('currentPassword')?.touched
+          ) {
+            <span class="field-error">Required</span>
+          }
+        </div>
+        <div class="field">
+          <label for="newPassword">New password</label>
+          <input
+            id="newPassword"
+            type="password"
+            formControlName="newPassword"
+            [class.invalid]="
+              passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched
+            "
+          />
+          @if (
+            passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched
+          ) {
+            <span class="field-error">Min 6 characters</span>
+          }
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" [disabled]="isChangingPassword">
+          {{ isChangingPassword ? 'Updating...' : 'Update Password' }}
+        </button>
+      </div>
+    </form>
+  </div>
+} @else {
+  <div class="profile-skeleton">
+    <div class="skeleton skeleton-line" style="width: 200px; height: 32px"></div>
+    <div class="skeleton skeleton-line" style="width: 300px; height: 12px; margin-top: 8px"></div>
+    <div class="fields-row" style="margin-top: 40px">
+      <div class="skeleton skeleton-line" style="height: 40px"></div>
+      <div class="skeleton skeleton-line" style="height: 40px"></div>
+    </div>
+    <div class="fields-row" style="margin-top: 24px">
+      <div class="skeleton skeleton-line" style="height: 40px"></div>
+      <div class="skeleton skeleton-line" style="height: 40px"></div>
+    </div>
+  </div>
+}

@@ -1,0 +1,180 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div>
+      <h2>Site Settings</h2>
+      <p>Control your store's branding, hero text, stats, and contact info.</p>
+    </div>
+    <button class="btn btn-primary" (click)="onSubmit()" [disabled]="isSaving || isLoading">
+      {{ isSaving ? 'Saving...' : 'Save All Changes' }}
+    </button>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-state">Loading settings...</div>
+  } @else {
+    <form [formGroup]="configForm">
+
+      <!-- Tabs -->
+      <div class="settings-tabs">
+        <button type="button" class="tab-btn" [class.active]="activeTab === 'general'" (click)="activeTab = 'general'">General</button>
+        <button type="button" class="tab-btn" [class.active]="activeTab === 'hero'" (click)="activeTab = 'hero'">Hero Section</button>
+        <button type="button" class="tab-btn" [class.active]="activeTab === 'about'" (click)="activeTab = 'about'">About Section</button>
+        <button type="button" class="tab-btn" [class.active]="activeTab === 'footer'" (click)="activeTab = 'footer'">Footer & Social</button>
+      </div>
+
+      <!-- ── General ── -->
+      @if (activeTab === 'general') {
+        <div class="settings-section">
+          <h3 class="section-heading">General</h3>
+
+          <div class="form-group">
+            <label>Site Name</label>
+            <input type="text" formControlName="siteName" class="form-control" placeholder="e.g. Luxe Store" />
+          </div>
+
+          <div class="form-group">
+            <label>Announcement Bar</label>
+            <input type="text" formControlName="announcement" class="form-control" placeholder="e.g. Free shipping on orders over $150" />
+            <span class="hint">Leave empty to hide the announcement bar</span>
+          </div>
+        </div>
+      }
+
+      <!-- ── Hero ── -->
+      @if (activeTab === 'hero') {
+        <div class="settings-section" formGroupName="heroSection">
+          <h3 class="section-heading">Hero Section</h3>
+
+          <div class="form-group">
+            <label>Slogan (eyebrow text)</label>
+            <input type="text" formControlName="heroSlogan" class="form-control" placeholder="e.g. NEW ARRIVALS 2025" />
+          </div>
+
+          <div class="form-group">
+            <label>Season Badge</label>
+            <input type="text" formControlName="season" class="form-control" placeholder="e.g. Spring / Summer 2025" />
+          </div>
+
+          <label class="group-label">Hero Title (3 lines)</label>
+          <div class="form-row" formGroupName="heroTitle">
+            <div class="form-group flex-1">
+              <input type="text" formControlName="line1" class="form-control" placeholder="Line 1" />
+            </div>
+            <div class="form-group flex-1">
+              <input type="text" formControlName="line2" class="form-control" placeholder="Line 2 (italic/accent)" />
+            </div>
+            <div class="form-group flex-1">
+              <input type="text" formControlName="line3" class="form-control" placeholder="Line 3" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Hero Description</label>
+            <textarea formControlName="heroDescription" class="form-control" rows="3" placeholder="Short description under hero title"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Hero Image URL</label>
+            <input type="text" formControlName="heroImage" class="form-control" placeholder="e.g. hero.jpg (filename only, stored in uploads)" />
+            <span class="hint">Enter the filename as stored in your uploads directory</span>
+          </div>
+        </div>
+      }
+
+      <!-- ── About ── -->
+      @if (activeTab === 'about') {
+        <div class="settings-section" formGroupName="aboutSection">
+          <h3 class="section-heading">About Section</h3>
+
+          <div class="form-group">
+            <label>About Slogan (eyebrow text)</label>
+            <input type="text" formControlName="aboutSlogan" class="form-control" placeholder="e.g. Our Story" />
+          </div>
+
+          <label class="group-label">About Title (3 lines)</label>
+          <div class="form-row" formGroupName="aboutTitle">
+            <div class="form-group flex-1">
+              <input type="text" formControlName="line1" class="form-control" placeholder="Line 1" />
+            </div>
+            <div class="form-group flex-1">
+              <input type="text" formControlName="line2" class="form-control" placeholder="Line 2 (italic)" />
+            </div>
+            <div class="form-group flex-1">
+              <input type="text" formControlName="line3" class="form-control" placeholder="Line 3" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>About Description</label>
+            <textarea formControlName="aboutDescription" class="form-control" rows="4" placeholder="Describe your brand story..."></textarea>
+          </div>
+
+          <h4 class="group-label" style="margin-top: 24px">Analytics Stats (4 boxes)</h4>
+          <div formGroupName="analytics">
+            <div class="stats-grid">
+              @for (s of ['stat1','stat2','stat3','stat4']; track s) {
+                <div class="stat-inputs" [formGroupName]="s">
+                  <div class="form-group">
+                    <label>Stat {{ $index + 1 }} Value</label>
+                    <input type="text" formControlName="value" class="form-control" placeholder="e.g. 10K+" />
+                  </div>
+                  <div class="form-group">
+                    <label>Stat {{ $index + 1 }} Label</label>
+                    <input type="text" formControlName="label" class="form-control" placeholder="e.g. Happy Customers" />
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ── Footer & Social ── -->
+      @if (activeTab === 'footer') {
+        <div class="settings-section">
+          <h3 class="section-heading">Footer</h3>
+
+          <div class="settings-sub" formGroupName="footerSection">
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label>Contact Email</label>
+                <input type="email" formControlName="contactEmail" class="form-control" placeholder="hello@yourstore.com" />
+              </div>
+              <div class="form-group flex-1">
+                <label>Contact Phone</label>
+                <input type="text" formControlName="contactPhone" class="form-control" placeholder="+20 100 000 0000" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Footer Text / Tagline</label>
+              <input type="text" formControlName="footerText" class="form-control" placeholder="Short brand tagline shown in footer" />
+            </div>
+
+            <div class="form-group">
+              <label>Copyright Text</label>
+              <input type="text" formControlName="copyrightText" class="form-control" placeholder="© 2025 Your Store. All rights reserved." />
+            </div>
+          </div>
+
+          <h3 class="section-heading" style="margin-top:32px">Social Links</h3>
+          <div class="social-grid">
+            @for (s of [['facebook','Facebook'],['instagram','Instagram'],['twitter','X / Twitter'],['youtube','YouTube'],['tiktok','TikTok'],['pinterest','Pinterest']]; track s[0]) {
+              <div class="form-group">
+                <label>{{ s[1] }}</label>
+                <input type="url" [formControlName]="s[0]" class="form-control" [placeholder]="'https://' + s[0].toLowerCase() + '.com/yourpage'" />
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="isSaving">
+          {{ isSaving ? 'Saving...' : 'Save All Changes' }}
+        </button>
+      </div>
+
+    </form>
+  }
+</div>

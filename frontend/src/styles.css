@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap');
+
+:root {
+  --cream: #faf8f5;
+  --charcoal: #1a1a1a;
+  --muted: #7a7570;
+  --border: #e8e4df;
+  --accent: #c9a96e;
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'Jost', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--cream);
+  font-family: var(--font-body);
+}

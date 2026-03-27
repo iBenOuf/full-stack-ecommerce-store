@@ -1,0 +1,30 @@
+<div class="not-found">
+  <div class="bg-number">404</div>
+  <div class="content">
+    <p class="eyebrow">Page not found</p>
+    <h1 class="title">Lost in the<br /><em>wardrobe</em></h1>
+    <p class="subtitle">
+      The page you're looking for seems to have gone out of style. Let's get you back to something
+      beautiful.
+    </p>
+    <div class="actions">
+      <a routerLink="/" class="btn-primary">Back to Home</a>
+      <a routerLink="/shop" class="btn-outline">Shop Collection</a>
+    </div>
+    <div class="divider-line"></div>
+    <p class="suggestions-label">You might be looking for</p>
+    <div class="suggestions">
+      <a routerLink="/shop" [queryParams]="{ filter: 'new' }" class="suggestion-tag"
+        >New Arrivals</a
+      >
+      <a routerLink="/shop" [queryParams]="{ category: 'dresses' }" class="suggestion-tag"
+        >Dresses</a
+      >
+      <a routerLink="/shop" [queryParams]="{ category: 'outerwear' }" class="suggestion-tag"
+        >Outerwear</a
+      >
+      <a routerLink="/shop" [queryParams]="{ sale: true }" class="suggestion-tag">Sale</a>
+      <a routerLink="/my-orders" class="suggestion-tag">My Orders</a>
+    </div>
+  </div>
+</div>

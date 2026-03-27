@@ -1,0 +1,260 @@
+.login-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+.login-left {
+  background: var(--charcoal);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 48px 64px;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.logo span {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.left-mid h2 {
+  font-family: var(--font-display);
+  font-size: 52px;
+  font-weight: 300;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+
+.left-mid h2 em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.left-mid p {
+  font-size: 13px;
+  color: #9a9590;
+  font-weight: 300;
+  line-height: 1.8;
+  max-width: 340px;
+}
+
+.left-bottom {
+  display: flex;
+  gap: 32px;
+}
+
+.left-stat {
+  border-top: 1px solid #2e2e2e;
+  padding-top: 16px;
+  min-width: 80px;
+}
+
+.left-stat strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 300;
+  color: #fff;
+}
+
+.left-stat span {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #5a5550;
+}
+
+.login-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  background: var(--cream);
+}
+
+.login-form-wrap {
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-eyebrow {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.form-title {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 300;
+  color: var(--charcoal);
+  margin-bottom: 8px;
+}
+
+.form-sub {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 300;
+  margin-bottom: 40px;
+}
+
+.form-sub a {
+  color: var(--charcoal);
+  font-weight: 400;
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-error {
+  background: #fdf2f2;
+  border: 1px solid #f5c6c6;
+  color: #c0392b;
+  font-size: 13px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+}
+
+.field {
+  margin-bottom: 24px;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-weight: 400;
+}
+
+.field input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--charcoal);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.field input:focus {
+  border-bottom-color: var(--charcoal);
+}
+
+.field input.invalid {
+  border-bottom-color: #c0392b;
+}
+
+.field input::placeholder {
+  color: #c5c0bb;
+}
+
+.field-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.field-row label {
+  margin-bottom: 0;
+}
+
+.field-error {
+  display: block;
+  font-size: 11px;
+  color: #c0392b;
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+}
+
+.forgot-link {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.forgot-link:hover {
+  color: var(--charcoal);
+}
+
+.btn-submit {
+  width: 100%;
+  background: var(--charcoal);
+  color: #fff;
+  padding: 16px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #2e2e2e;
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 28px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.divider span {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.register-link {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+.register-link a {
+  color: var(--charcoal);
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 1px solid var(--charcoal);
+}

@@ -1,0 +1,170 @@
+@if (product) {
+  <div class="pd-wrapper">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a routerLink="/">Home</a>
+      <span class="sep">/</span>
+      <a routerLink="/shop">Shop</a>
+      <span class="sep">/</span>
+      <span>{{ product.name }}</span>
+    </nav>
+
+    <div class="pd-layout">
+      <!-- Left: Image -->
+      <div class="pd-gallery">
+        <div class="pd-img-main">
+          <img
+            [src]="staticFilesURL + 'products/' + product.imageUrl"
+            [alt]="product.name"
+            (error)="$event.target.style.display = 'none'"
+          />
+          @if (product.stockQuantity === 0) {
+            <div class="pd-sold-out-overlay">Sold Out</div>
+          }
+        </div>
+      </div>
+
+      <!-- Right: Info -->
+      <div class="pd-info">
+        <div class="pd-meta">
+          <span class="pd-cat">{{ product.subcategory.name }}</span>
+          @if (product.stockQuantity > 0 && product.stockQuantity <= 5) {
+            <span class="pd-low-stock">Only {{ product.stockQuantity }} left</span>
+          }
+          @if (product.stockQuantity === 0) {
+            <span class="pd-out-of-stock">Out of Stock</span>
+          }
+        </div>
+
+        <h1 class="pd-name">{{ product.name }}</h1>
+
+        <div class="pd-price">
+          <span class="pd-price-value">${{ product.price }}</span>
+        </div>
+
+        <div class="pd-divider"></div>
+
+        <p class="pd-description">{{ product.description }}</p>
+
+        <div class="pd-divider"></div>
+
+        <!-- Quantity -->
+        <div class="pd-qty-row">
+          <span class="pd-label">Quantity</span>
+          <div class="pd-qty-ctrl">
+            <button class="qty-btn" (click)="decreaseQty()" [disabled]="quantity <= 1">−</button>
+            <span class="qty-val">{{ quantity }}</span>
+            <button
+              class="qty-btn"
+              (click)="increaseQty()"
+              [disabled]="quantity >= product.stockQuantity"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="pd-actions">
+          <button
+            class="btn-add-cart"
+            [disabled]="product.stockQuantity === 0"
+            (click)="addToCart()"
+          >
+            @if (product.stockQuantity === 0) {
+              Sold Out
+            } @else {
+              Add to Cart
+            }
+          </button>
+        </div>
+
+        <!-- Accordions -->
+        <div class="pd-accordions">
+          <div class="accordion-item" [class.open]="openAccordion === 'details'">
+            <button class="accordion-trigger" (click)="toggleAccordion('details')">
+              <span>Product Details</span>
+              <span class="accordion-icon">{{ openAccordion === 'details' ? '−' : '+' }}</span>
+            </button>
+            <div class="accordion-body">
+              <ul>
+                <li>Carefully selected natural fibres</li>
+                <li>Ethically produced in small batches</li>
+                <li>True to size — see our size guide for details</li>
+                <li>Model is 5'9" and wears a size S</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="accordion-item" [class.open]="openAccordion === 'care'">
+            <button class="accordion-trigger" (click)="toggleAccordion('care')">
+              <span>Care Instructions</span>
+              <span class="accordion-icon">{{ openAccordion === 'care' ? '−' : '+' }}</span>
+            </button>
+            <div class="accordion-body">
+              <ul>
+                <li>Hand wash or gentle machine wash at 30°C</li>
+                <li>Do not tumble dry</li>
+                <li>Iron on low heat inside out</li>
+                <li>Dry clean if needed</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="accordion-item" [class.open]="openAccordion === 'shipping'">
+            <button class="accordion-trigger" (click)="toggleAccordion('shipping')">
+              <span>Shipping & Returns</span>
+              <span class="accordion-icon">{{ openAccordion === 'shipping' ? '−' : '+' }}</span>
+            </button>
+            <div class="accordion-body">
+              <ul>
+                <li>Free shipping on orders over $150</li>
+                <li>Standard delivery: 3–5 business days</li>
+                <li>Returns accepted within 14 days of delivery</li>
+                <li>Items must be unworn and in original condition</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products -->
+    @if (relatedProducts.length > 0) {
+      <div class="pd-related">
+        <div class="section-header">
+          <h2 class="section-title">You may also <em>like</em></h2>
+          <a routerLink="/shop" class="section-link">View all</a>
+        </div>
+        <div class="products-grid">
+          @for (relatedProduct of relatedProducts; track $index) {
+            <app-product-card [product]="relatedProduct"></app-product-card>
+          }
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+  <!-- Loading skeleton -->
+  <div class="pd-loading">
+    <div class="pd-loading-breadcrumb">
+      <div class="skeleton skeleton-line" style="width: 200px; height: 12px"></div>
+    </div>
+    <div class="pd-loading-grid">
+      <div class="skeleton skeleton-img"></div>
+      <div class="skeleton-info">
+        <div class="skeleton skeleton-line" style="width: 30%; height: 12px"></div>
+        <div class="skeleton skeleton-line" style="width: 75%; height: 44px; margin-top: 8px"></div>
+        <div class="skeleton skeleton-line" style="width: 20%; height: 24px; margin-top: 8px"></div>
+        <div
+          class="skeleton skeleton-line"
+          style="width: 100%; height: 80px; margin-top: 24px"
+        ></div>
+        <div
+          class="skeleton skeleton-line"
+          style="width: 100%; height: 52px; margin-top: 24px"
+        ></div>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,41 @@
+<div class="faq-page">
+  <div class="faq-container">
+    <div class="faq-header">
+      <h1>Frequently Asked Questions</h1>
+      <p>Find answers to common questions about our products, shipping, and returns.</p>
+    </div>
+
+    @if (isLoading) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+      </div>
+    } @else if (faqs.length === 0) {
+      <div class="empty-state">No FAQs available at the moment.</div>
+    } @else {
+      <div class="faq-list">
+        @for (faq of faqs; track faq._id) {
+          <div class="faq-item" [class.active]="activeId === faq._id">
+            <button class="faq-question" (click)="toggle(faq._id)">
+              {{ faq.question }}
+              <span class="faq-icon">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                {{ faq.answer }}
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+    
+    <div class="faq-footer">
+      <p>Still have questions?</p>
+      <a href="/contact" class="btn-outline">Contact Us</a>
+    </div>
+  </div>
+</div>

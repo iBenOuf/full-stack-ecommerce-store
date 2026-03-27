@@ -1,0 +1,107 @@
+<div class="admin-page">
+  <div class="admin-header-flex">
+    <div>
+      <h2>Manage FAQs</h2>
+      <p>Add, edit, or remove frequently asked questions shown to customers.</p>
+    </div>
+    @if (!showForm) {
+      <button class="btn-primary" (click)="openCreateForm()">
+        + New FAQ
+      </button>
+    }
+  </div>
+
+  @if (showForm) {
+    <div class="form-card">
+      <h3>{{ editingId ? 'Edit FAQ' : 'Create New FAQ' }}</h3>
+      <form [formGroup]="faqForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Question</label>
+            <input type="text" formControlName="question" placeholder="e.g. What is your return policy?" />
+            @if (faqForm.get('question')?.touched && faqForm.get('question')?.invalid) {
+              <span class="error-msg">Question is required</span>
+            }
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Answer</label>
+            <textarea formControlName="answer" rows="4" placeholder="Detailed answer..."></textarea>
+            @if (faqForm.get('answer')?.touched && faqForm.get('answer')?.invalid) {
+              <span class="error-msg">Answer is required</span>
+            }
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Sort Order (Lower appears first)</label>
+            <input type="number" formControlName="order" />
+          </div>
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="isActive" />
+              Active (Visible to customers)
+            </label>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-outline" (click)="closeForm()" [disabled]="isSaving">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="isSaving">
+            {{ isSaving ? 'Saving...' : 'Save FAQ' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="loading-state">Loading FAQs...</div>
+  } @else if (!showForm) {
+    @if (faqs.length === 0) {
+      <div class="empty-state">No FAQs found. Create one to get started.</div>
+    } @else {
+      <div class="table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th width="80">Order</th>
+              <th>Question</th>
+              <th width="100">Status</th>
+              <th width="160" class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (faq of faqs; track faq._id) {
+              <tr [class.inactive-row]="!faq.isActive">
+                <td class="order-cell">{{ faq.order }}</td>
+                <td>
+                  <div class="faq-q">{{ faq.question }}</div>
+                  <div class="faq-a">{{ faq.answer }}</div>
+                </td>
+                <td>
+                  <button 
+                    class="status-toggle" 
+                    [class.active]="faq.isActive"
+                    (click)="toggleActive(faq)"
+                    title="Toggle Visibility">
+                    {{ faq.isActive ? 'Active' : 'Inactive' }}
+                  </button>
+                </td>
+                <td class="actions-cell">
+                  <div class="action-buttons">
+                    <button class="btn-action edit" (click)="openEditForm(faq)">Edit</button>
+                    <button class="btn-action danger" (click)="deleteFaq(faq._id)">Delete</button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</div>

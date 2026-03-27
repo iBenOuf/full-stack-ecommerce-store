@@ -1,0 +1,185 @@
+<div class="register-page">
+  <div class="register-left">
+    <div class="left-top">
+      <a routerLink="/" class="logo">Maison<span>&</span>Co</a>
+    </div>
+    <div class="left-mid">
+      <h2>Join the<br /><em>Maison</em><br />family</h2>
+      <p>
+        Create an account and unlock a world of considered fashion, exclusive offers, and effortless
+        shopping.
+      </p>
+      <div class="perks">
+        <div class="perk">
+          <div class="perk-dot"></div>
+          <div class="perk-text">
+            <strong>Order tracking</strong>
+            <span>Follow every step of your delivery</span>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-dot"></div>
+          <div class="perk-text">
+            <strong>Wishlist</strong>
+            <span>Save pieces you love for later</span>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-dot"></div>
+          <div class="perk-text">
+            <strong>Early access</strong>
+            <span>Be first to shop new arrivals</span>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-dot"></div>
+          <div class="perk-text">
+            <strong>Faster checkout</strong>
+            <span>Saved addresses and payment</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="left-bottom">
+      <div class="left-stat"><strong>100%</strong><span>Natural</span></div>
+      <div class="left-stat"><strong>12+</strong><span>Workshops</span></div>
+      <div class="left-stat"><strong>3yr</strong><span>Guarantee</span></div>
+    </div>
+  </div>
+
+  <div class="register-right">
+    <div class="register-form-wrap">
+      <p class="form-eyebrow">Get started</p>
+      <h1 class="form-title">Create account</h1>
+      <!-- <p class="form-sub">Already have an account? <a routerLink="/login">Sign in</a></p> -->
+
+      @if (error) {
+        <div class="form-error">{{ error }}</div>
+      }
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="fields-row">
+          <div class="field">
+            <label for="firstName">First name</label>
+            <input
+              id="firstName"
+              type="text"
+              formControlName="firstName"
+              placeholder="Sofia"
+              [class.invalid]="
+                registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched
+              "
+            />
+            @if (registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched) {
+              <span class="field-error">Required</span>
+            }
+          </div>
+          <div class="field">
+            <label for="lastName">Last name</label>
+            <input
+              id="lastName"
+              type="text"
+              formControlName="lastName"
+              placeholder="Ahmed"
+              [class.invalid]="
+                registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched
+              "
+            />
+            @if (registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched) {
+              <span class="field-error">Required</span>
+            }
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="email">Email address</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="you@example.com"
+            [class.invalid]="
+              registerForm.get('email')?.invalid && registerForm.get('email')?.touched
+            "
+          />
+          @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+            <span class="field-error">Please enter a valid email</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="phone">Phone number</label>
+          <input
+            id="phone"
+            type="tel"
+            formControlName="phone"
+            placeholder="01XX XXX XXXX"
+            [class.invalid]="
+              registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched
+            "
+          />
+          @if (registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched) {
+            <span class="field-error">Phone number is required</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            placeholder="••••••••"
+            [class.invalid]="
+              registerForm.get('password')?.invalid && registerForm.get('password')?.touched
+            "
+          />
+          @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+            <span class="field-error">Minimum 8 characters</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="confirmPassword">Confirm password</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            formControlName="confirmPassword"
+            placeholder="••••••••"
+            [class.invalid]="
+              registerForm.get('confirmPassword')?.invalid &&
+              registerForm.get('confirmPassword')?.touched
+            "
+          />
+          @if (
+            registerForm.get('confirmPassword')?.invalid &&
+            registerForm.get('confirmPassword')?.touched
+          ) {
+            <span class="field-error">Passwords do not match</span>
+          }
+        </div>
+
+        <div class="field">
+          <label>Gender</label>
+          <div class="gender-group">
+            <div class="gender-opt">
+              <input type="radio" id="female" formControlName="gender" value="female" />
+              <label for="female">Female</label>
+            </div>
+            <div class="gender-opt">
+              <input type="radio" id="male" formControlName="gender" value="male" />
+              <label for="male">Male</label>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" [disabled]="loading">
+          {{ loading ? 'Creating account...' : 'Create Account' }}
+        </button>
+      </form>
+
+      <div class="divider"><span>or</span></div>
+      <p class="login-link">Already a member? <a routerLink="/login">Sign in</a></p>
+    </div>
+  </div>
+</div>
