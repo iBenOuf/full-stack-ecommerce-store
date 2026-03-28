@@ -1,5 +1,5 @@
 export const environment = {
-  apiURL: 'http://mydomain.com/api/v1/',
-  staticFilesURL: 'http://mydomain.com/api/v1/uploads/',
+  apiURL: 'https://full-stack-ecommerce-store.onrender.com/api/v1/',
+  staticFilesURL: 'https://full-stack-ecommerce-store.onrender.com/api/v1/uploads/',
   isProduction: true,
 };
