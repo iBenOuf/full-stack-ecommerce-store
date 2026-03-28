@@ -214,3 +214,49 @@ textarea.form-control {
   color: var(--text-light);
   margin-top: 4px;
 }
+
+/* Hero Upload Section */
+.hero-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.current-image-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upload-input-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.upload-input-row .file-input {
+  flex: 1;
+  padding: 0.5rem;
+}
+
+.file-info {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin: 0;
+  padding: 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.image-preview {
+  max-width: 400px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.image-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}

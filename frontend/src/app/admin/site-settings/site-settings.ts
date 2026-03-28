@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { ISiteConfig } from '../../core/models/site-config.model';
 import { SiteConfigService } from '../../core/services/site-config.service';
 import { ToastService } from '../../core/services/toast.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-site-settings',
@@ -17,6 +18,10 @@ export class SiteSettings implements OnInit, OnDestroy {
   activeTab: 'general' | 'hero' | 'about' | 'footer' = 'general';
   isLoading = true;
   isSaving = false;
+  isUploading = false;
+  uploadProgress = 0;
+  selectedFile: File | null = null;
+  previewUrl: string | null = null;
   private _sub!: Subscription;
 
   configForm = new FormGroup({
@@ -146,6 +151,11 @@ export class SiteSettings implements OnInit, OnDestroy {
       tiktok: this.getSocialUrl(config, 'tiktok'),
       pinterest: this.getSocialUrl(config, 'pinterest'),
     });
+
+    // Set preview for existing hero image
+    if (config.heroSection?.heroImage) {
+      this.previewUrl = `${environment.staticFilesURL}assets/images/${config.heroSection.heroImage}`;
+    }
   }
 
   onSubmit() {
@@ -229,7 +239,67 @@ export class SiteSettings implements OnInit, OnDestroy {
     });
   }
 
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) {
+      return;
+    }
+
+    const file = input.files[0];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    
+    if (!allowedTypes.includes(file.type)) {
+      this._toastService.error('Please select a valid image file (JPG, PNG, or WebP)');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this._toastService.error('Image size must be less than 5MB');
+      return;
+    }
+
+    this.selectedFile = file;
+    
+    // Create preview URL
+    if (this.previewUrl) {
+      URL.revokeObjectURL(this.previewUrl);
+    }
+    this.previewUrl = URL.createObjectURL(file);
+  }
+
+  onUpload() {
+    if (!this.selectedFile) {
+      this._toastService.error('Please select a file first');
+      return;
+    }
+
+    this.isUploading = true;
+    this.uploadProgress = 0;
+
+    this._siteConfigService.uploadHeroImage(this.selectedFile).subscribe({
+      next: (res) => {
+        const filename = res.data.heroSection.heroImage;
+        this.configForm.patchValue({
+          heroSection: { heroImage: filename }
+        });
+        this.previewUrl = `${environment.staticFilesURL}assets/images/${filename}`;
+        this._toastService.success('Hero image uploaded successfully!');
+        this.selectedFile = null;
+        this.isUploading = false;
+        this._cdr.detectChanges();
+      },
+      error: (err) => {
+        this._toastService.error(err?.error?.message || 'Failed to upload image');
+        this.isUploading = false;
+        this._cdr.detectChanges();
+      },
+    });
+  }
+
   ngOnDestroy() {
     if (this._sub) this._sub.unsubscribe();
+    if (this.previewUrl) {
+      URL.revokeObjectURL(this.previewUrl);
+    }
   }
 }

@@ -47,4 +47,13 @@ export class SiteConfigService {
   getConfigSnapshot(): ISiteConfig | null {
     return this.configData.getValue();
   }
+
+  uploadHeroImage(file: File) {
+    const formData = new FormData();
+    formData.append('heroImage', file);
+    return this._http.post<{ message: string; data: ISiteConfig }>(
+      this.apiURL + '/upload-hero',
+      formData
+    );
+  }
 }

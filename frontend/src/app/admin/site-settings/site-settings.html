@@ -74,9 +74,38 @@
           </div>
 
           <div class="form-group">
-            <label>Hero Image URL</label>
-            <input type="text" formControlName="heroImage" class="form-control" placeholder="e.g. hero.jpg (filename only, stored in uploads)" />
-            <span class="hint">Enter the filename as stored in your uploads directory</span>
+            <label>Hero Image</label>
+            <div class="hero-upload-section">
+              @if (previewUrl && !selectedFile) {
+                <div class="current-image-section">
+                  <label class="group-label">Current Image:</label>
+                  <div class="image-preview">
+                    <img [src]="previewUrl" alt="Current hero image" />
+                  </div>
+                </div>
+              }
+              <div class="upload-input-row">
+                <input type="file"
+                       #fileInput
+                       accept="image/png, image/jpeg, image/webp"
+                       (change)="onFileSelected($event)"
+                       class="form-control file-input" />
+                <button type="button"
+                        class="btn btn-primary"
+                        (click)="onUpload()"
+                        [disabled]="isUploading || !selectedFile">
+                  {{ isUploading ? 'Uploading...' : 'Upload New' }}
+                </button>
+              </div>
+              @if (selectedFile) {
+                <p class="file-info">Selected: {{ selectedFile.name }} ({{ (selectedFile.size / 1024).toFixed(1) }} KB)</p>
+                <div class="image-preview">
+                  <img [src]="previewUrl" alt="New hero preview" />
+                </div>
+              }
+              <input type="text" formControlName="heroImage" class="form-control" placeholder="Image filename (auto-filled after upload)" readonly />
+              <span class="hint">Upload a new image to replace the current one, or use the existing filename from uploads/assets/images/</span>
+            </div>
           </div>
         </div>
       }

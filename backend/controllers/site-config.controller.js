@@ -96,3 +96,28 @@ exports.updateSiteConfig = async (req, res) => {
         data: config,
     });
 };
+
+exports.uploadHeroImage = async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: "No image file uploaded" });
+    }
+
+    const heroImage = req.file.filename;
+
+    const config = await SiteConfig.findOneAndUpdate(
+        {},
+        { "heroSection.heroImage": heroImage },
+        {
+            new: true,
+            upsert: true,
+            runValidators: true,
+        },
+    );
+
+    clearCache(SITE_CONFIG_CACHE_KEY);
+
+    res.status(200).json({
+        message: "Hero image uploaded successfully",
+        data: config,
+    });
+};

@@ -1,5 +1,6 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 
 const allowedExt = [".png", ".jpg", ".jpeg", ".webp"];
 
@@ -14,7 +15,9 @@ const fileFilter = (req, file, cb) => {
 const storage = (folderName) => {
     return multer.diskStorage({
         destination: (request, file, cb) => {
-            cb(null, path.join(__dirname, `../uploads/${folderName}`));
+            const uploadPath = path.join(__dirname, `../uploads/${folderName}`);
+            fs.mkdirSync(uploadPath, { recursive: true });
+            cb(null, uploadPath);
         },
         filename: (request, file, cb) => {
             const uniqueSuffix = Date.now() + "_" + Math.round(Math.random() * 1e6);
