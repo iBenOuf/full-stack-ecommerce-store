@@ -9,7 +9,6 @@ import { CartService } from '../../core/services/cart.service';
 import { OrderService } from '../../core/services/order.service';
 import { ProductService } from '../../core/services/product.service';
 import { ToastService } from '../../core/services/toast.service';
-import { environment } from '../../../environments/environment';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
@@ -38,7 +37,6 @@ export class Checkout {
   showAddressForm = false;
   isMergingCart = true;
   isPlacingOrder = false;
-  staticFilesURL = environment.staticFilesURL;
 
   addressForm = new FormGroup({
     street: new FormControl('', Validators.required),

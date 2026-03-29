@@ -4,7 +4,6 @@ import { CartDisplayItem, ICartItem } from '../../core/models/cart.model';
 import { IProduct } from '../../core/models/product.model';
 import { CartService } from '../../core/services/cart.service';
 import { ProductService } from '../../core/services/product.service';
-import { environment } from '../../../environments/environment';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -23,7 +22,6 @@ export class Cart {
   cartItems: CartDisplayItem[] = [];
   isLoading = true;
   skeletons = ['a', 'b', 'c'];
-  staticFilesURL = environment.staticFilesURL;
 
   get subtotal(): number {
     return this.cartItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);

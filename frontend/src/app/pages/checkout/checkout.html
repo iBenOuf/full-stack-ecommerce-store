@@ -137,7 +137,7 @@
               <div class="summary-item">
                 <div class="summary-item-img">
                   <img
-                    [src]="staticFilesURL + 'products/' + item.imageUrl"
+                    [src]="item.imageUrl"
                     [alt]="item.name"
                     (error)="$event.target.style.display = 'none'"
                   />

@@ -6,7 +6,7 @@
       <span class="product-tag low">Low Stock</span>
     }
     <img
-      [src]="staticFilesURL + 'products/' + product.imageUrl"
+      [src]="product.imageUrl"
       [alt]="product.name"
       (error)="$event.target.style.display = 'none'"
     />

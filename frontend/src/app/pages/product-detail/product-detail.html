@@ -14,7 +14,7 @@
       <div class="pd-gallery">
         <div class="pd-img-main">
           <img
-            [src]="staticFilesURL + 'products/' + product.imageUrl"
+            [src]="product.imageUrl"
             [alt]="product.name"
             (error)="$event.target.style.display = 'none'"
           />

@@ -42,7 +42,7 @@ export class ManageSubcategories implements OnInit {
     private _toastService: ToastService,
     private _cdr: ChangeDetectorRef,
   ) {}
-  staticFilesURL = environment.staticFilesURL;
+
   ngOnInit() {
     this.loadData();
   }
@@ -84,7 +84,7 @@ export class ManageSubcategories implements OnInit {
       category: catId,
     });
     this.selectedFile = null;
-    this.previewUrl = this.staticFilesURL + 'subcategories/' + subcat.image;
+    this.previewUrl = subcat.image; // Cloudinary URL
     this.showModal = true;
     if (this.imageInput) this.imageInput.nativeElement.value = '';
   }

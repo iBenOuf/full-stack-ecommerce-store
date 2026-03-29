@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../core/services/product.service';
 import { IProduct } from '../../core/models/product.model';
-import { environment } from '../../../environments/environment';
 import { ProductCard } from '../../shared/components/product-card/product-card';
 import { TestimonialService } from '../../core/services/testimonial.service';
 import { ITestimonial } from '../../core/models/testimonial.model';
@@ -65,8 +64,6 @@ export class Home implements OnInit {
       },
     });
   }
-
-  staticFilesURL = environment.staticFilesURL;
 
   newArrivals: IProduct[] = [];
   bestSellers: IProduct[] = [];

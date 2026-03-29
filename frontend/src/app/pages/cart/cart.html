@@ -40,7 +40,7 @@
             <div class="item-img" [routerLink]="['/product', item.product?.slug]">
               @if (item.product) {
                 <img
-                  [src]="staticFilesURL + 'products/' + item.product.imageUrl"
+                  [src]="item.product.imageUrl"
                   [alt]="item.product.name"
                   (error)="$event.target.style.display = 'none'"
                 />

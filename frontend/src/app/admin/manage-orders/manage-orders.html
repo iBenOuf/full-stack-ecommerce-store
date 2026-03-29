@@ -105,7 +105,7 @@
                         @for (item of order.items; track item.product._id) {
                           <div class="order-item-row">
                             <img
-                              [src]="staticFilesURL + 'products/' + item.product.imageUrl"
+                              [src]="item.product.imageUrl"
                               [alt]="item.product.name"
                               class="order-item-img"
                               (error)="$event.target.style.display='none'"

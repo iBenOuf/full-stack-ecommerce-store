@@ -3,7 +3,6 @@ import { ProductService } from '../../core/services/product.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../core/services/toast.service';
 import { IProduct } from '../../core/models/product.model';
-import { environment } from '../../../environments/environment';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../core/services/cart.service';
 import { ProductCard } from '../../shared/components/product-card/product-card';
@@ -22,8 +21,6 @@ export class ProductDetail {
     private _toastService: ToastService,
     private _cdr: ChangeDetectorRef,
   ) {}
-
-  staticFilesURL = environment.staticFilesURL;
 
   product: IProduct | null = null;
   relatedProducts: IProduct[] = [];

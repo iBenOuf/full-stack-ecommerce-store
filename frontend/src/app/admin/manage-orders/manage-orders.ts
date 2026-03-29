@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { IOrder, OrderStatus } from '../../core/models/order.model';
 import { OrderService } from '../../core/services/order.service';
 import { ToastService } from '../../core/services/toast.service';
-import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-manage-orders',
@@ -18,7 +17,6 @@ export class ManageOrders implements OnInit {
   isLoading = true;
   isProcessing = false;
   expandedOrderId: string | null = null;
-  staticFilesURL = environment.staticFilesURL;
 
   statusOptions: OrderStatus[] = [
     'pending',

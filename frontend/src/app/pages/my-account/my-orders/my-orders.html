@@ -83,7 +83,7 @@
                         <div class="order-item">
                           <div class="item-img">
                             <img
-                              [src]="staticFilesURL + 'products/' + item.product.imageUrl"
+                              [src]="item.product.imageUrl"
                               [alt]="item.product.name"
                               (error)="$event.target.style.display = 'none'"
                             />

@@ -20,7 +20,7 @@
     </div>
   </div>
   <div class="hero-right">
-    <img [src]="staticFilesURL + 'assets/images/' + siteConfig?.heroSection?.heroImage" alt="Collection Hero" />
+    <img [src]="siteConfig?.heroSection?.heroImage" alt="Collection Hero" />
     <div class="hero-badge">
       <span>Now Live</span>
       <strong>{{ siteConfig?.heroSection?.season || 'Season Loading...' }}</strong>

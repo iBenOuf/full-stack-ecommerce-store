@@ -31,8 +31,6 @@ export class ManageCategories implements OnInit {
     slug: new FormControl('', [Validators.required, Validators.minLength(2)]),
   });
 
-  staticFilesURL = environment.staticFilesURL;
-
   constructor(
     private _categoryService: CategoryService,
     private _toastService: ToastService,
@@ -73,7 +71,7 @@ export class ManageCategories implements OnInit {
     this.categoryForm.patchValue({ name: cat.name });
     this.categoryForm.patchValue({ slug: cat.slug });
     this.selectedFile = null;
-    this.previewUrl = this.staticFilesURL + 'categories/' + cat.imageUrl;
+    this.previewUrl = cat.imageUrl; // Cloudinary URL
     this.showModal = true;
     if (this.imageInput) this.imageInput.nativeElement.value = '';
   }

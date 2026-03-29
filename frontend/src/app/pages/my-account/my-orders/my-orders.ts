@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { IOrder, OrderStatus } from '../../../core/models/order.model';
 import { ToastService } from '../../../core/services/toast.service';
-import { environment } from '../../../../environments/environment';
 import { NgClass } from '@angular/common';
 import { OrderService } from '../../../core/services/order.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -31,7 +30,6 @@ export class MyOrders {
   isReordering = false;
   expandedOrderId: string | null = null;
   skeletons = ['a', 'b', 'c', 'd'];
-  staticFilesURL = environment.staticFilesURL;
 
   ngOnInit(): void {
     this._authService.getAuthData().subscribe((data) => {

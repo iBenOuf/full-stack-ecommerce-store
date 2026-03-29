@@ -27,7 +27,7 @@
             <tr>
               <td>
                 <img
-                  [src]="staticFilesURL + 'subcategories/' + sub.image"
+                  [src]="sub.image"
                   alt="{{ sub.name }}"
                   class="cat-thumb"
                   (error)="$event.target.src = 'assets/images/placeholder.png'"

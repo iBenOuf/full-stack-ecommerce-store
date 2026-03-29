@@ -3,7 +3,6 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { OrderService } from '../../core/services/order.service';
 import { IOrder } from '../../core/models/order.model';
-import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-order-confirmation',
@@ -22,7 +21,6 @@ export class OrderConfirmation implements OnInit {
   order: IOrder | null = null;
   isLoading = true;
   orderId: string | null = null;
-  staticFilesURL = environment.staticFilesURL;
 
   get subtotal(): number {
     if (!this.order) return 0;

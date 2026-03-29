@@ -28,7 +28,7 @@
               <td>
                 <div class="product-cell">
                   <img
-                    [src]="staticFilesURL + 'products/' + prod.imageUrl"
+                    [src]="prod.imageUrl"
                     alt="{{ prod.name }}"
                     class="cat-thumb"
                     (error)="$event.target.src = 'assets/images/placeholder.png'"

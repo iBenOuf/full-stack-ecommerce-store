@@ -47,8 +47,6 @@ export class ManageProducts implements OnInit {
     subcategory: new FormControl('', Validators.required),
   });
 
-  staticFilesURL = environment.staticFilesURL;
-
   constructor(
     private _productService: ProductService,
     private _categoryService: CategoryService,
@@ -140,7 +138,7 @@ export class ManageProducts implements OnInit {
     });
 
     this.selectedFile = null;
-    this.previewUrl = this.staticFilesURL + 'products/' + prod.imageUrl;
+    this.previewUrl = prod.imageUrl; // Cloudinary URL
     this.showModal = true;
     if (this.imageInput) this.imageInput.nativeElement.value = '';
   }

@@ -4,11 +4,11 @@ import { CategoryService } from '../../../core/services/category.service';
 import { ICategory } from '../../../core/models/category.model';
 import { SiteConfigService } from '../../../core/services/site-config.service';
 import { ISiteConfig } from '../../../core/models/site-config.model';
-import { TitleCasePipe, UpperCasePipe } from '@angular/common';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-footer',
-  imports: [RouterLink, TitleCasePipe, UpperCasePipe],
+  imports: [RouterLink, UpperCasePipe],
   templateUrl: './footer.html',
   styleUrl: './footer.css',
 })

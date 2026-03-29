@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs';
 import { ISiteConfig } from '../../core/models/site-config.model';
 import { SiteConfigService } from '../../core/services/site-config.service';
 import { ToastService } from '../../core/services/toast.service';
-import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-site-settings',
@@ -152,9 +151,9 @@ export class SiteSettings implements OnInit, OnDestroy {
       pinterest: this.getSocialUrl(config, 'pinterest'),
     });
 
-    // Set preview for existing hero image
+    // Set preview for existing hero image (now a full Cloudinary URL)
     if (config.heroSection?.heroImage) {
-      this.previewUrl = `${environment.staticFilesURL}assets/images/${config.heroSection.heroImage}`;
+      this.previewUrl = config.heroSection.heroImage;
     }
   }
 
@@ -278,11 +277,11 @@ export class SiteSettings implements OnInit, OnDestroy {
 
     this._siteConfigService.uploadHeroImage(this.selectedFile).subscribe({
       next: (res) => {
-        const filename = res.data.heroSection.heroImage;
+        const cloudinaryUrl = res.data.heroSection.heroImage;
         this.configForm.patchValue({
-          heroSection: { heroImage: filename }
+          heroSection: { heroImage: cloudinaryUrl }
         });
-        this.previewUrl = `${environment.staticFilesURL}assets/images/${filename}`;
+        this.previewUrl = cloudinaryUrl; // Cloudinary URL
         this._toastService.success('Hero image uploaded successfully!');
         this.selectedFile = null;
         this.isUploading = false;
