@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
 import { IRegisterRequest } from '../core/models/auth.model';
@@ -29,7 +29,7 @@ export class Register {
     private _authService: AuthService,
   ) {}
 
-  passwordMatchValidator(group: FormGroup): { [key: string]: boolean } | null {
+  passwordMatchValidator(group: AbstractControl): { [key: string]: boolean } | null {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { passwordMismatch: true };
