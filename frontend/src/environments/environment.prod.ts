@@ -1,5 +1,5 @@
 export const environment = {
-  apiURL: 'https://full-stack-ecommerce-store.onrender.com/api/v1/',
-  staticFilesURL: 'https://full-stack-ecommerce-store.onrender.com/api/v1/uploads/',
+  apiURL: 'https://api.ecommerce-store.benouf.dev/api/v1/',
+  staticFilesURL: 'https://api.ecommerce-store.benouf.dev/api/v1/uploads/',
   isProduction: true,
 };
