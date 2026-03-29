@@ -147,14 +147,18 @@
             formControlName="confirmPassword"
             placeholder="••••••••"
             [class.invalid]="
-              registerForm.get('confirmPassword')?.invalid &&
-              registerForm.get('confirmPassword')?.touched
+              (registerForm.get('confirmPassword')?.invalid &&
+              registerForm.get('confirmPassword')?.touched) ||
+              registerForm.errors?.['passwordMismatch']
             "
           />
           @if (
             registerForm.get('confirmPassword')?.invalid &&
             registerForm.get('confirmPassword')?.touched
           ) {
+            <span class="field-error">Please confirm your password</span>
+          }
+          @if (registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched) {
             <span class="field-error">Passwords do not match</span>
           }
         </div>
