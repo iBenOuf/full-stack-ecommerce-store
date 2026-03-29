@@ -1,6 +1,7 @@
 const SiteConfig = require("../models/site-config.model");
 const Joi = require("joi");
 const { getCache, setCache, clearCache } = require("../utils/cache.utils");
+const { deleteFromCloudinary, extractPublicIdFromUrl } = require("../utils/cloudinary");
 
 const SITE_CONFIG_CACHE_KEY = "site_config";
 
@@ -102,11 +103,17 @@ exports.uploadHeroImage = async (req, res) => {
         return res.status(400).json({ message: "No image file uploaded" });
     }
 
-    const heroImage = req.file.filename;
+    const config = await SiteConfig.findOne();
 
-    const config = await SiteConfig.findOneAndUpdate(
+    // Delete old hero image from Cloudinary if exists
+    if (config && config.heroSection && config.heroSection.heroImage) {
+        const oldPublicId = extractPublicIdFromUrl(config.heroSection.heroImage);
+        await deleteFromCloudinary(oldPublicId);
+    }
+
+    const updatedConfig = await SiteConfig.findOneAndUpdate(
         {},
-        { "heroSection.heroImage": heroImage },
+        { "heroSection.heroImage": req.file.path }, // Cloudinary URL
         {
             new: true,
             upsert: true,
@@ -118,6 +125,6 @@ exports.uploadHeroImage = async (req, res) => {
 
     res.status(200).json({
         message: "Hero image uploaded successfully",
-        data: config,
+        data: updatedConfig,
     });
 };

@@ -1,6 +1,7 @@
 const Category = require("../models/category.model");
 const Joi = require("joi");
 const { getCache, setCache, clearPrefix } = require("../utils/cache.utils");
+const { deleteFromCloudinary, extractPublicIdFromUrl } = require("../utils/cloudinary");
 
 const CACHE_PREFIX = "categories_";
 
@@ -90,7 +91,7 @@ exports.createCategory = async (req, res) => {
             message: "Category with this slug already exists",
         });
     }
-    const imageUrl = req.file.filename;
+    const imageUrl = req.file.path; // Cloudinary URL
     const category = await Category.create({
         name,
         slug,
@@ -140,7 +141,13 @@ exports.updateCategory = async (req, res) => {
         ...(slug && { slug }),
     };
     if (req.file) {
-        updateData.imageUrl = req.file.path;
+        // Delete old image from Cloudinary
+        const existingCategory = await Category.findById(categoryId);
+        if (existingCategory && existingCategory.imageUrl) {
+            const oldPublicId = extractPublicIdFromUrl(existingCategory.imageUrl);
+            await deleteFromCloudinary(oldPublicId);
+        }
+        updateData.imageUrl = req.file.path; // Cloudinary URL
     }
 
     const category = await Category.findByIdAndUpdate(categoryId, updateData, {
@@ -163,18 +170,27 @@ exports.updateCategory = async (req, res) => {
 
 exports.deleteCategory = async (req, res) => {
     const categoryId = req.params.id;
-    const category = await Category.findByIdAndUpdate(
+    const category = await Category.findById(categoryId);
+
+    if (!category) {
+        return res.status(404).json({
+            message: "Category not found",
+        });
+    }
+
+    // Delete image from Cloudinary
+    if (category.imageUrl) {
+        const publicId = extractPublicIdFromUrl(category.imageUrl);
+        await deleteFromCloudinary(publicId);
+    }
+
+    await Category.findByIdAndUpdate(
         categoryId,
         {
             isDeleted: true,
         },
         { new: true, runValidators: true },
     );
-    if (!category) {
-        return res.status(404).json({
-            message: "Category not found",
-        });
-    }
 
     clearPrefix(CACHE_PREFIX);
 

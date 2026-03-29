@@ -2,6 +2,7 @@ const Product = require("../models/product.model");
 const Order = require("../models/order.model");
 const Joi = require("joi");
 const { clearPrefix } = require("../utils/cache.utils");
+const { deleteFromCloudinary, extractPublicIdFromUrl } = require("../utils/cloudinary");
 
 const PRODUCT_LIST_CACHE_PREFIX = "products_list_";
 
@@ -32,7 +33,7 @@ exports.createProduct = async (req, res) => {
             .json({ message: "Product with this slug already exists" });
     }
 
-    const imageUrl = req.file.filename;
+    const imageUrl = req.file.path; // Cloudinary URL
     const product = await Product.create({
         name,
         slug,
@@ -184,7 +185,21 @@ exports.getRelatedProducts = async (req, res) => {
 
 exports.deleteProductById = async (req, res) => {
     const productId = req.params.id;
-    const product = await Product.findByIdAndUpdate(
+    const product = await Product.findById(productId);
+    
+    if (!product) {
+        return res.status(404).json({
+            message: "Product not found",
+        });
+    }
+
+    // Delete image from Cloudinary
+    if (product.imageUrl) {
+        const publicId = extractPublicIdFromUrl(product.imageUrl);
+        await deleteFromCloudinary(publicId);
+    }
+
+    const deletedProduct = await Product.findByIdAndUpdate(
         productId,
         {
             isDeleted: true,
@@ -195,15 +210,11 @@ exports.deleteProductById = async (req, res) => {
             runValidators: true,
         },
     ).populate("subcategory");
-    if (!product) {
-        return res.status(404).json({
-            message: "Product not found",
-        });
-    }
+
     clearPrefix(PRODUCT_LIST_CACHE_PREFIX);
     res.status(200).json({
         message: "Product deleted successfully",
-        data: product,
+        data: deletedProduct,
     });
 };
 
@@ -247,7 +258,13 @@ exports.updateProductById = async (req, res) => {
     };
 
     if (req.file) {
-        updateData.imageUrl = req.file.path;
+        // Delete old image from Cloudinary
+        const existingProduct = await Product.findById(productId);
+        if (existingProduct && existingProduct.imageUrl) {
+            const oldPublicId = extractPublicIdFromUrl(existingProduct.imageUrl);
+            await deleteFromCloudinary(oldPublicId);
+        }
+        updateData.imageUrl = req.file.path; // Cloudinary URL
     }
 
     if (Object.keys(updateData).length === 0) {

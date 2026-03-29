@@ -20,8 +20,6 @@ app.use(
 app.use(corsMiddleware);
 app.use(express.json({ limit: "10kb" }));
 
-app.use("/api/v1/uploads", express.static(path.join(__dirname, "uploads")));
-
 app.use("/api/v1/auth", require("./routes/auth.route"));
 app.use("/api/v1/user", require("./routes/user.route"));
 app.use("/api/v1/product", require("./routes/product.route"));

@@ -2,6 +2,7 @@ const Subcategory = require("../models/subcategory.model");
 const Category = require("../models/category.model");
 const Joi = require("joi");
 const { getCache, setCache, clearPrefix } = require("../utils/cache.utils");
+const { deleteFromCloudinary, extractPublicIdFromUrl } = require("../utils/cloudinary");
 
 const CACHE_PREFIX = "subcategories_";
 
@@ -113,7 +114,7 @@ exports.createSubcategory = async (req, res) => {
         return res.status(404).json({ message: "Parent category not found" });
     }
 
-    const image = req.file.filename;
+    const image = req.file.path; // Cloudinary URL
     const subcategory = await Subcategory.create({
         name,
         slug,
@@ -178,7 +179,13 @@ exports.updateSubcategory = async (req, res) => {
         ...(categoryId && { category: categoryId }),
     };
     if (req.file) {
-        updateData.image = req.file.path;
+        // Delete old image from Cloudinary
+        const existingSubcategory = await Subcategory.findById(subcategoryId);
+        if (existingSubcategory && existingSubcategory.image) {
+            const oldPublicId = extractPublicIdFromUrl(existingSubcategory.image);
+            await deleteFromCloudinary(oldPublicId);
+        }
+        updateData.image = req.file.path; // Cloudinary URL
     }
 
     const subcategory = await Subcategory.findByIdAndUpdate(
@@ -201,15 +208,23 @@ exports.updateSubcategory = async (req, res) => {
 
 exports.deleteSubcategory = async (req, res) => {
     const subcategoryId = req.params.id;
-    const subcategory = await Subcategory.findByIdAndUpdate(
-        subcategoryId,
-        { isDeleted: true },
-        { new: true, runValidators: true },
-    ).populate("category");
+    const subcategory = await Subcategory.findById(subcategoryId);
 
     if (!subcategory) {
         return res.status(404).json({ message: "Subcategory not found" });
     }
+
+    // Delete image from Cloudinary
+    if (subcategory.image) {
+        const publicId = extractPublicIdFromUrl(subcategory.image);
+        await deleteFromCloudinary(publicId);
+    }
+
+    await Subcategory.findByIdAndUpdate(
+        subcategoryId,
+        { isDeleted: true },
+        { new: true, runValidators: true },
+    ).populate("category");
 
     clearPrefix(CACHE_PREFIX);
 
