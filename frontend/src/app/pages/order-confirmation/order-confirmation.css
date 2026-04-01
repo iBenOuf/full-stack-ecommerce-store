@@ -307,3 +307,229 @@
   padding: 0 48px;
   text-align: center;
 }
+
+/* ── Mobile Responsive ── */
+
+@media (max-width: 768px) {
+  .oc-wrapper {
+    padding: 0 24px 48px;
+  }
+
+  .oc-hero {
+    margin: 0 -24px;
+    padding: 48px 24px;
+  }
+
+  .oc-eyebrow {
+    font-size: 10px;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+
+  .oc-title {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+
+  .oc-sub {
+    font-size: 13px;
+    max-width: 100%;
+  }
+
+  .oc-meta {
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .oc-meta-item {
+    flex: 1 1 40%;
+    padding: 20px 16px;
+  }
+
+  .oc-meta-divider {
+    display: none;
+  }
+
+  .oc-meta-value {
+    font-size: 18px;
+  }
+
+  .oc-body {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .oc-delivery-col {
+    order: 2;
+  }
+
+  .oc-items-col {
+    order: 1;
+  }
+
+  .oc-col-title {
+    font-size: 9px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+
+  .oc-item {
+    gap: 16px;
+    padding: 16px 0;
+  }
+
+  .oc-item-img {
+    width: 60px;
+    height: 80px;
+  }
+
+  .oc-item-name {
+    font-size: 16px;
+  }
+
+  .oc-item-price {
+    font-size: 14px;
+  }
+
+  .oc-totals {
+    max-width: 100%;
+    margin-left: 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .oc-delivery-card {
+    padding: 20px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 14px 20px;
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .oc-wrapper {
+    padding: 0 16px 32px;
+  }
+
+  .oc-hero {
+    margin: 0 -16px;
+    padding: 32px 16px;
+  }
+
+  .oc-title {
+    font-size: 28px;
+  }
+
+  .oc-sub {
+    font-size: 12px;
+  }
+
+  .oc-meta-item {
+    flex: 1 1 100%;
+    padding: 16px;
+  }
+
+  .oc-meta-label {
+    font-size: 9px;
+  }
+
+  .oc-meta-value {
+    font-size: 16px;
+  }
+
+  .oc-status-badge {
+    font-size: 9px;
+    padding: 4px 10px;
+  }
+
+  .oc-col-title {
+    font-size: 8px;
+    letter-spacing: 2px;
+  }
+
+  .oc-item {
+    gap: 12px;
+    padding: 14px 0;
+  }
+
+  .oc-item-img {
+    width: 50px;
+    height: 65px;
+  }
+
+  .oc-item-name {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .oc-item-qty {
+    font-size: 10px;
+  }
+
+  .oc-item-price {
+    font-size: 13px;
+  }
+
+  .oc-total-line {
+    font-size: 12px;
+    padding: 6px 0;
+  }
+
+  .oc-total-line.grand {
+    font-size: 14px;
+    padding-top: 12px;
+  }
+
+  .oc-delivery-card {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .oc-dl-label {
+    font-size: 9px;
+  }
+
+  .oc-dl-value {
+    font-size: 12px;
+  }
+
+  .oc-actions {
+    gap: 8px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 12px 16px;
+    font-size: 9px;
+  }
+
+  .oc-fallback {
+    margin: 48px auto;
+    padding: 0 16px;
+  }
+
+  .oc-fallback .oc-title {
+    font-size: 26px;
+  }
+
+  .oc-fallback .oc-sub {
+    font-size: 12px;
+  }
+
+  .oc-fallback .oc-actions {
+    margin-top: 24px;
+  }
+
+  .oc-loading {
+    font-size: 10px;
+  }
+
+  .oc-spinner {
+    width: 28px;
+    height: 28px;
+  }
+}
