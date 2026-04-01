@@ -267,6 +267,12 @@ header {
     font-weight: 500;
   }
 
+  .mobile-sub-empty {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
   .mobile-sub-nav a {
     display: block;
     font-size: 13px;

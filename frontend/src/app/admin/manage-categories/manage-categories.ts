@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ICategory } from '../../core/models/category.model';
 import { CategoryService } from '../../core/services/category.service';
@@ -35,6 +35,7 @@ export class ManageCategories implements OnInit {
     private _categoryService: CategoryService,
     private _toastService: ToastService,
     private _cdr: ChangeDetectorRef,
+    private _zone: NgZone,
   ) {}
 
   ngOnInit() {
@@ -90,8 +91,10 @@ export class ManageCategories implements OnInit {
       this.selectedFile = file;
       const reader = new FileReader();
       reader.onload = () => {
-        this.previewUrl = reader.result as string;
-        this._cdr.detectChanges();
+        this._zone.run(() => {
+          this.previewUrl = reader.result as string;
+          this._cdr.detectChanges();
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -121,6 +124,7 @@ export class ManageCategories implements OnInit {
           this._toastService.success('Category updated successfully');
           this.closeModal();
           this.loadCategories();
+          this.isSaving = false;
         },
         error: (err) => {
           this._toastService.error(err?.error?.message || 'Failed to update category');
@@ -134,6 +138,7 @@ export class ManageCategories implements OnInit {
           this._toastService.success('Category created successfully');
           this.closeModal();
           this.loadCategories();
+          this.isSaving = false;
         },
         error: (err) => {
           this._toastService.error(err?.error?.message || 'Failed to create category');
@@ -152,6 +157,7 @@ export class ManageCategories implements OnInit {
           this._toastService.success('Category deleted successfully');
           this.loadCategories();
           this.isDeleting = false;
+          this._cdr.detectChanges();
         },
         error: (err) => {
           this._toastService.error(err?.error?.message || 'Failed to delete category');

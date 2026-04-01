@@ -103,16 +103,18 @@
           <a routerLink="/login" (click)="closeMobileMenu()">Login</a>
         }
       </nav>
-      @if (subcategories.length > 0) {
-        <div class="mobile-sub-nav">
-          <p class="mobile-sub-label">Shop by Category</p>
-          @for (subcategory of subcategories; track $index) {
+      <div class="mobile-sub-nav">
+        <p class="mobile-sub-label">Shop by Category</p>
+        @if (subcategories.length === 0) {
+          <p class="mobile-sub-empty">No subcategories available</p>
+        } @else {
+          @for (subcategory of subcategories; track subcategory._id) {
             <a routerLink="/shop" [queryParams]="{ subcategorySlug: subcategory.slug }" (click)="closeMobileMenu()">{{
               subcategory.name
             }}</a>
           }
-        </div>
-      }
+        }
+      </div>
     </div>
   }
 </header>

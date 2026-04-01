@@ -26,7 +26,6 @@ export class Footer implements OnInit {
     this._siteConfigService.getSiteConfigData().subscribe((config) => {
       setTimeout(() => {
         this.siteConfig = config;
-        console.log(this.siteConfig);
         this._cdr.detectChanges();
       });
     });
