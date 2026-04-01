@@ -497,10 +497,36 @@
     font-size: 11px;
   }
 
+  /* 2-column grid for better browsing */
   .products-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
     margin-bottom: 32px;
+  }
+
+  .product-card {
+    font-size: 12px;
+  }
+
+  .product-name {
+    font-size: 13px;
+    margin-bottom: 3px;
+  }
+
+  .product-cat {
+    font-size: 9px;
+    margin: 8px 0 4px;
+  }
+
+  .product-price {
+    font-size: 12px;
+  }
+
+  .product-tag {
+    font-size: 8px;
+    padding: 3px 6px;
+    top: 6px;
+    left: 6px;
   }
 
   .pagination {
