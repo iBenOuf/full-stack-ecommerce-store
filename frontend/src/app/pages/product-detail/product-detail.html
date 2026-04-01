@@ -128,7 +128,7 @@
           <a routerLink="/shop" class="section-link">View all</a>
         </div>
         <div class="products-grid">
-          @for (relatedProduct of relatedProducts; track $index) {
+          @for (relatedProduct of relatedProducts; track relatedProduct._id) {
             <app-product-card [product]="relatedProduct"></app-product-card>
           }
         </div>

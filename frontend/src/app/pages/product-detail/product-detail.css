@@ -476,6 +476,7 @@
 @media (max-width: 768px) {
   .pd-wrapper {
     padding: 0 24px 48px;
+    overflow-x: visible;
   }
 
   .breadcrumb {
@@ -486,10 +487,15 @@
   .pd-layout {
     grid-template-columns: 1fr;
     gap: 32px;
+    overflow-x: visible;
   }
 
   .pd-gallery {
     position: static;
+  }
+
+  .pd-info {
+    overflow-x: visible;
   }
 
   .pd-name {
@@ -549,15 +555,42 @@
     font-size: 32px;
   }
 
+  /* Horizontal scroll carousel for related products */
   .products-grid {
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
     gap: 16px;
+    padding-bottom: 16px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .products-grid::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .products-grid::-webkit-scrollbar-track {
+    background: var(--border);
+    border-radius: 2px;
+  }
+
+  .products-grid::-webkit-scrollbar-thumb {
+    background: var(--muted);
+    border-radius: 2px;
+  }
+
+  .products-grid app-product-card {
+    flex: 0 0 180px;
+    min-width: 180px;
+    scroll-snap-align: start;
   }
 }
 
 @media (max-width: 480px) {
   .pd-wrapper {
     padding: 0 16px 32px;
+    overflow-x: visible;
   }
 
   .breadcrumb {
@@ -609,20 +642,25 @@
     font-size: 12px;
   }
 
+  /* Horizontal scroll carousel for related products */
   .pd-related {
     padding-top: 32px;
+  }
+
+  .section-header {
+    margin-bottom: 24px;
   }
 
   .section-title {
     font-size: 26px;
   }
 
-  .products-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+  .section-link {
+    font-size: 10px;
   }
 
-  .product-name {
-    font-size: 16px;
+  .products-grid app-product-card {
+    flex: 0 0 150px;
+    min-width: 150px;
   }
 }
