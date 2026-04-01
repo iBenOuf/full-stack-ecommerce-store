@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ICategory } from '../../core/models/category.model';
 import { CategoryService } from '../../core/services/category.service';
@@ -12,6 +12,7 @@ import { environment } from '../../../environments/environment';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './manage-categories.html',
   styleUrl: './manage-categories.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageCategories implements OnInit {
   @ViewChild('imageInput') imageInput!: ElementRef;
@@ -35,7 +36,6 @@ export class ManageCategories implements OnInit {
     private _categoryService: CategoryService,
     private _toastService: ToastService,
     private _cdr: ChangeDetectorRef,
-    private _zone: NgZone,
   ) {}
 
   ngOnInit() {
@@ -51,9 +51,9 @@ export class ManageCategories implements OnInit {
         this._cdr.detectChanges();
       },
       error: (err) => {
-        this._toastService.error('Failed to load categories');
         this.isLoading = false;
         this._cdr.detectChanges();
+        setTimeout(() => this._toastService.error('Failed to load categories'));
       },
     });
   }
@@ -91,10 +91,8 @@ export class ManageCategories implements OnInit {
       this.selectedFile = file;
       const reader = new FileReader();
       reader.onload = () => {
-        this._zone.run(() => {
-          this.previewUrl = reader.result as string;
-          this._cdr.detectChanges();
-        });
+        this.previewUrl = reader.result as string;
+        this._cdr.detectChanges();
       };
       reader.readAsDataURL(file);
     }
@@ -118,35 +116,30 @@ export class ManageCategories implements OnInit {
       formData.append('image', this.selectedFile);
     }
 
-    if (this.editingId) {
-      this._categoryService.updateCategory(this.editingId, formData).subscribe({
-        next: () => {
-          this._toastService.success('Category updated successfully');
+    const wasEditing = !!this.editingId;
+    const req$ = this.editingId
+      ? this._categoryService.updateCategory(this.editingId, formData)
+      : this._categoryService.createCategory(formData);
+
+    req$.subscribe({
+      next: () => {
+        setTimeout(() => {
           this.closeModal();
-          this.loadCategories();
           this.isSaving = false;
-        },
-        error: (err) => {
-          this._toastService.error(err?.error?.message || 'Failed to update category');
+          this.loadCategories();
+          this._toastService.success(
+            `Category ${wasEditing ? 'updated' : 'created'} successfully`,
+          );
+        });
+      },
+      error: (err) => {
+        setTimeout(() => {
           this.isSaving = false;
           this._cdr.detectChanges();
-        },
-      });
-    } else {
-      this._categoryService.createCategory(formData).subscribe({
-        next: (res) => {
-          this._toastService.success('Category created successfully');
-          this.closeModal();
-          this.loadCategories();
-          this.isSaving = false;
-        },
-        error: (err) => {
-          this._toastService.error(err?.error?.message || 'Failed to create category');
-          this.isSaving = false;
-          this._cdr.detectChanges();
-        },
-      });
-    }
+          this._toastService.error(err?.error?.message || 'Failed to save category');
+        });
+      },
+    });
   }
 
   deleteCategory(id: string) {
@@ -154,15 +147,18 @@ export class ManageCategories implements OnInit {
       this.isDeleting = true;
       this._categoryService.deleteCategory(id).subscribe({
         next: () => {
-          this._toastService.success('Category deleted successfully');
-          this.loadCategories();
-          this.isDeleting = false;
-          this._cdr.detectChanges();
+          setTimeout(() => {
+            this.isDeleting = false;
+            this.loadCategories();
+            this._toastService.success('Category deleted successfully');
+          });
         },
         error: (err) => {
-          this._toastService.error(err?.error?.message || 'Failed to delete category');
-          this.isDeleting = false;
-          this._cdr.detectChanges();
+          setTimeout(() => {
+            this.isDeleting = false;
+            this._cdr.detectChanges();
+            this._toastService.error(err?.error?.message || 'Failed to delete category');
+          });
         },
       });
     }

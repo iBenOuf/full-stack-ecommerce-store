@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { IUser } from '../../core/models/user.model';
 import { ToastService } from '../../core/services/toast.service';
 import { UserService } from '../../core/services/user.service';
@@ -10,6 +10,7 @@ import { UserService } from '../../core/services/user.service';
   imports: [CommonModule],
   templateUrl: './manage-users.html',
   styleUrl: './manage-users.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageUsers implements OnInit {
   users: IUser[] = [];
@@ -43,14 +44,18 @@ export class ManageUsers implements OnInit {
     const newStatus = !user.isActive;
     this._userService.changeUserStatus(user._id, { status: newStatus }).subscribe({
       next: () => {
-        this._toastService.success(`User ${newStatus ? 'activated' : 'deactivated'} successfully`);
-        this.loadUsers();
-        this.isProcessing = false;
+        setTimeout(() => {
+          this._toastService.success(`User ${newStatus ? 'activated' : 'deactivated'} successfully`);
+          this.loadUsers();
+          this.isProcessing = false;
+        });
       },
       error: (err) => {
-        this._toastService.error(err?.error?.message || 'Failed to update user status');
-        this.isProcessing = false;
-        this._cdr.detectChanges();
+        setTimeout(() => {
+          this._toastService.error(err?.error?.message || 'Failed to update user status');
+          this.isProcessing = false;
+          this._cdr.detectChanges();
+        });
       },
     });
   }
@@ -60,22 +65,28 @@ export class ManageUsers implements OnInit {
       this.isProcessing = true;
       this._userService.deleteUser(id).subscribe({
         next: () => {
-          this._toastService.success('User deleted successfully');
-          this.loadUsers();
-          this.isProcessing = false;
+          setTimeout(() => {
+            this._toastService.success('User deleted successfully');
+            this.loadUsers();
+            this.isProcessing = false;
+          });
         },
         error: () => {
-          this._toastService.error('Failed to delete user');
-          this.isProcessing = false;
-          this._cdr.detectChanges();
+          setTimeout(() => {
+            this._toastService.error('Failed to delete user');
+            this.isProcessing = false;
+            this._cdr.detectChanges();
+          });
         },
       });
     }
   }
 
   private handleError(msg: string) {
-    this._toastService.error(msg);
-    this.isLoading = false;
-    this._cdr.detectChanges();
+    setTimeout(() => {
+      this._toastService.error(msg);
+      this.isLoading = false;
+      this._cdr.detectChanges();
+    });
   }
 }

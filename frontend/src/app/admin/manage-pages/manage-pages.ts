@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IPage } from '../../core/models/page.model';
 import { PageService } from '../../core/services/page.service';
@@ -11,6 +11,7 @@ import { ToastService } from '../../core/services/toast.service';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './manage-pages.html',
   styleUrl: './manage-pages.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManagePages implements OnInit {
   pages: IPage[] = [];
@@ -103,15 +104,19 @@ export class ManagePages implements OnInit {
 
     req$.subscribe({
       next: () => {
-        this._toastService.success(`Page ${this.editingId ? 'updated' : 'created'} successfully`);
-        this.closeModal();
-        this.loadPages();
-        this.isSaving = false;
+        setTimeout(() => {
+          this._toastService.success(`Page ${this.editingId ? 'updated' : 'created'} successfully`);
+          this.closeModal();
+          this.loadPages();
+          this.isSaving = false;
+        });
       },
       error: (err) => {
-        this._toastService.error(err?.error?.message || 'Failed to save page');
-        this.isSaving = false;
-        this._cdr.detectChanges();
+        setTimeout(() => {
+          this._toastService.error(err?.error?.message || 'Failed to save page');
+          this.isSaving = false;
+          this._cdr.detectChanges();
+        });
       },
     });
   }
@@ -121,14 +126,18 @@ export class ManagePages implements OnInit {
     const newStatus = !page.isActive;
     this._pageService.updatePage(page._id, { isActive: newStatus }).subscribe({
       next: () => {
-        this._toastService.success(`Page ${newStatus ? 'published' : 'unpublished'}`);
-        this.loadPages();
-        this.isProcessing = false;
+        setTimeout(() => {
+          this._toastService.success(`Page ${newStatus ? 'published' : 'unpublished'}`);
+          this.loadPages();
+          this.isProcessing = false;
+        });
       },
       error: (err) => {
-        this._toastService.error(err?.error?.message || 'Failed to update status');
-        this.isProcessing = false;
-        this._cdr.detectChanges();
+        setTimeout(() => {
+          this._toastService.error(err?.error?.message || 'Failed to update status');
+          this.isProcessing = false;
+          this._cdr.detectChanges();
+        });
       },
     });
   }
@@ -138,22 +147,28 @@ export class ManagePages implements OnInit {
       this.isProcessing = true;
       this._pageService.deletePage(id).subscribe({
         next: () => {
-          this._toastService.success('Page deleted successfully');
-          this.loadPages();
-          this.isProcessing = false;
+          setTimeout(() => {
+            this._toastService.success('Page deleted successfully');
+            this.loadPages();
+            this.isProcessing = false;
+          });
         },
         error: () => {
-          this._toastService.error('Failed to delete page');
-          this.isProcessing = false;
-          this._cdr.detectChanges();
+          setTimeout(() => {
+            this._toastService.error('Failed to delete page');
+            this.isProcessing = false;
+            this._cdr.detectChanges();
+          });
         },
       });
     }
   }
 
   private handleError(msg: string) {
-    this._toastService.error(msg);
-    this.isLoading = false;
-    this._cdr.detectChanges();
+    setTimeout(() => {
+      this._toastService.error(msg);
+      this.isLoading = false;
+      this._cdr.detectChanges();
+    });
   }
 }

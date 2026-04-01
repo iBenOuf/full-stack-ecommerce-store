@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ISiteConfig } from '../../core/models/site-config.model';
@@ -12,6 +12,7 @@ import { ToastService } from '../../core/services/toast.service';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './site-settings.html',
   styleUrl: './site-settings.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SiteSettings implements OnInit, OnDestroy {
   activeTab: 'general' | 'hero' | 'about' | 'footer' = 'general';
@@ -226,14 +227,18 @@ export class SiteSettings implements OnInit, OnDestroy {
 
     this._siteConfigService.updateConfig(updateData as any).subscribe({
       next: () => {
-        this._toastService.success('Site settings saved successfully!');
-        this.isSaving = false;
-        this._cdr.detectChanges();
+        setTimeout(() => {
+          this._toastService.success('Site settings saved successfully!');
+          this.isSaving = false;
+          this._cdr.detectChanges();
+        });
       },
       error: (err) => {
-        this._toastService.error(err?.error?.message || 'Failed to save settings');
-        this.isSaving = false;
-        this._cdr.detectChanges();
+        setTimeout(() => {
+          this._toastService.error(err?.error?.message || 'Failed to save settings');
+          this.isSaving = false;
+          this._cdr.detectChanges();
+        });
       },
     });
   }
@@ -277,20 +282,24 @@ export class SiteSettings implements OnInit, OnDestroy {
 
     this._siteConfigService.uploadHeroImage(this.selectedFile).subscribe({
       next: (res) => {
-        const cloudinaryUrl = res.data.heroSection.heroImage;
-        this.configForm.patchValue({
-          heroSection: { heroImage: cloudinaryUrl }
+        setTimeout(() => {
+          const cloudinaryUrl = res.data.heroSection.heroImage;
+          this.configForm.patchValue({
+            heroSection: { heroImage: cloudinaryUrl }
+          });
+          this.previewUrl = cloudinaryUrl;
+          this._toastService.success('Hero image uploaded successfully!');
+          this.selectedFile = null;
+          this.isUploading = false;
+          this._cdr.detectChanges();
         });
-        this.previewUrl = cloudinaryUrl; // Cloudinary URL
-        this._toastService.success('Hero image uploaded successfully!');
-        this.selectedFile = null;
-        this.isUploading = false;
-        this._cdr.detectChanges();
       },
       error: (err) => {
-        this._toastService.error(err?.error?.message || 'Failed to upload image');
-        this.isUploading = false;
-        this._cdr.detectChanges();
+        setTimeout(() => {
+          this._toastService.error(err?.error?.message || 'Failed to upload image');
+          this.isUploading = false;
+          this._cdr.detectChanges();
+        });
       },
     });
   }

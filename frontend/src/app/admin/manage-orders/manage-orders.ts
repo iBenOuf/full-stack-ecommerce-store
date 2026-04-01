@@ -1,5 +1,5 @@
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IOrder, OrderStatus } from '../../core/models/order.model';
 import { OrderService } from '../../core/services/order.service';
@@ -11,6 +11,7 @@ import { ToastService } from '../../core/services/toast.service';
   imports: [CommonModule, CurrencyPipe, DatePipe, FormsModule],
   templateUrl: './manage-orders.html',
   styleUrl: './manage-orders.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageOrders implements OnInit {
   orders: IOrder[] = [];
@@ -60,15 +61,19 @@ export class ManageOrders implements OnInit {
     this.isProcessing = true;
     this._orderService.updateOrderStatus(order._id, newStatus).subscribe({
       next: () => {
-        this._toastService.success(`Order status updated to ${newStatus.replace(/_/g, ' ')}`);
-        this.loadOrders();
-        this.isProcessing = false;
+        setTimeout(() => {
+          this._toastService.success(`Order status updated to ${newStatus.replace(/_/g, ' ')}`);
+          this.loadOrders();
+          this.isProcessing = false;
+        });
       },
       error: (err) => {
-        this._toastService.error(err?.error?.message || 'Failed to update order status');
-        order.status = order.status;
-        this.isProcessing = false;
-        this._cdr.detectChanges();
+        setTimeout(() => {
+          this._toastService.error(err?.error?.message || 'Failed to update order status');
+          order.status = order.status;
+          this.isProcessing = false;
+          this._cdr.detectChanges();
+        });
       },
     });
   }
@@ -97,8 +102,10 @@ export class ManageOrders implements OnInit {
   }
 
   private handleError(msg: string) {
-    this._toastService.error(msg);
-    this.isLoading = false;
-    this._cdr.detectChanges();
+    setTimeout(() => {
+      this._toastService.error(msg);
+      this.isLoading = false;
+      this._cdr.detectChanges();
+    });
   }
 }

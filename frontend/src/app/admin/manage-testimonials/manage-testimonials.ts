@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { DatePipe, NgClass } from '@angular/common';
 import { TestimonialService } from '../../core/services/testimonial.service';
 import { ToastService } from '../../core/services/toast.service';
@@ -10,6 +10,7 @@ import { ITestimonial, TestimonialStatus } from '../../core/models/testimonial.m
   imports: [DatePipe, NgClass],
   templateUrl: './manage-testimonials.html',
   styleUrl: './manage-testimonials.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageTestimonials implements OnInit {
   constructor(
@@ -48,11 +49,15 @@ export class ManageTestimonials implements OnInit {
   updateStatus(id: string, status: TestimonialStatus) {
     this._testimonialService.updateTestimonialStatus(id, { status }).subscribe({
       next: () => {
-        this._toastService.success(`Testimonial ${status}`);
-        this.loadTestimonials();
+        setTimeout(() => {
+          this._toastService.success(`Testimonial ${status}`);
+          this.loadTestimonials();
+        });
       },
       error: (err) => {
-        this._toastService.error(err?.error?.message || 'Failed to update status');
+        setTimeout(() => {
+          this._toastService.error(err?.error?.message || 'Failed to update status');
+        });
       }
     });
   }
@@ -61,11 +66,15 @@ export class ManageTestimonials implements OnInit {
     if (confirm('Are you sure you want to permanently delete this testimonial?')) {
       this._testimonialService.deleteTestimonial(id).subscribe({
         next: () => {
-          this._toastService.success('Testimonial deleted');
-          this.loadTestimonials();
+          setTimeout(() => {
+            this._toastService.success('Testimonial deleted');
+            this.loadTestimonials();
+          });
         },
         error: (err) => {
-          this._toastService.error(err?.error?.message || 'Failed to delete testimonial');
+          setTimeout(() => {
+            this._toastService.error(err?.error?.message || 'Failed to delete testimonial');
+          });
         }
       });
     }

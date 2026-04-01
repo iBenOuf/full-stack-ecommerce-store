@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FaqService } from '../../core/services/faq.service';
 import { ToastService } from '../../core/services/toast.service';
@@ -10,6 +10,7 @@ import { IFAQ } from '../../core/models/faq.model';
   imports: [ReactiveFormsModule],
   templateUrl: './manage-faqs.html',
   styleUrl: './manage-faqs.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageFaqs implements OnInit {
   constructor(
@@ -94,15 +95,19 @@ export class ManageFaqs implements OnInit {
 
     req$.subscribe({
       next: () => {
-        this.isSaving = false;
-        this._toastService.success(`FAQ ${this.editingId ? 'updated' : 'created'} successfully`);
-        this.closeForm();
-        this.loadFaqs();
+        setTimeout(() => {
+          this.isSaving = false;
+          this._toastService.success(`FAQ ${this.editingId ? 'updated' : 'created'} successfully`);
+          this.closeForm();
+          this.loadFaqs();
+        });
       },
       error: (err) => {
-        this.isSaving = false;
-        this._toastService.error(err?.error?.message || 'Failed to save FAQ');
-        this._cdr.detectChanges();
+        setTimeout(() => {
+          this.isSaving = false;
+          this._toastService.error(err?.error?.message || 'Failed to save FAQ');
+          this._cdr.detectChanges();
+        });
       }
     });
   }
@@ -114,11 +119,15 @@ export class ManageFaqs implements OnInit {
       isActive: !faq.isActive 
     }).subscribe({
       next: () => {
-        this._toastService.success(`FAQ status updated`);
-        this.loadFaqs();
+        setTimeout(() => {
+          this._toastService.success(`FAQ status updated`);
+          this.loadFaqs();
+        });
       },
       error: (err) => {
-        this._toastService.error(err?.error?.message || 'Failed to update status');
+        setTimeout(() => {
+          this._toastService.error(err?.error?.message || 'Failed to update status');
+        });
       }
     });
   }
@@ -127,11 +136,15 @@ export class ManageFaqs implements OnInit {
     if (confirm('Are you sure you want to delete this FAQ?')) {
       this._faqService.deleteFaq(id).subscribe({
         next: () => {
-          this._toastService.success('FAQ deleted');
-          this.loadFaqs();
+          setTimeout(() => {
+            this._toastService.success('FAQ deleted');
+            this.loadFaqs();
+          });
         },
         error: (err) => {
-          this._toastService.error(err?.error?.message || 'Failed to delete FAQ');
+          setTimeout(() => {
+            this._toastService.error(err?.error?.message || 'Failed to delete FAQ');
+          });
         }
       });
     }

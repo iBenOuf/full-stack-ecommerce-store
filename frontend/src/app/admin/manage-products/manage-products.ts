@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ICategory } from '../../core/models/category.model';
 import { IProduct } from '../../core/models/product.model';
@@ -16,6 +16,7 @@ import { environment } from '../../../environments/environment';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './manage-products.html',
   styleUrl: './manage-products.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageProducts implements OnInit {
   @ViewChild('imageInput') imageInput!: ElementRef;
@@ -195,17 +196,21 @@ export class ManageProducts implements OnInit {
 
     req$.subscribe({
       next: () => {
-        this._toastService.success(
-          `Product ${this.editingId ? 'updated' : 'created'} successfully`,
-        );
-        this.closeModal();
-        this.loadProducts();
-        this.isSaving = false;
+        setTimeout(() => {
+          this._toastService.success(
+            `Product ${this.editingId ? 'updated' : 'created'} successfully`,
+          );
+          this.closeModal();
+          this.loadProducts();
+          this.isSaving = false;
+        });
       },
       error: (err) => {
-        this._toastService.error(err?.error?.message || 'Failed to save product');
-        this.isSaving = false;
-        this._cdr.detectChanges();
+        setTimeout(() => {
+          this._toastService.error(err?.error?.message || 'Failed to save product');
+          this.isSaving = false;
+          this._cdr.detectChanges();
+        });
       },
     });
   }
@@ -215,14 +220,18 @@ export class ManageProducts implements OnInit {
       this.isDeleting = true;
       this._productService.deleteProduct(id).subscribe({
         next: () => {
-          this._toastService.success('Product deleted successfully');
-          this.loadProducts();
-          this.isDeleting = false;
+          setTimeout(() => {
+            this._toastService.success('Product deleted successfully');
+            this.loadProducts();
+            this.isDeleting = false;
+          });
         },
         error: (err) => {
-          this._toastService.error(err?.error?.message || 'Failed to delete product');
-          this.isDeleting = false;
-          this._cdr.detectChanges();
+          setTimeout(() => {
+            this._toastService.error(err?.error?.message || 'Failed to delete product');
+            this.isDeleting = false;
+            this._cdr.detectChanges();
+          });
         },
       });
     }
@@ -236,8 +245,10 @@ export class ManageProducts implements OnInit {
   }
 
   private handleError(msg: string) {
-    this._toastService.error(msg);
-    this.isLoading = false;
-    this._cdr.detectChanges();
+    setTimeout(() => {
+      this._toastService.error(msg);
+      this.isLoading = false;
+      this._cdr.detectChanges();
+    });
   }
 }

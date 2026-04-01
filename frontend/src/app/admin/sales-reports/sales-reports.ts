@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReportService } from '../../core/services/report.service';
@@ -16,6 +16,7 @@ import {
   imports: [CommonModule, FormsModule, CurrencyPipe, DatePipe, DecimalPipe],
   templateUrl: './sales-reports.html',
   styleUrl: './sales-reports.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SalesReports implements OnInit {
   constructor(
@@ -77,9 +78,11 @@ export class SalesReports implements OnInit {
         this._cdr.detectChanges();
       },
       error: () => {
-        this._toastService.error('Failed to load sales report');
-        this.isLoading = false;
-        this._cdr.detectChanges();
+        setTimeout(() => {
+          this._toastService.error('Failed to load sales report');
+          this.isLoading = false;
+          this._cdr.detectChanges();
+        });
       },
     });
   }

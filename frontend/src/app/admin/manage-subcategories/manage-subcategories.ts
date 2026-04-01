@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ICategory } from '../../core/models/category.model';
 import { ISubcategory } from '../../core/models/subcategory.model';
@@ -14,6 +14,7 @@ import { environment } from '../../../environments/environment';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './manage-subcategories.html',
   styleUrl: './manage-subcategories.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageSubcategories implements OnInit {
   @ViewChild('imageInput') imageInput!: ElementRef;
@@ -41,7 +42,6 @@ export class ManageSubcategories implements OnInit {
     private _categoryService: CategoryService,
     private _toastService: ToastService,
     private _cdr: ChangeDetectorRef,
-    private _zone: NgZone,
   ) {}
 
   ngOnInit() {
@@ -104,10 +104,8 @@ export class ManageSubcategories implements OnInit {
       this.selectedFile = file;
       const reader = new FileReader();
       reader.onload = () => {
-        this._zone.run(() => {
-          this.previewUrl = reader.result as string;
-          this._cdr.detectChanges();
-        });
+        this.previewUrl = reader.result as string;
+        this._cdr.detectChanges();
       };
       reader.readAsDataURL(file);
     }
@@ -136,19 +134,24 @@ export class ManageSubcategories implements OnInit {
       ? this._subcategoryService.updateSubcategory(this.editingId, formData)
       : this._subcategoryService.createSubcategory(formData);
 
+    const wasEditing = !!this.editingId;
     req$.subscribe({
       next: (res) => {
-        this._toastService.success(
-          `Subcategory ${this.editingId ? 'updated' : 'created'} successfully`,
-        );
-        this.closeModal();
-        this.loadData();
-        this.isSaving = false;
+        setTimeout(() => {
+          this.closeModal();
+          this.isSaving = false;
+          this.loadData();
+          this._toastService.success(
+            `Subcategory ${wasEditing ? 'updated' : 'created'} successfully`,
+          );
+        });
       },
       error: (err) => {
-        this._toastService.error(err?.error?.message || 'Failed to save subcategory');
-        this.isSaving = false;
-        this._cdr.detectChanges();
+        setTimeout(() => {
+          this.isSaving = false;
+          this._cdr.detectChanges();
+          this._toastService.error(err?.error?.message || 'Failed to save subcategory');
+        });
       },
     });
   }
@@ -158,15 +161,18 @@ export class ManageSubcategories implements OnInit {
       this.isDeleting = true;
       this._subcategoryService.deleteSubcategory(id).subscribe({
         next: () => {
-          this._toastService.success('Subcategory deleted successfully');
-          this.loadData();
-          this.isDeleting = false;
-          this._cdr.detectChanges();
+          setTimeout(() => {
+            this.isDeleting = false;
+            this.loadData();
+            this._toastService.success('Subcategory deleted successfully');
+          });
         },
         error: (err) => {
-          this._toastService.error(err?.error?.message || 'Failed to delete subcategory');
-          this.isDeleting = false;
-          this._cdr.detectChanges();
+          setTimeout(() => {
+            this.isDeleting = false;
+            this._cdr.detectChanges();
+            this._toastService.error(err?.error?.message || 'Failed to delete subcategory');
+          });
         },
       });
     }
@@ -180,8 +186,8 @@ export class ManageSubcategories implements OnInit {
   }
 
   private handleError(msg: string) {
-    this._toastService.error(msg);
     this.isLoading = false;
     this._cdr.detectChanges();
+    setTimeout(() => this._toastService.error(msg));
   }
 }
