@@ -472,3 +472,207 @@
   border-bottom: 1px solid var(--border);
   font-weight: 300;
 }
+
+/* ── Mobile Responsive ── */
+
+@media (max-width: 768px) {
+  .account-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 32px 24px;
+  }
+
+  .account-header h1 {
+    font-size: 32px;
+  }
+
+  .account-body {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .account-nav {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+    background: #fff;
+    flex-wrap: nowrap;
+    height: 56px;
+    align-items: center;
+  }
+
+  .nav-item {
+    flex: 0 0 auto;
+    padding: 0 20px;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 56px;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+
+  .nav-item.active {
+    border-left: none;
+    border-bottom-color: var(--accent);
+  }
+
+  .nav-item svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .account-content {
+    padding: 32px 24px;
+  }
+
+  .section-title {
+    font-size: 26px;
+  }
+
+  .fields-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .addresses-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .orders-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .account-header {
+    padding: 24px 16px;
+  }
+
+  .account-header h1 {
+    font-size: 26px;
+  }
+
+  .account-meta {
+    font-size: 11px;
+  }
+
+  .btn-logout {
+    padding: 8px 20px;
+    font-size: 10px;
+  }
+
+  .nav-item {
+    padding: 14px 16px;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  .nav-item svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .account-content {
+    padding: 24px 16px;
+  }
+
+  .section-title {
+    font-size: 22px;
+  }
+
+  .section-sub {
+    font-size: 11px;
+    margin-bottom: 24px;
+  }
+
+  .field input {
+    font-size: 13px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 12px 24px;
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+
+  .address-card {
+    padding: 20px 16px;
+  }
+
+  .address-name {
+    font-size: 13px;
+  }
+
+  .address-text {
+    font-size: 12px;
+  }
+
+  .default-badge {
+    font-size: 9px;
+    padding: 3px 8px;
+  }
+
+  .address-actions {
+    gap: 12px;
+  }
+
+  .address-actions button {
+    font-size: 10px;
+  }
+
+  .add-address {
+    padding: 20px 16px;
+    font-size: 11px;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    padding: 12px 12px 12px 0;
+    font-size: 12px;
+  }
+
+  .order-id {
+    font-size: 14px;
+  }
+
+  .status-badge {
+    font-size: 9px;
+    padding: 3px 8px;
+  }
+
+  .btn-view {
+    padding: 5px 12px;
+    font-size: 9px;
+  }
+
+  .empty-orders {
+    padding: 48px 0;
+  }
+
+  .empty-orders p {
+    font-size: 12px;
+  }
+}

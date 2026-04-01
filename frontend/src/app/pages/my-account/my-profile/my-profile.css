@@ -191,3 +191,78 @@
     background-position: -200% 0;
   }
 }
+
+/* ── Mobile Responsive ── */
+
+@media (max-width: 768px) {
+  .fields-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+
+  .danger-zone {
+    margin-top: 32px;
+    padding-top: 24px;
+  }
+
+  .danger-title {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .field input {
+    font-size: 13px;
+  }
+
+  .gender-field {
+    max-width: 100%;
+  }
+
+  .gender-group {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .gender-opt {
+    width: 100%;
+  }
+
+  .gender-opt label {
+    width: 100%;
+  }
+
+  .gender-opt:first-child label {
+    border-right: 1px solid var(--border);
+    border-bottom: none;
+  }
+
+  .gender-opt:last-child label {
+    border-top: none;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 12px 24px;
+    font-size: 10px;
+  }
+
+  .danger-title {
+    font-size: 18px;
+  }
+
+  .danger-sub {
+    font-size: 11px;
+  }
+}
