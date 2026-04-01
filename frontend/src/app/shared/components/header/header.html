@@ -8,11 +8,11 @@
   </div>
 
   <div class="nav-main">
-    <a routerLink="/" class="logo">
+    <a routerLink="/" class="logo" (click)="closeMobileMenu()">
       {{ siteConfig?.siteName || 'Site Name Loading...' }}
     </a>
 
-    <nav class="nav-links">
+    <nav class="nav-links desktop-only">
       <a routerLink="/shop" [queryParams]="{ sort: 'createdAtDESC' }">New In</a>
       @for (category of categories; track $index) {
         <a routerLink="/shop" [queryParams]="{ categorySlug: category.slug }">{{
@@ -60,14 +60,59 @@
         </svg>
         <span class="cart-badge">{{ cartCount }}</span>
       </a>
+      <button class="icon-btn mobile-menu-toggle" (click)="toggleMobileMenu()" aria-label="Menu">
+        <svg viewBox="0 0 24 24" class="menu-icon">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
     </div>
   </div>
 
-  <div class="nav-sub">
+  <div class="nav-sub desktop-only">
     @for (subcategory of subcategories; track $index) {
       <a routerLink="/shop" [queryParams]="{ subcategorySlug: subcategory.slug }">{{
         subcategory.name
       }}</a>
     }
   </div>
+
+  @if (mobileMenuOpen) {
+    <div class="mobile-menu">
+      <div class="mobile-menu-header">
+        <span>Menu</span>
+        <button class="icon-btn" (click)="toggleMobileMenu()" aria-label="Close menu">
+          <svg viewBox="0 0 24 24" class="close-icon">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <nav class="mobile-nav-links">
+        <a routerLink="/shop" [queryParams]="{ sort: 'createdAtDESC' }" (click)="closeMobileMenu()">New In</a>
+        @for (category of categories; track $index) {
+          <a routerLink="/shop" [queryParams]="{ categorySlug: category.slug }" (click)="closeMobileMenu()">{{
+            category.name
+          }}</a>
+        }
+        <a routerLink="/shop" (click)="closeMobileMenu()">Collections</a>
+        @if (userData) {
+          <a routerLink="/my-account" (click)="closeMobileMenu()">My Account</a>
+        } @else {
+          <a routerLink="/login" (click)="closeMobileMenu()">Login</a>
+        }
+      </nav>
+      @if (subcategories.length > 0) {
+        <div class="mobile-sub-nav">
+          <p class="mobile-sub-label">Shop by Category</p>
+          @for (subcategory of subcategories; track $index) {
+            <a routerLink="/shop" [queryParams]="{ subcategorySlug: subcategory.slug }" (click)="closeMobileMenu()">{{
+              subcategory.name
+            }}</a>
+          }
+        </div>
+      }
+    </div>
+  }
 </header>

@@ -96,3 +96,26 @@
     background-position: -200% 0;
   }
 }
+
+/* ── Mobile Responsive ── */
+@media (max-width: 480px) {
+  .product-cat {
+    font-size: 10px;
+    margin: 10px 0 4px;
+  }
+
+  .product-name {
+    font-size: 16px;
+  }
+
+  .product-price {
+    font-size: 13px;
+  }
+
+  .product-tag {
+    font-size: 9px;
+    padding: 3px 8px;
+    top: 8px;
+    left: 8px;
+  }
+}

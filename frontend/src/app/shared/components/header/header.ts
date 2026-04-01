@@ -9,10 +9,11 @@ import { ICategory } from '../../../core/models/category.model';
 import { CartService } from '../../../core/services/cart.service';
 import { SiteConfigService } from '../../../core/services/site-config.service';
 import { ISiteConfig } from '../../../core/models/site-config.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink],
+  imports: [RouterLink, CommonModule],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
@@ -31,6 +32,15 @@ export class Header implements OnInit {
   subcategories: ISubcategory[] = [];
   categories: ICategory[] = [];
   siteConfig: ISiteConfig | null = null;
+  mobileMenuOpen = false;
+
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.mobileMenuOpen = false;
+  }
 
   ngOnInit(): void {
     this._siteConfigService.getSiteConfigData().subscribe((data) => {

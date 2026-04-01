@@ -574,3 +574,250 @@
   line-height: 1.7;
 }
 
+/* ── Mobile Responsive ── */
+
+/* Tablet (max-width: 768px) */
+@media (max-width: 768px) {
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .hero-left {
+    padding: 48px 32px;
+    text-align: center;
+    align-items: center;
+  }
+
+  .hero-sub {
+    max-width: 100%;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-right {
+    min-height: 300px;
+  }
+
+  .hero-badge {
+    bottom: 16px;
+    right: 16px;
+    padding: 8px 16px;
+  }
+
+  .hero-badge strong {
+    font-size: 18px;
+  }
+
+  .hero-title {
+    font-size: 36px;
+  }
+
+  .banner-text h2 {
+    font-size: 42px;
+  }
+
+  .section {
+    padding: 48px 24px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .section-title {
+    font-size: 32px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .banner {
+    grid-template-columns: 1fr;
+    padding: 48px 24px;
+    gap: 40px;
+  }
+
+  .banner-text {
+    text-align: center;
+  }
+
+  .banner-text p {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .banner-text h2 {
+    font-size: 32px;
+  }
+
+  .banner-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .testimonials {
+    padding: 48px 24px;
+  }
+
+  .testimonial-card {
+    flex: 0 0 280px;
+  }
+
+  .review-form-inner {
+    padding: 32px 24px;
+  }
+}
+
+/* Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+  .hero-left {
+    padding: 32px 20px;
+  }
+
+  .hero-eyebrow {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  .hero-title {
+    font-size: 28px;
+  }
+
+  .hero-sub {
+    font-size: 12px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-primary,
+  .btn-outline {
+    width: 100%;
+    padding: 12px 24px;
+    font-size: 10px;
+  }
+
+  .hero-badge {
+    bottom: 12px;
+    right: 12px;
+  }
+
+  .hero-badge span {
+    font-size: 9px;
+  }
+
+  .hero-badge strong {
+    font-size: 16px;
+  }
+
+  .hero-right {
+    min-height: 200px;
+  }
+
+  .section {
+    padding: 32px 16px;
+  }
+
+  .section-title {
+    font-size: 26px;
+  }
+
+  .products-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .product-name {
+    font-size: 16px;
+  }
+
+  .banner {
+    padding: 32px 16px;
+  }
+
+  .banner-text .eyebrow {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  .banner-text h2 {
+    font-size: 26px;
+  }
+
+  .banner-text p {
+    font-size: 12px;
+  }
+
+  .banner-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .stat-num {
+    font-size: 28px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+  }
+
+  .testimonials {
+    padding: 32px 16px;
+  }
+
+  .testimonials-grid {
+    flex-direction: column;
+    overflow-x: visible;
+  }
+
+  .testimonial-card {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .review-form-inner {
+    padding: 24px 16px;
+  }
+
+  .review-title {
+    font-size: 24px;
+  }
+
+  .review-stars {
+    gap: 6px;
+  }
+
+  .review-star {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .review-submit {
+    width: 100%;
+    padding: 12px 24px !important;
+  }
+
+  .review-success {
+    padding: 32px 16px;
+  }
+
+  .review-success-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  .review-success h3 {
+    font-size: 22px;
+  }
+}
+
