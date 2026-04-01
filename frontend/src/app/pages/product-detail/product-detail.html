@@ -44,10 +44,6 @@
 
         <div class="pd-divider"></div>
 
-        <p class="pd-description">{{ product.description }}</p>
-
-        <div class="pd-divider"></div>
-
         <!-- Quantity -->
         <div class="pd-qty-row">
           <span class="pd-label">Quantity</span>
@@ -87,16 +83,11 @@
               <span class="accordion-icon">{{ openAccordion === 'details' ? '−' : '+' }}</span>
             </button>
             <div class="accordion-body">
-              <ul>
-                <li>Carefully selected natural fibres</li>
-                <li>Ethically produced in small batches</li>
-                <li>True to size — see our size guide for details</li>
-                <li>Model is 5'9" and wears a size S</li>
-              </ul>
+              <p style="white-space: pre-wrap; line-height: 1.8">{{ product.description }}</p>
             </div>
           </div>
 
-          <div class="accordion-item" [class.open]="openAccordion === 'care'">
+          <!-- <div class="accordion-item" [class.open]="openAccordion === 'care'">
             <button class="accordion-trigger" (click)="toggleAccordion('care')">
               <span>Care Instructions</span>
               <span class="accordion-icon">{{ openAccordion === 'care' ? '−' : '+' }}</span>
@@ -109,7 +100,7 @@
                 <li>Dry clean if needed</li>
               </ul>
             </div>
-          </div>
+          </div> -->
 
           <div class="accordion-item" [class.open]="openAccordion === 'shipping'">
             <button class="accordion-trigger" (click)="toggleAccordion('shipping')">
@@ -118,7 +109,7 @@
             </button>
             <div class="accordion-body">
               <ul>
-                <li>Free shipping on orders over $150</li>
+                <li>Free shipping</li>
                 <li>Standard delivery: 3–5 business days</li>
                 <li>Returns accepted within 14 days of delivery</li>
                 <li>Items must be unworn and in original condition</li>
