@@ -506,17 +506,24 @@
     gap: 12px;
   }
 
+  .pd-label {
+    font-size: 11px;
+  }
+
   .pd-qty-ctrl {
     width: 100%;
+    justify-content: space-between;
   }
 
   .qty-btn {
     width: 48px;
     height: 48px;
+    font-size: 18px;
   }
 
   .qty-val {
     width: 56px;
+    font-size: 16px;
   }
 
   .btn-add-cart {
@@ -569,19 +576,32 @@
     font-size: 13px;
   }
 
+  .pd-qty-row {
+    gap: 10px;
+  }
+
+  .pd-label {
+    font-size: 10px;
+  }
+
+  .pd-qty-ctrl {
+    justify-content: space-between;
+  }
+
   .qty-btn {
-    width: 44px;
-    height: 44px;
-    font-size: 16px;
+    width: 52px;
+    height: 52px;
+    font-size: 20px;
   }
 
   .qty-val {
-    width: 48px;
+    width: 60px;
+    font-size: 18px;
   }
 
   .btn-add-cart {
-    padding: 12px;
-    font-size: 9px;
+    padding: 14px;
+    font-size: 10px;
     letter-spacing: 2px;
   }
 
