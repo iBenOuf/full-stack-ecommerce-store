@@ -156,6 +156,40 @@
   margin-top: 0.4rem;
 }
 
+.slug-input-group {
+  display: flex;
+  gap: 0;
+}
+
+.slug-input-group .form-control {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  flex: 1;
+}
+
+.btn-generate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 1rem;
+  border: 1px solid var(--border-color);
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  background: #f8f9fa;
+  color: var(--text-main);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-generate:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
 .image-upload-wrapper {
   border: 2px dashed var(--border-color);
   border-radius: 8px;

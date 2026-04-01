@@ -103,12 +103,17 @@
           </div>
           <div class="form-group">
             <label>Subcategory Slug</label>
-            <input
-              type="text"
-              formControlName="slug"
-              class="form-control"
-              placeholder="e.g. t-shirts"
-            />
+            <div class="slug-input-group">
+              <input
+                type="text"
+                formControlName="slug"
+                class="form-control"
+                placeholder="e.g. t-shirts"
+              />
+              <button type="button" class="btn-generate" title="Auto-generate from name" (click)="generateSlug()">
+                ⚡ Generate
+              </button>
+            </div>
             @if (subcatForm.get('slug')?.invalid && subcatForm.get('slug')?.touched) {
               <span class="error-msg">Slug is required</span>
             }

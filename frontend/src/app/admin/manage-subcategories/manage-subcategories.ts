@@ -94,6 +94,14 @@ export class ManageSubcategories implements OnInit {
     this.showModal = false;
   }
 
+  generateSlug() {
+    const name = this.subcatForm.get('name')?.value;
+    if (name) {
+      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+      this.subcatForm.patchValue({ slug });
+    }
+  }
+
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {

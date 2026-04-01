@@ -148,6 +148,14 @@ export class ManageProducts implements OnInit {
     this.showModal = false;
   }
 
+  generateSlug() {
+    const name = this.productForm.get('name')?.value;
+    if (name) {
+      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+      this.productForm.patchValue({ slug });
+    }
+  }
+
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {

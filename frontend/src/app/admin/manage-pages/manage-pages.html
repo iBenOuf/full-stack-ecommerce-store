@@ -81,7 +81,12 @@
             
             <div class="form-group flex-1">
               <label>URL Slug</label>
-              <input type="text" formControlName="pageSlug" class="form-control" placeholder="e.g. terms-of-service" />
+              <div class="slug-input-group">
+                <input type="text" formControlName="pageSlug" class="form-control" placeholder="e.g. terms-of-service" />
+                <button type="button" class="btn-generate" title="Auto-generate from title" (click)="generateSlug()">
+                  ⚡ Generate
+                </button>
+              </div>
               @if (pageForm.get('pageSlug')?.invalid && pageForm.get('pageSlug')?.touched) {
                 <span class="error-msg">Valid slug format required (e.g. valid-url-slug)</span>
               }

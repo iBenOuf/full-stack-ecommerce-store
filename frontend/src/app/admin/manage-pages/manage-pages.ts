@@ -69,6 +69,14 @@ export class ManagePages implements OnInit {
     this.showModal = true;
   }
 
+  generateSlug() {
+    const title = this.pageForm.get('title')?.value;
+    if (title) {
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+      this.pageForm.patchValue({ pageSlug: slug });
+    }
+  }
+
   openEditModal(page: IPage) {
     this.editingId = page._id;
     this.pageForm.patchValue({
