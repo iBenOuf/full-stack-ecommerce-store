@@ -432,3 +432,295 @@
 .btn-primary:hover {
   background: #2e2e2e;
 }
+
+/* ── Mobile Responsive ── */
+
+@media (max-width: 768px) {
+  .checkout-wrapper {
+    padding: 32px 24px 48px;
+  }
+
+  .checkout-header {
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+  }
+
+  .checkout-title {
+    font-size: 32px;
+  }
+
+  .checkout-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .checkout-summary-col {
+    order: 2;
+  }
+
+  .checkout-form-col {
+    order: 1;
+  }
+
+  .checkout-summary {
+    position: static;
+    padding: 20px;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .summary-title {
+    font-size: 20px;
+  }
+
+  .summary-items {
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+  }
+
+  .summary-item {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .summary-item-img {
+    width: 50px;
+    height: 65px;
+    flex-shrink: 0;
+  }
+
+  .summary-item-info {
+    flex: 1;
+    min-width: 0;
+    max-width: calc(100% - 70px);
+  }
+
+  .summary-item-name {
+    font-size: 12px;
+    white-space: normal;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .summary-item-price {
+    font-size: 10px;
+  }
+
+  .summary-item-total {
+    font-size: 12px;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .item-qty-badge {
+    width: 16px;
+    height: 16px;
+    font-size: 8px;
+  }
+
+  .saved-address-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .saved-address-radio {
+    width: 20px;
+    height: 20px;
+  }
+
+  .saved-address-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .saved-address-label {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .saved-address-text {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .default-tag {
+    position: static;
+    display: block;
+    font-size: 9px;
+    margin-top: 6px;
+  }
+
+  .fields-row.two-col {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .btn-place-order {
+    padding: 14px;
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkout-wrapper {
+    padding: 24px 16px 32px;
+  }
+
+  .checkout-title {
+    font-size: 26px;
+  }
+
+  .checkout-section {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+  }
+
+  .checkout-section-title {
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+
+  .saved-address-card {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .saved-address-radio {
+    width: 18px;
+    height: 18px;
+  }
+
+  .saved-address-label {
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+
+  .saved-address-text {
+    font-size: 11px;
+  }
+
+  .default-tag {
+    font-size: 9px;
+    margin-top: 4px;
+  }
+
+  .btn-new-address {
+    padding: 12px;
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  .field input {
+    font-size: 13px;
+    padding: 10px 0;
+  }
+
+  .field label {
+    font-size: 10px;
+    margin-bottom: 6px;
+  }
+
+  .field-error {
+    font-size: 10px;
+  }
+
+  .checkout-summary {
+    padding: 16px 12px;
+  }
+
+  .summary-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .summary-items {
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+  }
+
+  .summary-item {
+    gap: 10px;
+  }
+
+  .summary-item-img {
+    width: 48px;
+    height: 64px;
+  }
+
+  .summary-item-name {
+    font-size: 12px;
+  }
+
+  .summary-item-price {
+    font-size: 10px;
+  }
+
+  .summary-item-total {
+    font-size: 12px;
+  }
+
+  .item-qty-badge {
+    width: 16px;
+    height: 16px;
+    font-size: 8px;
+  }
+
+  .summary-line {
+    font-size: 11px;
+  }
+
+  .summary-total {
+    font-size: 14px;
+    padding: 12px 0;
+    margin-bottom: 16px;
+  }
+
+  .btn-place-order {
+    padding: 14px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+
+  .secure-note {
+    font-size: 10px;
+  }
+
+  .secure-note svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .merging-overlay {
+    padding: 48px 0;
+  }
+
+  .merging-spinner {
+    width: 28px;
+    height: 28px;
+  }
+
+  .merging-overlay p {
+    font-size: 11px;
+  }
+
+  .cart-empty {
+    padding: 48px 0;
+  }
+
+  .cart-empty p {
+    font-size: 12px;
+  }
+
+  .btn-primary {
+    padding: 12px 24px;
+    font-size: 10px;
+    width: 100%;
+    text-align: center;
+  }
+}
