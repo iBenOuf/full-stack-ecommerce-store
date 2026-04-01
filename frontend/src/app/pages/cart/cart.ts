@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { map, catchError, of, forkJoin } from 'rxjs';
 import { CartDisplayItem, ICartItem } from '../../core/models/cart.model';
 import { IProduct } from '../../core/models/product.model';
@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   templateUrl: './cart.html',
   styleUrl: './cart.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Cart {
   constructor(
@@ -33,9 +34,7 @@ export class Cart {
 
   ngOnInit(): void {
     this._cartService.cartData.subscribe((cart) => {
-      setTimeout(() => {
-        this.loadCartWithProducts(cart.items);
-      });
+      this.loadCartWithProducts(cart.items);
     });
   }
 
