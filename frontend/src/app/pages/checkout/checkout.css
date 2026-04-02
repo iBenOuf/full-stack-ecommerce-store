@@ -329,7 +329,7 @@
 
 .btn-place-order {
   width: 100%;
-  background: var(--charcoal);
+  background: #b8945a;
   color: #fff;
   padding: 16px;
   font-family: var(--font-body);
@@ -344,7 +344,7 @@
 }
 
 .btn-place-order:hover:not(:disabled) {
-  background: #2e2e2e;
+  background: #a3824a;
 }
 
 .btn-place-order:disabled {
