@@ -22,6 +22,16 @@ header {
   justify-content: space-between;
   padding: 0 48px;
   height: 72px;
+  position: relative;
+}
+
+.nav-links {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 36px;
+  align-items: center;
 }
 
 .logo {
@@ -32,18 +42,13 @@ header {
   letter-spacing: 4px;
   text-transform: uppercase;
   text-decoration: none;
+  z-index: 1;
 }
 
 .logo span {
   font-style: italic;
   font-weight: 400;
   color: var(--accent);
-}
-
-.nav-links {
-  display: flex;
-  gap: 36px;
-  align-items: center;
 }
 
 .nav-links a {
