@@ -14,7 +14,8 @@ import { INotification, INotificationsResponse } from '../core/models/notificati
   styleUrl: './admin.css',
 })
 export class Admin implements OnInit, OnDestroy {
-  isSidebarCollapsed = false;
+  isSidebarCollapsed = true; // Start collapsed (hidden on mobile)
+  isSidebarOpen = false;
   showNotifications = false;
 
   notifications: INotification[] = [];
@@ -62,6 +63,29 @@ export class Admin implements OnInit, OnDestroy {
 
   toggleSidebar() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    this.isSidebarOpen = !this.isSidebarOpen;
+    
+    // On mobile, also prevent body scroll when sidebar is open
+    if (window.innerWidth <= 768) {
+      if (this.isSidebarOpen) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    }
+  }
+
+  closeSidebar() {
+    this.isSidebarCollapsed = true;
+    this.isSidebarOpen = false;
+    document.body.style.overflow = '';
+  }
+
+  onNavClick() {
+    // Auto-close sidebar on mobile when navigating
+    if (window.innerWidth <= 768) {
+      this.closeSidebar();
+    }
   }
 
   toggleNotifications() {

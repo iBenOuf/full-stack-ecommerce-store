@@ -4,36 +4,40 @@
     <div class="sidebar-logo">
       <h3>Admin</h3>
       <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+      <button class="close-btn-mobile" (click)="closeSidebar()">✕</button>
     </div>
-    
+
     <nav class="sidebar-nav">
-      <a routerLink="dashboard" routerLinkActive="active">Dashboard</a>
-      <a routerLink="manage-orders" routerLinkActive="active">Orders</a>
-      <a routerLink="manage-products" routerLinkActive="active">Products</a>
-      <a routerLink="manage-categories" routerLinkActive="active">Categories</a>
-      <a routerLink="manage-subcategories" routerLinkActive="active">Subcategories</a>
-      <a routerLink="manage-users" routerLinkActive="active">Users</a>
-      <a routerLink="manage-testimonials" routerLinkActive="active">Testimonials</a>
-      <a routerLink="manage-faqs" routerLinkActive="active">FAQs</a>
-      <a routerLink="manage-pages" routerLinkActive="active">Pages</a>
-      <a routerLink="sales-reports" routerLinkActive="active">Reports</a>
-      <a routerLink="site-settings" routerLinkActive="active">Settings</a>
+      <a routerLink="dashboard" routerLinkActive="active" (click)="onNavClick()">Dashboard</a>
+      <a routerLink="manage-orders" routerLinkActive="active" (click)="onNavClick()">Orders</a>
+      <a routerLink="manage-products" routerLinkActive="active" (click)="onNavClick()">Products</a>
+      <a routerLink="manage-categories" routerLinkActive="active" (click)="onNavClick()">Categories</a>
+      <a routerLink="manage-subcategories" routerLinkActive="active" (click)="onNavClick()">Subcategories</a>
+      <a routerLink="manage-users" routerLinkActive="active" (click)="onNavClick()">Users</a>
+      <a routerLink="manage-testimonials" routerLinkActive="active" (click)="onNavClick()">Testimonials</a>
+      <a routerLink="manage-faqs" routerLinkActive="active" (click)="onNavClick()">FAQs</a>
+      <a routerLink="manage-pages" routerLinkActive="active" (click)="onNavClick()">Pages</a>
+      <a routerLink="sales-reports" routerLinkActive="active" (click)="onNavClick()">Reports</a>
+      <a routerLink="site-settings" routerLinkActive="active" (click)="onNavClick()">Settings</a>
     </nav>
-    
+
     <div class="sidebar-footer">
-      <a routerLink="/">↤ Back to Store</a>
+      <a routerLink="/" (click)="onNavClick()">↤ Back to Store</a>
     </div>
   </aside>
+
+  <!-- Mobile Overlay -->
+  @if (isSidebarOpen) {
+    <div class="sidebar-overlay" (click)="closeSidebar()"></div>
+  }
 
   <!-- Main Content -->
   <div class="admin-main">
     <header class="admin-topbar">
       <div class="topbar-left">
-        @if (isSidebarCollapsed) {
-          <button class="toggle-btn-mobile" (click)="toggleSidebar()">☰</button>
-        }
+        <button class="toggle-btn-mobile" (click)="toggleSidebar()">☰</button>
       </div>
-      
+
       <!-- Unread Notification Bell -->
       <div class="topbar-actions">
         <div class="notification-container">

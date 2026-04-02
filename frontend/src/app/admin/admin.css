@@ -13,17 +13,47 @@
   color: #fff;
   display: flex;
   flex-direction: column;
-  transition: width 0.3s;
+  transition: transform 0.3s;
 }
 
-.admin-sidebar.collapsed {
-  width: 60px;
+/* Mobile: sidebar hidden by default (collapsed state) */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    transform: translateX(-100%);
+  }
+
+  /* When NOT collapsed (open), show sidebar */
+  .admin-sidebar:not(.collapsed) {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar.collapsed {
+    transform: translateX(-100%);
+  }
+
+  .admin-sidebar.collapsed h3,
+  .admin-sidebar.collapsed .sidebar-nav a,
+  .admin-sidebar.collapsed .sidebar-footer a {
+    display: none;
+  }
 }
 
-.admin-sidebar.collapsed h3,
-.admin-sidebar.collapsed .sidebar-nav a,
-.admin-sidebar.collapsed .sidebar-footer a {
-  display: none;
+/* Desktop: collapsed state */
+@media (min-width: 769px) {
+  .admin-sidebar.collapsed {
+    width: 60px;
+  }
+
+  .admin-sidebar.collapsed h3,
+  .admin-sidebar.collapsed .sidebar-nav a,
+  .admin-sidebar.collapsed .sidebar-footer a {
+    display: none;
+  }
 }
 
 .sidebar-logo {
@@ -40,12 +70,57 @@
   letter-spacing: 1px;
 }
 
+/* Mobile close button - hidden on desktop */
+.close-btn-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .close-btn-mobile {
+    display: block;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+}
+
 .toggle-btn {
   background: none;
   border: none;
   color: #fff;
   font-size: 1.5rem;
   cursor: pointer;
+}
+
+/* Mobile: always show toggle in topbar, hide sidebar toggle */
+@media (max-width: 768px) {
+  .toggle-btn {
+    display: none;
+  }
+
+  .toggle-btn-mobile {
+    display: block !important;
+  }
+
+  /* Overlay when sidebar is open */
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+}
+
+/* Desktop: show sidebar toggle, hide mobile toggle */
+@media (min-width: 769px) {
+  .toggle-btn-mobile {
+    display: none;
+  }
 }
 
 .sidebar-nav {
