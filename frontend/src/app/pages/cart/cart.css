@@ -282,7 +282,7 @@
 .btn-checkout {
   display: block;
   width: 100%;
-  background: var(--charcoal);
+  background: #b8945a;
   color: #fff;
   padding: 16px;
   text-align: center;
@@ -297,7 +297,7 @@
 }
 
 .btn-checkout:hover {
-  background: #2e2e2e;
+  background: #a3824a;
 }
 
 .secure-note {
