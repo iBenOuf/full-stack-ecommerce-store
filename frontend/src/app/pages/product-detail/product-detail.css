@@ -218,7 +218,7 @@
 
 .btn-add-cart {
   width: 100%;
-  background: var(--charcoal);
+  background: #b8945a;
   color: #fff;
   padding: 16px;
   font-family: var(--font-body);
@@ -232,7 +232,7 @@
 }
 
 .btn-add-cart:hover:not(:disabled) {
-  background: #2e2e2e;
+  background: #a3824a;
 }
 
 .btn-add-cart:disabled {
