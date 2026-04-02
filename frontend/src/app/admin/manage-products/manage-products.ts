@@ -115,6 +115,7 @@ export class ManageProducts implements OnInit {
     this.previewUrl = null;
     this.showModal = true;
     if (this.imageInput) this.imageInput.nativeElement.value = '';
+    this._cdr.detectChanges();
   }
 
   openEditModal(prod: IProduct) {
@@ -142,6 +143,7 @@ export class ManageProducts implements OnInit {
     this.previewUrl = prod.imageUrl; // Cloudinary URL
     this.showModal = true;
     if (this.imageInput) this.imageInput.nativeElement.value = '';
+    this._cdr.detectChanges();
   }
 
   closeModal() {
