@@ -196,10 +196,17 @@ header {
 
   /* Mobile Menu */
   .mobile-menu {
+    position: fixed;
+    top: 72px;
+    left: 0;
+    right: 0;
     background: var(--cream);
     border-bottom: 1px solid var(--border);
     padding: 16px 24px 24px;
     animation: slideDown 0.3s ease;
+    z-index: 99;
+    max-height: calc(100vh - 72px);
+    overflow-y: auto;
   }
 
   @keyframes slideDown {
