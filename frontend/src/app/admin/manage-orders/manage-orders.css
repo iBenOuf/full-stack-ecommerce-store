@@ -67,14 +67,14 @@
   }
 }
 
-.status-pending { background: #fff8e1; color: #f57f17; }
-.status-preparing { background: #e3f2fd; color: #1565c0; }
-.status-shipped { background: #f3e5f5; color: #7b1fa2; }
-.status-delivered { background: #e8f5e9; color: #2e7d32; }
+.status-pending { background: var(--pending-bg); color: var(--warning); }
+.status-preparing { background: var(--info-bg); color: var(--info); }
+.status-shipped { background: var(--info-bg); color: var(--info); }
+.status-delivered { background: var(--success-bg); color: var(--success); }
 .status-canceled_by_client, 
 .status-canceled_by_admin,
 .status-rejected,
-.status-returned { background: #ffebee; color: #c62828; }
+.status-returned { background: var(--error-bg); color: var(--error); }
 
 .status-select {
   padding: 0.4rem 0.75rem;
@@ -83,7 +83,7 @@
   font-family: inherit;
   font-size: 0.85rem;
   font-weight: 500;
-  background-color: #f9f9f9;
+  background-color: var(--bg-subtle);
   color: var(--text-main);
   cursor: pointer;
   outline: none;
@@ -160,10 +160,10 @@
   transition: background 0.15s;
 }
 .order-row:hover {
-  background: #f9f9f9;
+  background: var(--bg-subtle);
 }
 .order-row.expanded {
-  background: #f5f5f5;
+  background: var(--bg-hover);
 }
 
 /* Detail panel */
@@ -175,7 +175,7 @@
   display: grid;
   grid-template-columns: 1fr 1.6fr;
   gap: 0;
-  background: #fafafa;
+  background: var(--bg-panel);
   border-top: 1px solid var(--border-color);
   animation: slideDown 0.18s ease;
 }
@@ -333,7 +333,7 @@
   .admin-table tr.order-row td {
     padding: 0.75rem 1rem;
     font-size: 0.9rem;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--divider);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -349,10 +349,10 @@
   .admin-table tr.order-row td.expand-cell {
     order: 99;
     border-bottom: none;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--divider);
     justify-content: center;
     padding: 0.5rem 1rem;
-    background: #fafafa;
+    background: var(--bg-panel);
     border-radius: 0 0 8px 8px;
   }
 

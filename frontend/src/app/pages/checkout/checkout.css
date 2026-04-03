@@ -344,7 +344,7 @@
 }
 
 .btn-place-order:hover:not(:disabled) {
-  background: #a3824a;
+  background: var(--accent-darker);
 }
 
 .btn-place-order:disabled {

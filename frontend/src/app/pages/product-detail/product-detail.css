@@ -232,7 +232,7 @@
 }
 
 .btn-add-cart:hover:not(:disabled) {
-  background: #a3824a;
+  background: var(--accent-darker);
 }
 
 .btn-add-cart:disabled {

@@ -83,7 +83,7 @@
 }
 
 .btn-outline:hover {
-  border-color: #6a6560;
+  border-color: var(--text-disabled);
 }
 
 .hero-right {
@@ -326,7 +326,7 @@
   font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #5a5550;
+  color: var(--text-hint);
   font-weight: 300;
 }
 

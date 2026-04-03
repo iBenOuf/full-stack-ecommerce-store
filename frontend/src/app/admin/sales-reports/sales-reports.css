@@ -129,9 +129,9 @@
   flex-shrink: 0;
 }
 
-.kpi-icon.revenue { background: #e8f5e9; }
+.kpi-icon.revenue { background: var(--success-bg); }
 .kpi-icon.orders { background: #e3f2fd; }
-.kpi-icon.aov { background: #fff3e0; }
+.kpi-icon.aov { background: var(--warning-bg); }
 .kpi-icon.items { background: #fce4ec; }
 .kpi-icon.customers { background: #f3e5f5; }
 .kpi-icon.avg-items { background: #e0f2f1; }
@@ -168,7 +168,7 @@
 .panel-header {
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
-  background: #fafafa;
+  background: var(--bg-panel);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -221,7 +221,7 @@
 .trend-bar-wrap {
   flex: 1;
   width: 22px;
-  background: #f0f0f0;
+  background: var(--divider);
   border-radius: 4px 4px 0 0;
   position: relative;
   display: flex;
@@ -332,7 +332,7 @@
 .cat-bar-container {
   width: 120px;
   height: 8px;
-  background: #f0f0f0;
+  background: var(--divider);
   border-radius: 4px;
   flex-shrink: 0;
   overflow: hidden;
@@ -358,7 +358,7 @@
 /* ── Utilities ─────────────────────────────────────────── */
 .text-right { text-align: right !important; }
 .text-center { text-align: center !important; }
-.text-success { color: #2e7d32 !important; font-weight: 600; }
+.text-success { color: var(--success) !important; font-weight: 600; }
 .font-medium { font-weight: 500; }
 
 .loading-state {

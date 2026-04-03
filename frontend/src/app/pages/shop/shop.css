@@ -20,7 +20,7 @@
 
 .shop-subtitle {
   font-size: 13px;
-  color: #6a6560;
+  color: var(--text-disabled);
   letter-spacing: 2px;
   text-transform: uppercase;
   font-weight: 300;

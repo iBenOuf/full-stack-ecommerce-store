@@ -183,7 +183,7 @@
 }
 
 .btn-outline:hover {
-  border-color: #6a6560;
+  border-color: var(--text-disabled);
 }
 
 @media (max-width: 768px) {

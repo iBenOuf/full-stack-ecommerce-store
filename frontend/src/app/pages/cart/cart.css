@@ -297,7 +297,7 @@
 }
 
 .btn-checkout:hover {
-  background: #a3824a;
+  background: var(--accent-darker);
 }
 
 .secure-note {

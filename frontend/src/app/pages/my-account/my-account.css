@@ -33,7 +33,7 @@
 
 .account-meta {
   font-size: 12px;
-  color: #5a5550;
+  color: var(--text-hint);
   letter-spacing: 1px;
   text-transform: uppercase;
   margin-top: 8px;
@@ -42,7 +42,7 @@
 .btn-logout {
   background: transparent;
   border: 1px solid var(--dark-surface);
-  color: #5a5550;
+  color: var(--text-hint);
   padding: 10px 24px;
   font-family: var(--font-body);
   font-size: 11px;
@@ -53,7 +53,7 @@
 }
 
 .btn-logout:hover {
-  border-color: #5a5550;
+  border-color: var(--text-hint);
   color: #9a9590;
 }
 
@@ -167,13 +167,13 @@
 }
 
 .field input.invalid {
-  border-bottom-color: #c0392b;
+  border-bottom-color: var(--error);
 }
 
 .field-error {
   display: block;
   font-size: 11px;
-  color: #c0392b;
+  color: var(--error);
   margin-top: 6px;
 }
 
@@ -334,7 +334,7 @@
 }
 
 .address-actions button.danger:hover {
-  color: #c0392b;
+  color: var(--error);
 }
 
 .add-address {
@@ -408,24 +408,24 @@
 }
 
 .status-delivered {
-  background: #f0f7ee;
-  color: #3b6d11;
+  background: var(--success-bg);
+  color: var(--success);
 }
 .status-shipped {
-  background: #e6f1fb;
-  color: #185fa5;
+  background: var(--info-bg);
+  color: var(--info);
 }
 .status-pending {
-  background: #faeeda;
-  color: #854f0b;
+  background: var(--warning-bg);
+  color: var(--warning);
 }
 .status-preparing {
-  background: #faeeda;
-  color: #854f0b;
+  background: var(--warning-bg);
+  color: var(--warning);
 }
 .status-canceled {
-  background: #fcebeb;
-  color: #a32d2d;
+  background: var(--error-bg);
+  color: var(--error);
 }
 .status-returned {
   background: #f1efe8;
