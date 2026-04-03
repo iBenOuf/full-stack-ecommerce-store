@@ -26,25 +26,25 @@
         <tbody>
           @for (order of orders; track order._id) {
             <tr class="order-row" (click)="toggleExpand(order._id)" [class.expanded]="expandedOrderId === order._id">
-              <td class="expand-cell">
+              <td class="expand-cell" data-label="">
                 <span class="expand-icon">{{ expandedOrderId === order._id ? '▾' : '▸' }}</span>
               </td>
-              <td class="font-medium text-muted">#{{ order._id.substring(order._id.length - 8).toUpperCase() }}</td>
-              <td>
+              <td class="font-medium text-muted" data-label="Order">#{{ order._id.substring(order._id.length - 8).toUpperCase() }}</td>
+              <td data-label="Customer">
                 <div class="customer-info">
                   <span class="font-medium">{{ getCustomerName(order.user) }}</span>
                   <span class="text-small text-muted">{{ order.deliveryPhone }}</span>
                 </div>
               </td>
-              <td class="text-muted">{{ order.createdAt | date:'shortDate' }}</td>
-              <td class="text-muted">{{ order.items.length }} item{{ order.items.length !== 1 ? 's' : '' }}</td>
-              <td class="font-medium">{{ calculateTotal(order) | currency }}</td>
-              <td>
+              <td class="text-muted" data-label="Date">{{ order.createdAt | date:'shortDate' }}</td>
+              <td class="text-muted" data-label="Items">{{ order.items.length }} item{{ order.items.length !== 1 ? 's' : '' }}</td>
+              <td class="font-medium" data-label="Total">{{ calculateTotal(order) | currency }}</td>
+              <td data-label="Status">
                 <span class="status-pill status-{{ order.status }}">
                   {{ formatStatus(order.status) | titlecase }}
                 </span>
               </td>
-              <td class="text-right" (click)="$event.stopPropagation()">
+              <td class="text-right" data-label="Update" (click)="$event.stopPropagation()">
                 <select
                   [disabled]="isProcessing || order.status === 'canceled_by_client'"
                   [ngModel]="order.status"
