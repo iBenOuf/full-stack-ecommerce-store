@@ -24,7 +24,7 @@
         <tbody>
           @for (cat of categories; track cat._id) {
             <tr>
-              <td>
+              <td data-label="Image">
                 <img
                   [src]="cat.imageUrl"
                   alt="{{ cat.name }}"
@@ -32,9 +32,9 @@
                   (error)="$event.target.src = 'assets/images/placeholder.png'"
                 />
               </td>
-              <td class="font-medium">{{ cat.name }}</td>
-              <td class="text-muted">{{ cat.slug }}</td>
-              <td>
+              <td data-label="Name" class="font-medium">{{ cat.name }}</td>
+              <td data-label="Slug" class="text-muted">{{ cat.slug }}</td>
+              <td data-label="Status">
                 <span
                   class="status-pill"
                   [class.active]="!cat.isDeleted"
@@ -43,7 +43,7 @@
                   {{ cat.isDeleted ? 'Deleted' : 'Active' }}
                 </span>
               </td>
-              <td class="text-right actions-cell">
+              <td data-label="Actions" class="text-right actions-cell">
                 <button class="btn-icon edit" (click)="openEditModal(cat)" [disabled]="isDeleting">
                   ✏️
                 </button>
