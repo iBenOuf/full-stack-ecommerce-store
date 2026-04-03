@@ -77,21 +77,21 @@
           <tbody>
             @for (faq of faqs; track faq._id) {
               <tr [class.inactive-row]="!faq.isActive">
-                <td class="order-cell">{{ faq.order }}</td>
-                <td>
+                <td data-label="Order" class="order-cell">{{ faq.order }}</td>
+                <td data-label="FAQ">
                   <div class="faq-q">{{ faq.question }}</div>
                   <div class="faq-a">{{ faq.answer }}</div>
                 </td>
-                <td>
-                  <button 
-                    class="status-toggle" 
+                <td data-label="Status">
+                  <button
+                    class="status-toggle"
                     [class.active]="faq.isActive"
                     (click)="toggleActive(faq)"
                     title="Toggle Visibility">
                     {{ faq.isActive ? 'Active' : 'Inactive' }}
                   </button>
                 </td>
-                <td class="actions-cell">
+                <td data-label="Actions" class="actions-cell">
                   <div class="action-buttons">
                     <button class="btn-action edit" (click)="openEditForm(faq)">Edit</button>
                     <button class="btn-action danger" (click)="deleteFaq(faq._id)">Delete</button>
