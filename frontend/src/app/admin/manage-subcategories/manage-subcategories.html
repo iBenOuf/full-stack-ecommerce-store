@@ -25,7 +25,7 @@
         <tbody>
           @for (sub of subcategories; track sub._id) {
             <tr>
-              <td>
+              <td data-label="Image">
                 <img
                   [src]="sub.image"
                   alt="{{ sub.name }}"
@@ -33,12 +33,12 @@
                   (error)="$event.target.src = 'assets/images/placeholder.png'"
                 />
               </td>
-              <td class="font-medium">{{ sub.name }}</td>
-              <td>
+              <td data-label="Name" class="font-medium">{{ sub.name }}</td>
+              <td data-label="Parent">
                 <span class="parent-badge">{{ getCategoryName(sub.category) }}</span>
               </td>
-              <td class="text-muted">{{ sub.slug }}</td>
-              <td>
+              <td data-label="Slug" class="text-muted">{{ sub.slug }}</td>
+              <td data-label="Status">
                 <span
                   class="status-pill"
                   [class.active]="!sub.isDeleted"
@@ -47,7 +47,7 @@
                   {{ sub.isDeleted ? 'Deleted' : 'Active' }}
                 </span>
               </td>
-              <td class="text-right actions-cell">
+              <td data-label="Actions" class="text-right actions-cell">
                 <button
                   class="btn-icon edit"
                   title="Edit"
