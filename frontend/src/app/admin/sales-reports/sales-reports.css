@@ -388,19 +388,97 @@
   .reports-header {
     flex-direction: column;
   }
+
+  .reports-header h2 {
+    font-size: 1.4rem;
+  }
+
   .report-filters {
     flex-direction: column;
     width: 100%;
     align-items: stretch;
   }
+
+  .report-filters select {
+    width: 100%;
+  }
+
   .date-inputs {
     flex-wrap: wrap;
+    width: 100%;
   }
+
+  .date-inputs input[type='date'] {
+    flex: 1;
+    min-width: 120px;
+  }
+
   .report-row {
     flex-direction: column;
   }
+
   .report-row > .flex-2,
   .report-row > .flex-1 {
     min-width: 100%;
+  }
+
+  /* Table cells smaller on mobile */
+  .admin-table th,
+  .admin-table td {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .admin-table th {
+    font-size: 0.75rem;
+  }
+
+  /* Trend chart: shorter and narrower */
+  .trend-chart {
+    height: 200px;
+    gap: 0.4rem;
+  }
+
+  .trend-bar-wrap {
+    width: 14px;
+  }
+
+  .trend-val {
+    font-size: 0.6rem;
+  }
+
+  .trend-date {
+    font-size: 0.6rem;
+  }
+
+  /* KPI cards: smaller on mobile */
+  .kpi-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .kpi-card {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .kpi-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+
+  .kpi-value {
+    font-size: 1.1rem;
+  }
+
+  /* Category breakdown: narrower bars */
+  .cat-bar-container {
+    width: 80px;
+  }
+
+  .cat-pct {
+    width: 36px;
+    font-size: 0.75rem;
   }
 }
