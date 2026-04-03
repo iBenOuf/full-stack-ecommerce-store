@@ -1,7 +1,8 @@
-import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, ChangeDetectorRef, OnInit, OnDestroy, AfterViewInit, ElementRef } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { NotificationService } from '../core/services/notification.service';
 import { AuthService } from '../core/services/auth.service';
 import { INotification, INotificationsResponse } from '../core/models/notification.model';
@@ -13,7 +14,7 @@ import { INotification, INotificationsResponse } from '../core/models/notificati
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
-export class Admin implements OnInit, OnDestroy {
+export class Admin implements OnInit, AfterViewInit, OnDestroy {
   isSidebarCollapsed = true; // Start collapsed (hidden on mobile)
   isSidebarOpen = false;
   showNotifications = false;
@@ -22,11 +23,14 @@ export class Admin implements OnInit, OnDestroy {
   unreadCount = 0;
 
   private _notifSub!: Subscription;
+  private _routerSub!: Subscription;
 
   constructor(
     private _notificationService: NotificationService,
     private _authService: AuthService,
     private _cdr: ChangeDetectorRef,
+    private _router: Router,
+    private _el: ElementRef,
   ) {}
 
   ngOnInit() {
@@ -46,6 +50,16 @@ export class Admin implements OnInit, OnDestroy {
         }
       },
     );
+  }
+
+  ngAfterViewInit() {
+    // Scroll .admin-content to top on every navigation
+    this._routerSub = this._router.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe(() => {
+        const content = this._el.nativeElement.querySelector('.admin-content');
+        if (content) content.scrollTop = 0;
+      });
   }
 
   loadNotifications() {
@@ -109,6 +123,9 @@ export class Admin implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this._notifSub) {
       this._notifSub.unsubscribe();
+    }
+    if (this._routerSub) {
+      this._routerSub.unsubscribe();
     }
     this._notificationService.disconnect();
   }
