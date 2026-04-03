@@ -24,24 +24,24 @@
         <tbody>
           @for (t of testimonials; track t._id) {
             <tr>
-              <td>
+              <td data-label="User">
                 <div class="user-info">
                   <span class="user-name">{{ getFullName(t) }}</span>
                 </div>
               </td>
-              <td>
+              <td data-label="Rating">
                 <div class="rating-badge">
                   {{ t.rating }} ★
                 </div>
               </td>
-              <td>
+              <td data-label="Comment">
                 <p class="comment-text">{{ t.comment }}</p>
               </td>
-              <td>
+              <td data-label="Status">
                 <span class="status-badge" [ngClass]="t.status">{{ t.status }}</span>
               </td>
-              <td>{{ t.createdAt | date:'mediumDate' }}</td>
-              <td class="actions-cell">
+              <td data-label="Date">{{ t.createdAt | date:'mediumDate' }}</td>
+              <td data-label="Actions" class="actions-cell">
                 <div class="action-buttons">
                   @if (t.status !== 'approved') {
                     <button class="btn-action success" (click)="updateStatus(t._id, 'approved')" title="Approve">
