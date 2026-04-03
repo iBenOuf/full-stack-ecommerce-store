@@ -259,6 +259,20 @@
   border-bottom: 1px solid var(--charcoal);
 }
 
+.register-link a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.forgot-link:hover {
+  color: var(--charcoal);
+}
+
+.form-sub a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
 /* ── Mobile Responsive ── */
 
 @media (max-width: 768px) {

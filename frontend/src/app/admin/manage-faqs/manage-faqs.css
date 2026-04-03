@@ -155,7 +155,7 @@
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--text-main);
+  background: var(--accent-dark);
 }
 
 .btn-primary:disabled {
@@ -308,11 +308,11 @@
 }
 
 .btn-action.edit {
-  border-color: #90caf9;
+  border-color: var(--info-bg);
   color: var(--info);
 }
 .btn-action.edit:hover {
-  background: #e3f2fd;
+  background: var(--info-bg);
 }
 
 .btn-action.danger {

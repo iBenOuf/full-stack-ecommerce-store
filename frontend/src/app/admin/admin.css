@@ -238,7 +238,7 @@
   position: absolute;
   top: 0;
   right: 0;
-  background-color: #e53935;
+  background-color: var(--error);
   color: #fff;
   font-size: 0.65rem;
   font-weight: bold;

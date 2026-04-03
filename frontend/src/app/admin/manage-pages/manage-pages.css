@@ -251,7 +251,7 @@
 }
 
 .btn-primary { background: var(--accent); color: white; }
-.btn-primary:hover { background: var(--charcoal); }
+.btn-primary:hover { background: var(--accent-dark); }
 .btn-primary:disabled { background: var(--border-color); cursor: not-allowed; }
 
 .btn-secondary { background: white; border: 1px solid var(--border-color); color: var(--text-main); }

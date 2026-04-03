@@ -323,6 +323,11 @@
   border-bottom: 1px solid var(--charcoal);
 }
 
+.login-link a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
 /* ── Mobile Responsive ── */
 
 @media (max-width: 768px) {

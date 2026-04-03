@@ -280,13 +280,13 @@
   }
 }
 
-.status-pill[data-status="pending"] { background: #fffde7; color: #f9a825; }
-.status-pill[data-status="preparing"] { background: #e3f2fd; color: #1976d2; }
-.status-pill[data-status="shipped"] { background: #e8eaf6; color: #3f51b5; }
-.status-pill[data-status="delivered"] { background: var(--success-bg); color: #2e7d32; }
+.status-pill[data-status="pending"] { background: var(--warning-bg); color: var(--warning); }
+.status-pill[data-status="preparing"] { background: var(--info-bg); color: var(--info); }
+.status-pill[data-status="shipped"] { background: var(--info-bg); color: var(--info); }
+.status-pill[data-status="delivered"] { background: var(--success-bg); color: var(--success); }
 .status-pill[data-status="canceled_by_client"],
 .status-pill[data-status="canceled_by_admin"],
-.status-pill[data-status="rejected"] { background: var(--error-bg); color: #c62828; }
+.status-pill[data-status="rejected"] { background: var(--error-bg); color: var(--error); }
 
 /* Stock Alerts */
 .stock-list {

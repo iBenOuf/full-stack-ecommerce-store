@@ -83,7 +83,9 @@
 }
 
 .btn-outline:hover {
-  border-color: var(--text-disabled);
+  background: #fff;
+  color: var(--charcoal);
+  border-color: #fff;
 }
 
 .hero-right {

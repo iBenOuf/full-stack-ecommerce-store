@@ -305,7 +305,7 @@
 }
 
 .btn-primary:hover {
-  background: var(--charcoal);
+  background: var(--accent-dark);
 }
 
 .btn-primary:disabled {
