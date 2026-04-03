@@ -43,7 +43,7 @@
 
 .left-mid p {
   font-size: 13px;
-  color: #9a9590;
+  color: var(--text-secondary);
   font-weight: 300;
   line-height: 1.8;
   max-width: 340px;
@@ -55,7 +55,7 @@
 }
 
 .left-stat {
-  border-top: 1px solid #2e2e2e;
+  border-top: 1px solid var(--dark-surface);
   padding-top: 16px;
   min-width: 80px;
 }
@@ -121,7 +121,7 @@
 .form-error {
   background: #fdf2f2;
   border: 1px solid #f5c6c6;
-  color: #c0392b;
+  color: var(--error);
   font-size: 13px;
   padding: 12px 16px;
   margin-bottom: 24px;
@@ -159,7 +159,7 @@
 }
 
 .field input.invalid {
-  border-bottom-color: #c0392b;
+  border-bottom-color: var(--error);
 }
 
 .field input::placeholder {
@@ -180,7 +180,7 @@
 .field-error {
   display: block;
   font-size: 11px;
-  color: #c0392b;
+  color: var(--error);
   margin-top: 6px;
   letter-spacing: 0.5px;
 }
@@ -215,7 +215,7 @@
 }
 
 .btn-submit:hover:not(:disabled) {
-  background: #2e2e2e;
+  background: var(--dark-surface);
 }
 
 .btn-submit:disabled {

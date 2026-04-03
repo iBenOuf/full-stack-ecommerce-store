@@ -345,7 +345,7 @@
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #2e2e2e;
+  background: var(--dark-surface);
 }
 
 .btn-primary:disabled {

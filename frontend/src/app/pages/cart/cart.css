@@ -128,7 +128,7 @@
 }
 
 .btn-remove:hover {
-  color: #c0392b;
+  color: var(--error);
 }
 
 .btn-remove svg {
@@ -225,14 +225,14 @@
 }
 
 .btn-clear:hover {
-  color: #c0392b;
+  color: var(--error);
 }
 
 /* ── Summary ─────────────────────────────────────────── */
 .cart-summary {
   position: sticky;
   top: 100px;
-  background: #f3f0eb;
+  background: var(--bg-hover);
   padding: 32px;
 }
 
@@ -282,7 +282,7 @@
 .btn-checkout {
   display: block;
   width: 100%;
-  background: #b8945a;
+  background: var(--accent-dark);
   color: #fff;
   padding: 16px;
   text-align: center;
@@ -362,7 +362,7 @@
 }
 
 .btn-primary:hover {
-  background: #2e2e2e;
+  background: var(--dark-surface);
 }
 
 /* ── Skeletons ───────────────────────────────────────── */
@@ -386,7 +386,7 @@
 }
 
 .skeleton {
-  background: linear-gradient(90deg, var(--border) 25%, #f0ece6 50%, var(--border) 75%);
+  background: linear-gradient(90deg, var(--border) 25%, var(--skeleton) 50%, var(--border) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   display: block;

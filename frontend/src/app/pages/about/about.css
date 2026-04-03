@@ -39,7 +39,7 @@
 
 .about-hero-desc {
   font-size: 15px;
-  color: #9a9590;
+  color: var(--text-secondary);
   line-height: 1.8;
   margin-bottom: 40px;
   max-width: 500px;
@@ -64,14 +64,14 @@
 }
 
 .btn-primary:hover {
-  background: #b8945a;
+  background: var(--accent-dark);
 }
 
 /* Stats */
 .about-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  background: #f3f0eb;
+  background: var(--bg-hover);
 }
 
 .stat-item {

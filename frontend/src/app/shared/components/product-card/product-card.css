@@ -21,7 +21,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, var(--border) 25%, #f0ece6 50%, var(--border) 75%);
+  background: linear-gradient(135deg, var(--border) 25%, var(--skeleton) 50%, var(--border) 75%);
   background-size: 200% 200%;
   animation: shimmer 1.5s infinite;
 }

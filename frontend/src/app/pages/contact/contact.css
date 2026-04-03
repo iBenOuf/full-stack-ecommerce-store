@@ -34,7 +34,7 @@
 
 .contact-subtitle {
   font-size: 15px;
-  color: #9a9590;
+  color: var(--text-secondary);
   line-height: 1.8;
   max-width: 480px;
   margin: 0 auto;
@@ -95,7 +95,7 @@
 /* Social */
 .contact-social {
   padding: 100px 48px;
-  background: #f3f0eb;
+  background: var(--bg-hover);
   text-align: center;
 }
 
@@ -164,7 +164,7 @@
 
 .contact-faq p {
   font-size: 15px;
-  color: #9a9590;
+  color: var(--text-secondary);
   margin-bottom: 24px;
 }
 

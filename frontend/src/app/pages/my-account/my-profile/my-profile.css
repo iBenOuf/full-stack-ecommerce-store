@@ -36,13 +36,13 @@
 }
 
 .field input.invalid {
-  border-bottom-color: #c0392b;
+  border-bottom-color: var(--error);
 }
 
 .field-error {
   display: block;
   font-size: 11px;
-  color: #c0392b;
+  color: var(--error);
   margin-top: 6px;
 }
 
@@ -121,7 +121,7 @@
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #2e2e2e;
+  background: var(--dark-surface);
 }
 
 .btn-primary:disabled {
@@ -177,7 +177,7 @@
 }
 
 .skeleton {
-  background: linear-gradient(90deg, var(--border) 25%, #f0ece6 50%, var(--border) 75%);
+  background: linear-gradient(90deg, var(--border) 25%, var(--skeleton) 50%, var(--border) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   display: block;
