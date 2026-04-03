@@ -25,18 +25,18 @@
         <tbody>
           @for (page of pages; track page._id) {
             <tr>
-              <td class="font-medium">{{ page.title }}</td>
-              <td class="text-muted">/p/{{ page.pageSlug }}</td>
-              <td>
+              <td data-label="Title" class="font-medium">{{ page.title }}</td>
+              <td data-label="URL" class="text-muted">/p/{{ page.pageSlug }}</td>
+              <td data-label="Visibility">
                 <div class="status-toggle-wrapper">
                   <span class="status-indicator" [class.active]="page.isActive"></span>
                   {{ page.isActive ? 'Published' : 'Draft' }}
                 </div>
               </td>
-              <td class="text-right actions-cell">
-                <button class="btn-icon" 
-                        [title]="page.isActive ? 'Unpublish' : 'Publish'" 
-                        (click)="toggleStatus(page)" 
+              <td data-label="Actions" class="text-right actions-cell">
+                <button class="btn-icon"
+                        [title]="page.isActive ? 'Unpublish' : 'Publish'"
+                        (click)="toggleStatus(page)"
                         [disabled]="isProcessing">
                   {{ page.isActive ? '🚫' : '✅' }}
                 </button>
