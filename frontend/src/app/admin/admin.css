@@ -1,9 +1,14 @@
 .admin-layout {
   display: flex;
   height: 100vh;
-  width: 100vw;
+  width: 100%;
   overflow: hidden;
   background-color: #f5f6f8;
+
+  /* Define admin-specific CSS variables */
+  --border-color: #e2e2e2;
+  --text-main: #1a1a1a;
+  --text-light: #6b7280;
 }
 
 /* Sidebar */
@@ -22,6 +27,7 @@
     position: fixed;
     top: 0;
     left: 0;
+    width: 260px;
     height: 100vh;
     z-index: 1000;
     transform: translateX(-100%);
@@ -40,6 +46,15 @@
   .admin-sidebar.collapsed .sidebar-nav a,
   .admin-sidebar.collapsed .sidebar-footer a {
     display: none;
+  }
+
+  /* Larger touch targets for mobile nav */
+  .sidebar-nav a {
+    padding: 14px 20px;
+    font-size: 1rem;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -181,6 +196,13 @@
   padding: 0 24px;
 }
 
+@media (max-width: 768px) {
+  .admin-topbar {
+    height: 56px;
+    padding: 0 16px;
+  }
+}
+
 .toggle-btn-mobile {
   background: none;
   border: none;
@@ -205,6 +227,11 @@
   cursor: pointer;
   position: relative;
   padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .badge {
@@ -224,7 +251,7 @@
   position: absolute;
   top: 100%;
   right: 0;
-  width: 320px;
+  width: clamp(280px, 80vw, 320px);
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -232,6 +259,17 @@
   z-index: 100;
   margin-top: 8px;
   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .notification-dropdown {
+    position: fixed;
+    top: 60px;
+    right: 8px;
+    left: 8px;
+    width: auto;
+    max-height: 60vh;
+  }
 }
 
 .dropdown-header {
@@ -302,4 +340,16 @@
   flex: 1;
   padding: 24px;
   overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .admin-content {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-content {
+    padding: 12px;
+  }
 }

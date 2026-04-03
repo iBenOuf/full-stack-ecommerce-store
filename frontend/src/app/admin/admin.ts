@@ -99,6 +99,13 @@ export class Admin implements OnInit, OnDestroy {
     }
   }
 
+  closeNotificationsOnOutsideClick(event: MouseEvent) {
+    const container = (event.target as HTMLElement).closest('.notification-container');
+    if (!container && this.showNotifications) {
+      this.showNotifications = false;
+    }
+  }
+
   ngOnDestroy() {
     if (this._notifSub) {
       this._notifSub.unsubscribe();
