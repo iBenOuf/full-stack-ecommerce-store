@@ -24,8 +24,8 @@
         </thead>
         <tbody>
           @for (prod of products; track prod._id) {
-            <tr>
-              <td>
+            <tr class="product-row">
+              <td data-label="Product">
                 <div class="product-cell">
                   <img
                     [src]="prod.imageUrl"
@@ -39,16 +39,16 @@
                   </div>
                 </div>
               </td>
-              <td>
+              <td data-label="Subcategory">
                 <span class="parent-badge">{{ getSubCatName(prod.subcategory) }}</span>
               </td>
-              <td class="text-right font-medium">{{ prod.price | currency }}</td>
-              <td class="text-right">
+              <td data-label="Price" class="text-right font-medium">{{ prod.price | currency }}</td>
+              <td data-label="Stock" class="text-right">
                 <span class="stock-badge" [class.critical]="prod.stockQuantity < 5">
                   {{ prod.stockQuantity }}
                 </span>
               </td>
-              <td>
+              <td data-label="Status">
                 <span
                   class="status-pill"
                   [class.active]="!prod.isDeleted"
@@ -57,7 +57,7 @@
                   {{ prod.isDeleted ? 'Deleted' : 'Active' }}
                 </span>
               </td>
-              <td class="text-right actions-cell">
+              <td data-label="Actions" class="text-right actions-cell">
                 <button
                   class="btn-icon edit"
                   title="Edit"
