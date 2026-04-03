@@ -35,6 +35,14 @@ app.use("/api/v1/notification", require("./routes/notification.route"));
 app.use("/api/v1/faq", require("./routes/faq.route"));
 app.use("/api/v1/report", require("./routes/report.route"));
 
+app.get("/api/v1/", (req, res) => {
+    res.status(200).json({
+        message: "API is running",
+        status: "ok",
+        timestamp: new Date().toISOString(),
+    });
+});
+
 const AppError = require("./utils/err.utils");
 const globalErrorHandler = require("./middlewares/error-handler.middleware");
 
