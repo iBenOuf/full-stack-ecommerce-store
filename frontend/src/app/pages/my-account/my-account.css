@@ -41,8 +41,8 @@
 
 .btn-logout {
   background: transparent;
-  border: 1px solid var(--dark-surface);
-  color: var(--text-hint);
+  border: 1px solid var(--error);
+  color: var(--error);
   padding: 10px 24px;
   font-family: var(--font-body);
   font-size: 11px;
@@ -53,8 +53,9 @@
 }
 
 .btn-logout:hover {
-  border-color: var(--text-hint);
-  color: #9a9590;
+  background: var(--error-bg);
+  border-color: var(--error);
+  color: var(--error);
 }
 
 .account-body {
