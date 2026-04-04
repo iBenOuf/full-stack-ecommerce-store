@@ -247,8 +247,8 @@ The API is organized into RESTful endpoints with **67 endpoints** across 15 modu
 
 ### Interactive Documentation
 Swagger UI is available at `/api-docs` when the backend is running:
+- **Live:** [https://api.ecommerce-store.benouf.dev/api-docs](https://api.ecommerce-store.benouf.dev/api-docs)
 - **Development:** `http://localhost:3000/api-docs`
-- **Production:** `https://your-backend-url.com/api-docs`
 
 ### Static Documentation
 | Documentation | Description |
