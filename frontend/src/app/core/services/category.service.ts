@@ -23,7 +23,7 @@ export class CategoryService {
     return this._http.post<ICategoryResponse>(this.apiURL + '/add', data);
   }
 
-  updateCategory(id: string, data: FormData) {
+  updateCategory(id: string, data: FormData | { isActive: boolean }) {
     return this._http.put<ICategoryResponse>(this.apiURL + '/update/' + id, data);
   }
 

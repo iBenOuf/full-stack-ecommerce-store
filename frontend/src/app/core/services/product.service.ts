@@ -61,7 +61,7 @@ export class ProductService {
     return this._http.post<IProductResponse>(this.apiURL, data);
   }
 
-  updateProduct(id: string, data: FormData) {
+  updateProduct(id: string, data: FormData | { isActive: boolean }) {
     return this._http.put<IProductResponse>(`${this.apiURL}/${id}`, data);
   }
 

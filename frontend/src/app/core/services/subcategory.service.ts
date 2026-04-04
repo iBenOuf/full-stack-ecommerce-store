@@ -22,7 +22,7 @@ export class SubcategoryService {
     return this._http.post<ISubcategoryResponse>(this.apiURL, data);
   }
 
-  updateSubcategory(id: string, data: FormData) {
+  updateSubcategory(id: string, data: FormData | { isActive: boolean }) {
     return this._http.put<ISubcategoryResponse>(this.apiURL + '/' + id, data);
   }
 

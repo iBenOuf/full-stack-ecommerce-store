@@ -6,6 +6,7 @@ export interface ISubcategory {
   slug: string;
   category: string | ICategory;
   image: string;
+  isActive?: boolean;
   isDeleted?: boolean;
 }
 

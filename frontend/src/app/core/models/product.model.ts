@@ -11,6 +11,7 @@ export interface IProduct {
   subcategory: ISubcategory;
   createdAt: string;
   updatedAt: string;
+  isActive?: boolean;
   isDeleted?: boolean;
 }
 
