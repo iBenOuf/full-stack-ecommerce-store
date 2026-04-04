@@ -19,7 +19,7 @@ info:
 
     ## Base URL
     ```
-    https://your-backend-url.com/api/v1
+    https://api.ecommerce-store.benouf.dev/api/v1
     ```
 
     ## Pagination
@@ -37,10 +37,10 @@ info:
     url: https://opensource.org/licenses/MIT
 
 servers:
+  - url: https://api.ecommerce-store.benouf.dev/api/v1
+    description: Production
   - url: http://localhost:3000/api/v1
     description: Development
-  - url: https://your-backend-url.com/api/v1
-    description: Production
 
 security:
   - bearerAuth: []
