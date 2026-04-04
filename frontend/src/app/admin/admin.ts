@@ -145,6 +145,5 @@ export class Admin implements OnInit, AfterViewInit, OnDestroy {
     if (this._routerSub) {
       this._routerSub.unsubscribe();
     }
-    this._notificationService.disconnect();
   }
 }

@@ -52,6 +52,15 @@ const productSchema = new mongoose.Schema(
     { timestamps: true },
 );
 
+productSchema.index({ isActive: 1, isDeleted: 1 });
+productSchema.index({ subcategory: 1, isActive: 1, isDeleted: 1 });
+productSchema.index({ category: 1, isActive: 1, isDeleted: 1 });
+productSchema.index({ slug: 1 });
+productSchema.index({ name: "text", description: "text" });
+productSchema.index({ createdAt: -1 });
+productSchema.index({ price: 1 });
+productSchema.index({ stockQuantity: 1 });
+
 productSchema.pre("save", async function () {
     if (this.isModified("subcategory")) {
         const Subcategory = mongoose.model("Subcategory");

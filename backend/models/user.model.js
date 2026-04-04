@@ -58,4 +58,7 @@ const userSchema = new mongoose.Schema(
 userSchema.pre("save", encryptPassword);
 userSchema.methods.isCorrectPassword = isCorrectPassword;
 
+userSchema.index({ role: 1, isActive: 1 });
+userSchema.index({ email: 1 });
+
 module.exports = mongoose.model("User", userSchema);

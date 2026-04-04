@@ -32,4 +32,7 @@ const testimonialSchema = new mongoose.Schema(
     { timestamps: true },
 );
 
+testimonialSchema.index({ status: 1, isDeleted: 1, createdAt: -1 });
+testimonialSchema.index({ user: 1 });
+
 module.exports = mongoose.model("Testimonial", testimonialSchema);

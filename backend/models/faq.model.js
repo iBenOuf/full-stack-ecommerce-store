@@ -30,4 +30,6 @@ const faqSchema = new mongoose.Schema(
     { timestamps: true },
 );
 
+faqSchema.index({ isActive: 1, isDeleted: 1, order: 1 });
+
 module.exports = mongoose.model("FAQ", faqSchema);

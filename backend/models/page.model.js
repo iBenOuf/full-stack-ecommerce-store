@@ -26,4 +26,6 @@ const pageSchema = new mongoose.Schema(
     { timestamps: true },
 );
 
+pageSchema.index({ pageSlug: 1, isActive: 1, isDeleted: 1 });
+
 module.exports = mongoose.model("Page", pageSchema);

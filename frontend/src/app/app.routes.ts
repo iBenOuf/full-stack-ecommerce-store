@@ -1,90 +1,59 @@
 import { Routes } from '@angular/router';
-import { Pages } from './pages/pages';
-import { Home } from './pages/home/home';
-import { About } from './pages/about/about';
-import { Contact } from './pages/contact/contact';
-import { Checkout } from './pages/checkout/checkout';
-import { Login } from './login/login';
-import { Register } from './register/register';
-import { Shop } from './pages/shop/shop';
-import { NotFound } from './not-found/not-found';
-import { Faq } from './pages/faq/faq';
-import { MyAccount } from './pages/my-account/my-account';
-import { MyOrders } from './pages/my-account/my-orders/my-orders';
-import { Testimonials } from './pages/testimonials/testimonials';
-import { Admin } from './admin/admin';
-import { Dashboard } from './admin/dashboard/dashboard';
-import { ManageCategories } from './admin/manage-categories/manage-categories';
-import { ManageOrders } from './admin/manage-orders/manage-orders';
-import { ManagePages } from './admin/manage-pages/manage-pages';
-import { ManageProducts } from './admin/manage-products/manage-products';
-import { ManageSubcategories } from './admin/manage-subcategories/manage-subcategories';
-import { ManageTestimonials } from './admin/manage-testimonials/manage-testimonials';
-import { ManageUsers } from './admin/manage-users/manage-users';
-import { SalesReports } from './admin/sales-reports/sales-reports';
-import { SiteSettings } from './admin/site-settings/site-settings';
-import { ManageFaqs } from './admin/manage-faqs/manage-faqs';
-import { Cart } from './pages/cart/cart';
-import { ProductDetail } from './pages/product-detail/product-detail';
-import { MyAddresses } from './pages/my-account/my-addresses/my-addresses';
-import { MyProfile } from './pages/my-account/my-profile/my-profile';
 import { authGuard } from './core/guards/auth-guard';
 import { adminGuard } from './core/guards/admin-guard';
 import { guestGuard } from './core/guards/guest-guard';
-import { OrderConfirmation } from './pages/order-confirmation/order-confirmation';
-import { DynamicPage } from './pages/dynamic-page/dynamic-page';
 
 export const routes: Routes = [
   {
     path: '',
-    component: Pages,
+    loadComponent: () => import('./pages/pages').then((m) => m.Pages),
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
-      { path: 'about', component: About },
-      { path: 'cart', component: Cart },
-      { path: 'checkout', component: Checkout, canActivate: [authGuard] },
-      { path: 'contact', component: Contact },
-      { path: 'faq', component: Faq },
-      { path: 'home', component: Home },
+      { path: 'about', loadComponent: () => import('./pages/about/about').then((m) => m.About) },
+      { path: 'cart', loadComponent: () => import('./pages/cart/cart').then((m) => m.Cart) },
+      { path: 'checkout', loadComponent: () => import('./pages/checkout/checkout').then((m) => m.Checkout), canActivate: [authGuard] },
+      { path: 'contact', loadComponent: () => import('./pages/contact/contact').then((m) => m.Contact) },
+      { path: 'faq', loadComponent: () => import('./pages/faq/faq').then((m) => m.Faq) },
+      { path: 'home', loadComponent: () => import('./pages/home/home').then((m) => m.Home) },
       {
         path: 'my-account',
-        component: MyAccount,
+        loadComponent: () => import('./pages/my-account/my-account').then((m) => m.MyAccount),
         canActivate: [authGuard],
         children: [
           { path: '', redirectTo: 'profile', pathMatch: 'full' },
-          { path: 'profile', component: MyProfile },
-          { path: 'addresses', component: MyAddresses },
-          { path: 'orders', component: MyOrders },
+          { path: 'profile', loadComponent: () => import('./pages/my-account/my-profile/my-profile').then((m) => m.MyProfile) },
+          { path: 'addresses', loadComponent: () => import('./pages/my-account/my-addresses/my-addresses').then((m) => m.MyAddresses) },
+          { path: 'orders', loadComponent: () => import('./pages/my-account/my-orders/my-orders').then((m) => m.MyOrders) },
         ],
       },
-      { path: 'product/:slug', component: ProductDetail },
-      { path: 'shop', component: Shop },
-      { path: 'testimonials', component: Testimonials },
-      { path: 'order-confirmation/:id', component: OrderConfirmation, canActivate: [authGuard] },
-      { path: 'p/:slug', component: DynamicPage },
+      { path: 'product/:slug', loadComponent: () => import('./pages/product-detail/product-detail').then((m) => m.ProductDetail) },
+      { path: 'shop', loadComponent: () => import('./pages/shop/shop').then((m) => m.Shop) },
+      { path: 'testimonials', loadComponent: () => import('./pages/testimonials/testimonials').then((m) => m.Testimonials) },
+      { path: 'order-confirmation/:id', loadComponent: () => import('./pages/order-confirmation/order-confirmation').then((m) => m.OrderConfirmation), canActivate: [authGuard] },
+      { path: 'p/:slug', loadComponent: () => import('./pages/dynamic-page/dynamic-page').then((m) => m.DynamicPage) },
     ],
   },
   {
     path: 'admin',
-    component: Admin,
+    loadComponent: () => import('./admin/admin').then((m) => m.Admin),
     canActivate: [adminGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: Dashboard },
-      { path: 'manage-categories', component: ManageCategories },
-      { path: 'manage-orders', component: ManageOrders },
-      { path: 'manage-pages', component: ManagePages },
-      { path: 'manage-products', component: ManageProducts },
-      { path: 'manage-subcategories', component: ManageSubcategories },
-      { path: 'manage-testimonials', component: ManageTestimonials },
-      { path: 'manage-faqs', component: ManageFaqs },
-      { path: 'manage-users', component: ManageUsers },
-      { path: 'sales-reports', component: SalesReports },
-      { path: 'site-settings', component: SiteSettings },
+      { path: 'dashboard', loadComponent: () => import('./admin/dashboard/dashboard').then((m) => m.Dashboard) },
+      { path: 'manage-categories', loadComponent: () => import('./admin/manage-categories/manage-categories').then((m) => m.ManageCategories) },
+      { path: 'manage-orders', loadComponent: () => import('./admin/manage-orders/manage-orders').then((m) => m.ManageOrders) },
+      { path: 'manage-pages', loadComponent: () => import('./admin/manage-pages/manage-pages').then((m) => m.ManagePages) },
+      { path: 'manage-products', loadComponent: () => import('./admin/manage-products/manage-products').then((m) => m.ManageProducts) },
+      { path: 'manage-subcategories', loadComponent: () => import('./admin/manage-subcategories/manage-subcategories').then((m) => m.ManageSubcategories) },
+      { path: 'manage-testimonials', loadComponent: () => import('./admin/manage-testimonials/manage-testimonials').then((m) => m.ManageTestimonials) },
+      { path: 'manage-faqs', loadComponent: () => import('./admin/manage-faqs/manage-faqs').then((m) => m.ManageFaqs) },
+      { path: 'manage-users', loadComponent: () => import('./admin/manage-users/manage-users').then((m) => m.ManageUsers) },
+      { path: 'sales-reports', loadComponent: () => import('./admin/sales-reports/sales-reports').then((m) => m.SalesReports) },
+      { path: 'site-settings', loadComponent: () => import('./admin/site-settings/site-settings').then((m) => m.SiteSettings) },
     ],
   },
-  { path: 'not-found', component: NotFound },
-  { path: 'register', component: Register, canActivate: [guestGuard] },
-  { path: 'login', component: Login, canActivate: [guestGuard] },
+  { path: 'not-found', loadComponent: () => import('./not-found/not-found').then((m) => m.NotFound) },
+  { path: 'register', loadComponent: () => import('./register/register').then((m) => m.Register), canActivate: [guestGuard] },
+  { path: 'login', loadComponent: () => import('./login/login').then((m) => m.Login), canActivate: [guestGuard] },
   { path: '**', redirectTo: 'not-found' },
 ];
