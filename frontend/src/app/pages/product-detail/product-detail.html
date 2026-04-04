@@ -104,14 +104,14 @@
 
           <div class="accordion-item" [class.open]="openAccordion === 'shipping'">
             <button class="accordion-trigger" (click)="toggleAccordion('shipping')">
-              <span>Shipping & Returns</span>
+              <span>{{ siteConfig?.shippingPolicy?.title?.en || 'Shipping & Returns' }}</span>
               <span class="accordion-icon">{{ openAccordion === 'shipping' ? '−' : '+' }}</span>
             </button>
             <div class="accordion-body">
               <ul>
-                <li>Free shipping</li>
-                <li>Standard delivery: 3–5 business days</li>
-                <li>Returns accepted within 14 days of delivery</li>
+                <li>{{ siteConfig?.shippingPolicy?.freeShipping?.en || 'Free shipping' }}</li>
+                <li>{{ siteConfig?.shippingPolicy?.standardDelivery?.en || 'Standard delivery: 3–5 business days' }}</li>
+                <li>{{ siteConfig?.shippingPolicy?.returnsPolicy?.en || 'Returns accepted within 14 days of delivery' }}</li>
                 <li>Items must be unworn and in original condition</li>
               </ul>
             </div>

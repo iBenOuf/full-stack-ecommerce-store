@@ -4,8 +4,10 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ICategory } from '../../core/models/category.model';
 import { cleanParams, IProduct, IProductsFilterParams } from '../../core/models/product.model';
 import { ISubcategory } from '../../core/models/subcategory.model';
+import { ISiteConfig } from '../../core/models/site-config.model';
 import { CategoryService } from '../../core/services/category.service';
 import { ProductService } from '../../core/services/product.service';
+import { SiteConfigService } from '../../core/services/site-config.service';
 import { SubcategoryService } from '../../core/services/subcategory.service';
 import { ProductCard } from '../../shared/components/product-card/product-card';
 
@@ -20,6 +22,7 @@ export class Shop {
     private _productService: ProductService,
     private _categoryService: CategoryService,
     private _subcategoryService: SubcategoryService,
+    private _siteConfigService: SiteConfigService,
     private _route: ActivatedRoute,
     private _router: Router,
     private _cdr: ChangeDetectorRef,
@@ -28,6 +31,7 @@ export class Shop {
   products: IProduct[] = [];
   categories: ICategory[] = [];
   subcategories: ISubcategory[] = [];
+  siteConfig: ISiteConfig | null = null;
 
   filterParams: IProductsFilterParams = { page: 1, limit: 12, sort: 'createdAtDESC' };
 
@@ -41,6 +45,7 @@ export class Shop {
   private searchSubject = new Subject<string>();
 
   ngOnInit(): void {
+    this.loadSiteConfig();
     this.loadCategories();
     this.loadSubcategories();
 
@@ -62,6 +67,20 @@ export class Shop {
       this.filterParams.page = 1;
       this.updateUrl();
     });
+  }
+
+  private loadSiteConfig(): void {
+    this._siteConfigService.getSiteConfigData().subscribe((config) => {
+      if (config) {
+        this.siteConfig = config;
+        this._cdr.detectChanges();
+      }
+    });
+    if (!this._siteConfigService.getConfigSnapshot()) {
+      this._siteConfigService.fetchConfig();
+    } else {
+      this.siteConfig = this._siteConfigService.getConfigSnapshot();
+    }
   }
 
   private loadProducts(): void {

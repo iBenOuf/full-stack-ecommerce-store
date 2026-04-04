@@ -6,10 +6,13 @@ import { IProduct } from '../../core/models/product.model';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../core/services/cart.service';
 import { ProductCard } from '../../shared/components/product-card/product-card';
+import { I18nPipe } from '../../core/pipes/i18n.pipe';
+import { ISiteConfig } from '../../core/models/site-config.model';
+import { SiteConfigService } from '../../core/services/site-config.service';
 
 @Component({
   selector: 'app-product-detail',
-  imports: [RouterLink, ProductCard],
+  imports: [RouterLink, ProductCard, I18nPipe],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.css',
 })
@@ -19,6 +22,7 @@ export class ProductDetail {
     private _productService: ProductService,
     private _cartService: CartService,
     private _toastService: ToastService,
+    private _siteConfigService: SiteConfigService,
     private _cdr: ChangeDetectorRef,
   ) {}
 
@@ -26,12 +30,29 @@ export class ProductDetail {
   relatedProducts: IProduct[] = [];
   quantity = 1;
   openAccordion: string | null = 'details';
+  siteConfig: ISiteConfig | null = null;
 
   ngOnInit(): void {
+    this.loadSiteConfig();
     this._route.paramMap.subscribe((params) => {
       const slug = params.get('slug');
       if (slug) this.loadProduct(slug);
     });
+  }
+
+  private loadSiteConfig(): void {
+    const snapshot = this._siteConfigService.getConfigSnapshot();
+    if (snapshot) {
+      this.siteConfig = snapshot;
+    } else {
+      this._siteConfigService.getSiteConfigData().subscribe((config) => {
+        if (config) {
+          this.siteConfig = config;
+          this._cdr.detectChanges();
+        }
+      });
+      this._siteConfigService.fetchConfig();
+    }
   }
 
   private loadProduct(slug: string): void {
