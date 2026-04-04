@@ -55,7 +55,6 @@ const productSchema = new mongoose.Schema(
 productSchema.index({ isActive: 1, isDeleted: 1 });
 productSchema.index({ subcategory: 1, isActive: 1, isDeleted: 1 });
 productSchema.index({ category: 1, isActive: 1, isDeleted: 1 });
-productSchema.index({ slug: 1 });
 productSchema.index({ name: "text", description: "text" });
 productSchema.index({ createdAt: -1 });
 productSchema.index({ price: 1 });

@@ -23,6 +23,5 @@ const categorySchema = new mongoose.Schema(
 );
 
 categorySchema.index({ isActive: 1, isDeleted: 1 });
-categorySchema.index({ slug: 1 });
 
 module.exports = mongoose.model("Category", categorySchema);
