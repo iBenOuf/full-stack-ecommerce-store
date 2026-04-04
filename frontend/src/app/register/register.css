@@ -264,7 +264,7 @@
 
 .btn-submit {
   width: 100%;
-  background: var(--charcoal);
+  background: var(--accent);
   color: #fff;
   padding: 16px;
   font-family: var(--font-body);
@@ -279,7 +279,7 @@
 }
 
 .btn-submit:hover:not(:disabled) {
-  background: var(--dark-surface);
+  background: var(--accent-dark);
 }
 
 .btn-submit:disabled {
@@ -317,15 +317,15 @@
 }
 
 .login-link a {
-  color: var(--charcoal);
+  color: var(--accent);
   font-weight: 500;
   text-decoration: none;
-  border-bottom: 1px solid var(--charcoal);
+  border-bottom: 1px solid var(--accent);
 }
 
 .login-link a:hover {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
+  color: var(--accent-dark);
+  border-bottom-color: var(--accent-dark);
 }
 
 /* ── Mobile Responsive ── */
