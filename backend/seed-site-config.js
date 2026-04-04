@@ -101,7 +101,7 @@ const seedSiteConfig = async () => {
                 {
                     section: { en: "Help" },
                     links: [
-                        { label: { en: "Track My Order" }, url: "/my-orders" },
+                        { label: { en: "Track My Order" }, url: "/my-account/orders" },
                         { label: { en: "FAQs" }, url: "/faq" },
                         { label: { en: "Contact Us" }, url: "/contact" },
                         { label: { en: "Shipping Policy" }, url: "/p/shipping-policy" },
