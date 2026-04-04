@@ -1,10 +1,10 @@
-const cloudinary = require("cloudinary").v2;
+const cloudinary = require("cloudinary");
 const CloudinaryStorage = require("multer-storage-cloudinary");
 const multer = require("multer");
 const path = require("path");
 
 // Configure Cloudinary
-cloudinary.config({
+cloudinary.v2.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
@@ -22,11 +22,6 @@ const createCloudinaryStorage = (folderName) => {
             folder: `ecommerce/${folderName}`,
             allowed_formats: ["png", "jpg", "jpeg", "webp"],
             transformation: [{ quality: "auto:good", fetch_format: "auto" }],
-            public_id: (req, file) => {
-                const uniqueSuffix = Date.now() + "_" + Math.round(Math.random() * 1e6);
-                const ext = path.extname(file.originalname).toLowerCase().replace(".", "");
-                return `${uniqueSuffix}_${ext}`;
-            },
         },
     });
 };
@@ -38,7 +33,7 @@ const createCloudinaryStorage = (folderName) => {
  * @returns {Promise<{ url: string, publicId: string }>}
  */
 const uploadToCloudinary = async (filePath, folderName) => {
-    const result = await cloudinary.uploader.upload(filePath, {
+    const result = await cloudinary.v2.uploader.upload(filePath, {
         folder: `ecommerce/${folderName}`,
         resource_type: "image",
         transformation: [{ quality: "auto:good", fetch_format: "auto" }],
@@ -59,7 +54,7 @@ const deleteFromCloudinary = async (publicId) => {
     if (!publicId) return;
 
     try {
-        await cloudinary.uploader.destroy(publicId);
+        await cloudinary.v2.uploader.destroy(publicId);
     } catch (error) {
         console.error("Error deleting image from Cloudinary:", error);
     }
@@ -96,7 +91,7 @@ const extractPublicIdFromUrl = (url) => {
 };
 
 module.exports = {
-    cloudinary,
+    cloudinary: cloudinary.v2,
     createCloudinaryStorage,
     uploadToCloudinary,
     deleteFromCloudinary,

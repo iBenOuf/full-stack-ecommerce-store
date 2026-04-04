@@ -190,11 +190,13 @@ exports.uploadHeroImage = async (req, res) => {
         await deleteFromCloudinary(oldPublicId);
     }
 
+    const imageUrl = req.file.secure_url;
+
     const updatedConfig = await SiteConfig.findOneAndUpdate(
         {},
-        { "heroSection.heroImage": req.file.path }, // Cloudinary URL
+        { $set: { "heroSection.heroImage": imageUrl } },
         {
-            new: true,
+            returnDocument: "after",
             upsert: true,
             runValidators: true,
         },
