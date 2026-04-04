@@ -18,7 +18,7 @@ exports.getAllCategories = ({ adminOnly = false } = {}) => {
 
         const selectFields = adminOnly ? "-__v" : "-__v -isDeleted";
         const categories = await Category.find({
-            ...(!adminOnly && { isDeleted: false }),
+            ...(!adminOnly && { isDeleted: false, isActive: true }),
         }).select(selectFields);
 
         setCache(cacheKey, categories, 3600); // 1h
@@ -35,7 +35,7 @@ exports.getCategoryBySlug = ({ adminOnly = false } = {}) => {
         const selectFields = adminOnly ? "-__v" : "-__v -isDeleted";
         const category = await Category.findOne({
             slug,
-            ...(!adminOnly && { isDeleted: false }),
+            ...(!adminOnly && { isDeleted: false, isActive: true }),
         }).select(selectFields);
         if (!category) {
             return res.status(404).json({
@@ -55,7 +55,7 @@ exports.getCategoryById = ({ adminOnly = false } = {}) => {
         const selectFields = adminOnly ? "-__v" : "-__v -isDeleted";
         const category = await Category.findOne({
             _id: categoryId,
-            ...(!adminOnly && { isDeleted: false }),
+            ...(!adminOnly && { isDeleted: false, isActive: true }),
         }).select(selectFields);
         if (!category) {
             return res.status(404).json({
@@ -72,6 +72,7 @@ exports.getCategoryById = ({ adminOnly = false } = {}) => {
 const createCategorySchema = Joi.object({
     name: Joi.string().min(1).max(50).required(),
     slug: Joi.string().min(1).max(50).trim().required(),
+    isActive: Joi.boolean().optional(),
 });
 
 exports.createCategory = async (req, res) => {
@@ -109,6 +110,7 @@ exports.createCategory = async (req, res) => {
 const updateCategorySchema = Joi.object({
     name: Joi.string().min(1).max(50).optional(),
     slug: Joi.string().min(1).max(50).trim().optional(),
+    isActive: Joi.boolean().optional(),
 });
 exports.updateCategory = async (req, res) => {
     const { error, value } = updateCategorySchema.validate(req.body);
@@ -139,6 +141,7 @@ exports.updateCategory = async (req, res) => {
     const updateData = {
         ...(name && { name }),
         ...(slug && { slug }),
+        ...(value.isActive !== undefined && { isActive: value.isActive }),
     };
     if (req.file) {
         // Delete old image from Cloudinary

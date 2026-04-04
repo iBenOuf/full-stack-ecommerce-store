@@ -81,7 +81,25 @@ exports.getCart = async (req, res) => {
             .status(200)
             .json({ message: "Cart is empty", data: { items: [] } });
     }
-    res.status(200).json({ message: "Cart fetched successfully", data: cart });
+
+    const removedItems = [];
+    cart.items = cart.items.filter((item) => {
+        if (!item.product || item.product.isDeleted || !item.product.isActive) {
+            removedItems.push(item.product?.name || "Unknown product");
+            return false;
+        }
+        return true;
+    });
+
+    if (removedItems.length > 0) {
+        await cart.save();
+    }
+
+    const response = { message: "Cart fetched successfully", data: cart };
+    if (removedItems.length > 0) {
+        response.removedItems = removedItems;
+    }
+    res.status(200).json(response);
 };
 
 const updateCartSchema = Joi.object({
@@ -116,6 +134,11 @@ exports.updateCart = async (req, res) => {
     const product = await Product.findById(productId);
     if (!product) {
         return res.status(404).json({ message: "Product not found" });
+    }
+    if (product.isDeleted || !product.isActive) {
+        return res.status(400).json({
+            message: "Product is no longer available",
+        });
     }
     if (quantity > product.stockQuantity) {
         return res.status(400).json({

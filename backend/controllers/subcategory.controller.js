@@ -18,7 +18,7 @@ exports.getAllSubcategories = ({ adminOnly = false } = {}) => {
         }
 
         const subcategories = await Subcategory.find({
-            ...(!adminOnly && { isDeleted: false }),
+            ...(!adminOnly && { isDeleted: false, isActive: true }),
         }).populate("category");
 
         setCache(cacheKey, subcategories, 3600); // 1h
@@ -56,6 +56,7 @@ exports.getAllSubcategoriesByCategorySlug = ({ adminOnly = false } = {}) => {
         const query = { category: category._id };
         if (!adminOnly) {
             query.isDeleted = false;
+            query.isActive = true;
         }
 
         const subcategories =
@@ -75,7 +76,7 @@ exports.getSubcategoryBySlug = ({ adminOnly = false } = {}) => {
         const slug = req.params.slug;
         const subcategory = await Subcategory.findOne({
             slug,
-            ...(!adminOnly && { isDeleted: false }),
+            ...(!adminOnly && { isDeleted: false, isActive: true }),
         }).populate("category");
         if (!subcategory) {
             return res.status(404).json({
@@ -138,11 +139,14 @@ const updateSubcategorySchema = Joi.object({
     name: Joi.string().min(1).max(50).optional(),
     slug: Joi.string().min(1).max(50).trim().optional(),
     categoryId: Joi.string().optional(),
+    isActive: Joi.boolean().optional(),
 });
 
 exports.updateSubcategory = async (req, res) => {
     const { error, value } = updateSubcategorySchema.validate(req.body);
     if (error) {
+        console.log("Subcategory update validation error:", error.details[0].message);
+        console.log("Received body:", req.body);
         return res.status(400).json({ message: error.details[0].message });
     }
     if (Object.keys(value).length === 0 && !req.file) {
@@ -177,6 +181,7 @@ exports.updateSubcategory = async (req, res) => {
         ...(name && { name }),
         ...(slug && { slug }),
         ...(categoryId && { category: categoryId }),
+        ...(value.isActive !== undefined && { isActive: value.isActive }),
     };
     if (req.file) {
         // Delete old image from Cloudinary

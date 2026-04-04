@@ -35,25 +35,66 @@ exports.createOrder = async (req, res) => {
     }
 
     try {
+        const orderItems = [];
+        const unavailableItems = [];
+
         for (const item of cart.items) {
-            const product = await Product.findOneAndUpdate(
-                { _id: item.product, stockQuantity: { $gte: item.quantity } },
-                { $inc: { stockQuantity: -item.quantity } },
-                { new: true },
-            );
+            const product = await Product.findOne({
+                _id: item.product,
+                isActive: true,
+                isDeleted: false,
+                stockQuantity: { $gte: item.quantity },
+            });
+
             if (!product) {
-                return res
-                    .status(400)
-                    .json({
-                        message: `Product ${item.product} not found or out of stock`,
+                const prod = await Product.findById(item.product);
+                if (!prod || prod.isDeleted) {
+                    unavailableItems.push({
+                        productId: item.product,
+                        reason: "no longer available",
                     });
+                } else if (!prod.isActive) {
+                    unavailableItems.push({
+                        productId: item.product,
+                        name: prod.name,
+                        reason: "no longer available",
+                    });
+                } else {
+                    unavailableItems.push({
+                        productId: item.product,
+                        name: prod?.name,
+                        reason: "out of stock",
+                    });
+                }
+                continue;
             }
+
+            await Product.findByIdAndUpdate(item.product, {
+                $inc: { stockQuantity: -item.quantity },
+            });
+
+            orderItems.push({
+                product: item.product,
+                snapshot: {
+                    name: product.name,
+                    imageUrl: product.imageUrl,
+                },
+                quantity: item.quantity,
+                unitPrice: product.price,
+            });
+        }
+
+        if (unavailableItems.length > 0 && orderItems.length === 0) {
+            return res.status(400).json({
+                message: "All items in your cart are no longer available",
+                unavailableItems,
+            });
         }
 
         const [order] = await Order.create([
             {
                 user: userId,
-                items: cart.items,
+                items: orderItems,
                 shippingAddress,
                 deliveryPhone,
             },
@@ -65,6 +106,14 @@ exports.createOrder = async (req, res) => {
             "items.product",
         );
 
+        const response = {
+            message: "Order created successfully",
+            data: populatedOrder,
+        };
+        if (unavailableItems.length > 0) {
+            response.unavailableItems = unavailableItems;
+        }
+
         await createNotification(
             "new_order",
             "New Order",
@@ -73,7 +122,7 @@ exports.createOrder = async (req, res) => {
             "Order",
         );
 
-        for (const item of cart.items) {
+        for (const item of orderItems) {
             const prod = await Product.findById(item.product);
             if (prod && prod.stockQuantity <= 5) {
                 await createNotification(
@@ -86,10 +135,7 @@ exports.createOrder = async (req, res) => {
             }
         }
 
-        res.status(201).json({
-            message: "Order created successfully",
-            data: populatedOrder,
-        });
+        return res.status(201).json(response);
     } catch (error) {
         console.error("CREATE ORDER ERROR:", error);
         res.status(500).json({

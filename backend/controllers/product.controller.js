@@ -236,6 +236,7 @@ const updateProductSchema = Joi.object({
     price: Joi.number().min(0).optional(),
     stockQuantity: Joi.number().integer().min(0).optional(),
     subcategoryId: Joi.string().optional(),
+    isActive: Joi.boolean().optional(),
 });
 
 exports.updateProductById = async (req, res) => {
@@ -266,6 +267,7 @@ exports.updateProductById = async (req, res) => {
         ...(price !== undefined && { price }),
         ...(stockQuantity !== undefined && { stockQuantity }),
         ...(subcategoryId && { subcategory: subcategoryId }),
+        ...(value.isActive !== undefined && { isActive: value.isActive }),
     };
 
     if (req.file) {
