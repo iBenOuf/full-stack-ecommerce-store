@@ -94,6 +94,22 @@ export class ManageSubcategories implements OnInit {
     this.showModal = false;
   }
 
+  toggleActive(id: string, event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+    this._subcategoryService.updateSubcategory(id, { isActive: checked }).subscribe({
+      next: () => {
+        const sub = this.subcategories.find((s) => s._id === id);
+        if (sub) sub.isActive = checked;
+        this._cdr.detectChanges();
+        this._toastService.success(`Subcategory ${checked ? 'activated' : 'deactivated'}`);
+      },
+      error: () => {
+        this._toastService.error('Failed to update subcategory');
+        this.loadData();
+      },
+    });
+  }
+
   generateSlug() {
     const name = this.subcatForm.get('name')?.value;
     if (name) {

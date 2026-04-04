@@ -49,13 +49,14 @@
                 </span>
               </td>
               <td data-label="Status">
-                <span
-                  class="status-pill"
-                  [class.active]="!prod.isDeleted"
-                  [class.inactive]="prod.isDeleted"
-                >
-                  {{ prod.isDeleted ? 'Deleted' : 'Active' }}
-                </span>
+                @if (!prod.isDeleted) {
+                  <label class="toggle-switch">
+                    <input type="checkbox" [checked]="prod.isActive !== false" (change)="toggleActive(prod._id, $event)" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                } @else {
+                  <span class="status-pill inactive">Deleted</span>
+                }
               </td>
               <td data-label="Actions" class="text-right actions-cell">
                 <button

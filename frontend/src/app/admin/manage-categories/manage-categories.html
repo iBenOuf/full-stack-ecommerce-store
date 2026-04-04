@@ -35,13 +35,14 @@
               <td data-label="Name" class="font-medium">{{ cat.name }}</td>
               <td data-label="Slug" class="text-muted">{{ cat.slug }}</td>
               <td data-label="Status">
-                <span
-                  class="status-pill"
-                  [class.active]="!cat.isDeleted"
-                  [class.inactive]="cat.isDeleted"
-                >
-                  {{ cat.isDeleted ? 'Deleted' : 'Active' }}
-                </span>
+                @if (!cat.isDeleted) {
+                  <label class="toggle-switch">
+                    <input type="checkbox" [checked]="cat.isActive !== false" (change)="toggleActive(cat._id, $event)" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                } @else {
+                  <span class="status-pill inactive">Deleted</span>
+                }
               </td>
               <td data-label="Actions" class="text-right actions-cell">
                 <button class="btn-icon edit" (click)="openEditModal(cat)" [disabled]="isDeleting">

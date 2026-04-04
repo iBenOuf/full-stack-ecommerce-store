@@ -39,13 +39,14 @@
               </td>
               <td data-label="Slug" class="text-muted">{{ sub.slug }}</td>
               <td data-label="Status">
-                <span
-                  class="status-pill"
-                  [class.active]="!sub.isDeleted"
-                  [class.inactive]="sub.isDeleted"
-                >
-                  {{ sub.isDeleted ? 'Deleted' : 'Active' }}
-                </span>
+                @if (!sub.isDeleted) {
+                  <label class="toggle-switch">
+                    <input type="checkbox" [checked]="sub.isActive !== false" (change)="toggleActive(sub._id, $event)" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                } @else {
+                  <span class="status-pill inactive">Deleted</span>
+                }
               </td>
               <td data-label="Actions" class="text-right actions-cell">
                 <button

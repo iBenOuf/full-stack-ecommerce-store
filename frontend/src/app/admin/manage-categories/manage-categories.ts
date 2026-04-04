@@ -81,6 +81,22 @@ export class ManageCategories implements OnInit {
     this.showModal = false;
   }
 
+  toggleActive(id: string, event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+    this._categoryService.updateCategory(id, { isActive: checked }).subscribe({
+      next: (res) => {
+        const cat = this.categories.find((c) => c._id === id);
+        if (cat) cat.isActive = checked;
+        this._cdr.detectChanges();
+        this._toastService.success(`Category ${checked ? 'activated' : 'deactivated'}`);
+      },
+      error: () => {
+        this._toastService.error('Failed to update category');
+        this.loadCategories();
+      },
+    });
+  }
+
   generateSlug() {
     const name = this.categoryForm.get('name')?.value;
     if (name) {

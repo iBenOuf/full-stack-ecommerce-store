@@ -100,6 +100,22 @@ export class ManageProducts implements OnInit {
     });
   }
 
+  toggleActive(id: string, event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+    this._productService.updateProduct(id, { isActive: checked }).subscribe({
+      next: () => {
+        const prod = this.products.find((p) => p._id === id);
+        if (prod) prod.isActive = checked;
+        this._cdr.detectChanges();
+        this._toastService.success(`Product ${checked ? 'activated' : 'deactivated'}`);
+      },
+      error: () => {
+        this._toastService.error('Failed to update product');
+        this.loadProducts();
+      },
+    });
+  }
+
   changePage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
