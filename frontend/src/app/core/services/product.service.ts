@@ -51,9 +51,13 @@ export class ProductService {
     });
   }
 
-  getAdminProducts(page: number = 1, limit: number = 10) {
+  getAdminProducts(params: IProductsFilterParams) {
+    const cleanParams: cleanParams = {};
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null) cleanParams[key] = val;
+    });
     return this._http.get<IProductsPaginatedResponse>(`${this.apiURL}/admin`, {
-      params: { page, limit },
+      params: cleanParams,
     });
   }
 

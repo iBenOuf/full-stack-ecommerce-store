@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ICategory } from '../../core/models/category.model';
-import { IProduct } from '../../core/models/product.model';
+import { IProduct, IProductsFilterParams } from '../../core/models/product.model';
 import { ISubcategory } from '../../core/models/subcategory.model';
 import { CategoryService } from '../../core/services/category.service';
 import { ProductService } from '../../core/services/product.service';
 import { SubcategoryService } from '../../core/services/subcategory.service';
 import { ToastService } from '../../core/services/toast.service';
-import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-manage-products',
@@ -30,8 +30,20 @@ export class ManageProducts implements OnInit {
   isSaving = false;
   isDeleting = false;
 
-  currentPage = 1;
+  totalProducts = 0;
   totalPages = 1;
+  currentPage = 1;
+
+  filterParams: IProductsFilterParams = {
+    page: 1,
+    limit: 12,
+    sort: 'createdAtDESC',
+    status: 'all',
+    stockStatus: undefined,
+  };
+
+  activeCategoryId: string | null = null;
+  private searchSubject = new Subject<string>();
 
   showModal = false;
   editingId: string | null = null;
@@ -60,6 +72,13 @@ export class ManageProducts implements OnInit {
     this.loadDependencies();
     this.loadProducts();
 
+    this.searchSubject.pipe(debounceTime(400), distinctUntilChanged()).subscribe((term) => {
+      this.filterParams.filter = term || undefined;
+      this.filterParams.page = 1;
+      this.currentPage = 1;
+      this.loadProducts();
+    });
+
     this.productForm.get('category')?.valueChanges.subscribe((catId) => {
       if (catId) {
         this.filteredSubcategories = this.subcategories.filter((sub) => {
@@ -81,23 +100,142 @@ export class ManageProducts implements OnInit {
   loadDependencies() {
     this._categoryService.getAdminCategories().subscribe((res) => {
       this.categories = res.data;
+      this._cdr.detectChanges();
     });
     this._subcategoryService.getAdminSubcategories().subscribe((res) => {
       this.subcategories = res.data;
+      this._cdr.detectChanges();
     });
   }
 
   loadProducts() {
     this.isLoading = true;
-    this._productService.getAdminProducts(this.currentPage, 12).subscribe({
+    const params: IProductsFilterParams = {
+      ...this.filterParams,
+      page: this.currentPage,
+    };
+    this._productService.getAdminProducts(params).subscribe({
       next: (res) => {
         this.products = res.data.data;
+        this.totalProducts = res.data.total;
         this.totalPages = res.data.totalPages || 1;
+        this.currentPage = res.data.page || 1;
         this.isLoading = false;
         this._cdr.detectChanges();
       },
       error: () => this.handleError('Failed to load products'),
     });
+  }
+
+  onSearch(event: Event) {
+    const term = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(term);
+  }
+
+  onSort(event: Event) {
+    this.filterParams.sort = (event.target as HTMLSelectElement).value;
+    this.filterParams.page = 1;
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
+  toggleCategory(catId: string) {
+    if (this.activeCategoryId === catId) {
+      this.activeCategoryId = null;
+      this.filterParams.categorySlug = undefined;
+      this.filterParams.subcategorySlug = undefined;
+    } else {
+      this.activeCategoryId = catId;
+      const cat = this.categories.find((c) => c._id === catId);
+      if (cat) {
+        this.filterParams.categorySlug = cat.slug;
+        this.filterParams.subcategorySlug = undefined;
+      }
+    }
+    this.filterParams.page = 1;
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
+  setSubcategory(slug: string) {
+    this.filterParams.subcategorySlug = slug;
+    this.filterParams.categorySlug = undefined;
+    this.filterParams.page = 1;
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
+  clearCategoryFilter() {
+    this.activeCategoryId = null;
+    this.filterParams.categorySlug = undefined;
+    this.filterParams.subcategorySlug = undefined;
+    this.filterParams.page = 1;
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
+  setStatus(status: string) {
+    this.filterParams.status = status;
+    this.filterParams.page = 1;
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
+  setStockStatus(stockStatus: string) {
+    this.filterParams.stockStatus = this.filterParams.stockStatus === stockStatus ? undefined : stockStatus;
+    this.filterParams.page = 1;
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(
+      this.filterParams.filter ||
+      this.filterParams.categorySlug ||
+      this.filterParams.subcategorySlug ||
+      this.filterParams.status === 'deleted' ||
+      this.filterParams.status === 'active' ||
+      this.filterParams.status === 'enabled' ||
+      this.filterParams.status === 'disabled' ||
+      this.filterParams.stockStatus
+    );
+  }
+
+  clearAllFilters() {
+    this.filterParams = {
+      page: 1,
+      limit: 12,
+      sort: this.filterParams.sort || 'createdAtDESC',
+      status: 'all',
+      stockStatus: undefined,
+    };
+    this.activeCategoryId = null;
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
+  getSubcategories(catId: string): ISubcategory[] {
+    return this.subcategories.filter((sub) => {
+      const subCatId = typeof sub.category === 'object' ? sub.category._id : sub.category;
+      return subCatId === catId;
+    });
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisible = 5;
+    if (this.totalPages <= maxVisible + 2) {
+      for (let i = 1; i <= this.totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (this.currentPage > 3) pages.push(-1);
+      const start = Math.max(2, this.currentPage - 1);
+      const end = Math.min(this.totalPages - 1, this.currentPage + 1);
+      for (let i = start; i <= end; i++) pages.push(i);
+      if (this.currentPage < this.totalPages - 2) pages.push(-1);
+      pages.push(this.totalPages);
+    }
+    return pages;
   }
 
   toggleActive(id: string, event: Event) {
@@ -119,6 +257,7 @@ export class ManageProducts implements OnInit {
   changePage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+      this.filterParams.page = page;
       this.loadProducts();
     }
   }
@@ -156,7 +295,7 @@ export class ManageProducts implements OnInit {
     });
 
     this.selectedFile = null;
-    this.previewUrl = prod.imageUrl; // Cloudinary URL
+    this.previewUrl = prod.imageUrl;
     this.showModal = true;
     if (this.imageInput) this.imageInput.nativeElement.value = '';
     this._cdr.detectChanges();

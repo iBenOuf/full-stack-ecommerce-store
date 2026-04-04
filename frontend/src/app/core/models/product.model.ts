@@ -43,10 +43,12 @@ export interface IProductsFilterParams {
   sort?: string;
   subcategorySlug?: string;
   categorySlug?: string;
-  inStock?: boolean;
+  inStock?: string;
+  stockStatus?: string;
+  status?: string;
   productId?: string;
   page?: number;
   limit?: number;
 }
 
-export type cleanParams = { [key: string]: string };
+export type cleanParams = { [key: string]: string | number };

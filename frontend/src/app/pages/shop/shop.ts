@@ -57,7 +57,7 @@ export class Shop {
         filter: params['filter'] || undefined,
         subcategorySlug: params['subcategorySlug'] || undefined,
         categorySlug: params['categorySlug'] || undefined,
-        inStock: params['inStock'] === 'true' || undefined,
+        inStock: params['inStock'] === 'true' ? 'true' : undefined,
       };
       this.loadProducts();
     });
@@ -164,7 +164,7 @@ export class Shop {
   }
 
   toggleInStock(): void {
-    this.filterParams.inStock = this.filterParams.inStock ? undefined : true;
+    this.filterParams.inStock = this.filterParams.inStock ? undefined : 'true';
     this.filterParams.page = 1;
     this.updateUrl();
   }

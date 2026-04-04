@@ -1,4 +1,4 @@
-<div class="admin-page category-page">
+<div class="admin-page manage-products-page">
   <div class="page-header">
     <div>
       <h2>Manage Products</h2>
@@ -7,108 +7,212 @@
     <button class="btn btn-primary" (click)="openAddModal()">+ Add Product</button>
   </div>
 
-  <div class="table-container">
-    @if (isLoading) {
-      <div class="loading-state">Loading products...</div>
-    } @else {
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Subcategory</th>
-            <th class="text-right">Price</th>
-            <th class="text-right">Stock</th>
-            <th>Status</th>
-            <th class="text-right">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (prod of products; track prod._id) {
-            <tr class="product-row">
-              <td data-label="Product">
-                <div class="product-cell">
-                  <img
-                    [src]="prod.imageUrl"
-                    alt="{{ prod.name }}"
-                    class="cat-thumb"
-                    (error)="$event.target.src = 'assets/images/placeholder.png'"
-                  />
-                  <div class="product-info">
-                    <span class="font-medium">{{ prod.name }}</span>
-                    <span class="text-muted text-small">{{ prod.slug }}</span>
-                  </div>
-                </div>
-              </td>
-              <td data-label="Subcategory">
-                <span class="parent-badge">{{ getSubCatName(prod.subcategory) }}</span>
-              </td>
-              <td data-label="Price" class="text-right font-medium">{{ prod.price | currency }}</td>
-              <td data-label="Stock" class="text-right">
-                <span class="stock-badge" [class.critical]="prod.stockQuantity < 5">
-                  {{ prod.stockQuantity }}
-                </span>
-              </td>
-              <td data-label="Status">
-                @if (!prod.isDeleted) {
-                  <label class="toggle-switch">
-                    <input type="checkbox" [checked]="prod.isActive !== false" (change)="toggleActive(prod._id, $event)" />
-                    <span class="toggle-slider"></span>
-                  </label>
-                } @else {
-                  <span class="status-pill inactive">Deleted</span>
-                }
-              </td>
-              <td data-label="Actions" class="text-right actions-cell">
-                <button
-                  class="btn-icon edit"
-                  title="Edit"
-                  (click)="openEditModal(prod)"
-                  [disabled]="isDeleting"
-                >
-                  ✏️
-                </button>
-                @if (!prod.isDeleted) {
-                  <button
-                    class="btn-icon delete"
-                    title="Delete"
-                    (click)="deleteProduct(prod._id)"
-                    [disabled]="isDeleting"
-                  >
-                    🗑️
-                  </button>
-                }
-              </td>
-            </tr>
-          }
-          @if (products.length === 0) {
-            <tr>
-              <td colspan="6" class="text-center py-4 text-muted">No products found.</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-
-      <!-- Pagination -->
-      @if (totalPages > 1) {
-        <div class="pagination">
-          <button
-            class="page-btn"
-            [disabled]="currentPage === 1"
-            (click)="changePage(currentPage - 1)"
-          >
-            Previous
-          </button>
-          <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
-          <button
-            class="page-btn"
-            [disabled]="currentPage === totalPages"
-            (click)="changePage(currentPage + 1)"
-          >
-            Next
-          </button>
+  <div class="mp-layout">
+    <!-- Sidebar -->
+    <aside class="mp-sidebar">
+      <!-- Search -->
+      <div class="filter-group">
+        <div class="search-box">
+          <input
+            type="text"
+            placeholder="Search products..."
+            [value]="filterParams.filter || ''"
+            (input)="onSearch($event)"
+            class="search-input"
+          />
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
         </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="filter-group">
+        <h3 class="filter-title">Categories</h3>
+        <ul class="filter-list">
+          <li>
+            <button
+              class="filter-item"
+              [class.active]="!filterParams.subcategorySlug && !filterParams.categorySlug"
+              (click)="clearCategoryFilter()"
+            >
+              All
+              <span class="filter-count">{{ totalProducts }}</span>
+            </button>
+          </li>
+          @for (category of categories; track $index) {
+            <li>
+              <button
+                class="filter-item filter-category"
+                [class.active]="activeCategoryId === category._id"
+                (click)="toggleCategory(category._id)"
+              >
+                {{ category.name }}
+                <svg class="chevron" [class.open]="activeCategoryId === category._id" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </button>
+              @if (activeCategoryId === category._id && getSubcategories(category._id).length > 0) {
+                <ul class="filter-sublist">
+                  @for (sub of getSubcategories(category._id); track $index) {
+                    <li>
+                      <button
+                        class="filter-item filter-sub"
+                        [class.active]="filterParams.subcategorySlug === sub.slug"
+                        (click)="setSubcategory(sub.slug)"
+                      >
+                        {{ sub.name }}
+                      </button>
+                    </li>
+                  }
+                </ul>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Status -->
+      <div class="filter-group">
+        <h3 class="filter-title">Status</h3>
+        <div class="status-filters">
+          <button class="status-btn" [class.active]="filterParams.status === 'all'" (click)="setStatus('all')">All</button>
+          <button class="status-btn" [class.active]="filterParams.status === 'active'" (click)="setStatus('active')">Active</button>
+          <button class="status-btn" [class.active]="filterParams.status === 'deleted'" (click)="setStatus('deleted')">Deleted</button>
+        </div>
+        <div class="status-filters">
+          <button class="status-btn" [class.active]="filterParams.status === 'enabled'" (click)="setStatus('enabled')">Enabled</button>
+          <button class="status-btn" [class.active]="filterParams.status === 'disabled'" (click)="setStatus('disabled')">Disabled</button>
+        </div>
+      </div>
+
+      <!-- Stock Status -->
+      <div class="filter-group">
+        <h3 class="filter-title">Stock Status</h3>
+        <div class="status-filters">
+          <button class="status-btn" [class.active]="filterParams.stockStatus === 'in'" (click)="setStockStatus('in')">In Stock</button>
+          <button class="status-btn" [class.active]="filterParams.stockStatus === 'low'" (click)="setStockStatus('low')">Low Stock</button>
+          <button class="status-btn" [class.active]="filterParams.stockStatus === 'out'" (click)="setStockStatus('out')">Out of Stock</button>
+        </div>
+      </div>
+
+      <!-- Clear filters -->
+      @if (hasActiveFilters()) {
+        <button class="clear-filters" (click)="clearAllFilters()">Clear all filters</button>
       }
-    }
+    </aside>
+
+    <!-- Main Content -->
+    <div class="mp-main">
+      @if (isLoading) {
+        <div class="loading-state">Loading products...</div>
+      } @else {
+        <!-- Toolbar -->
+        <div class="mp-toolbar">
+          <p class="results-count">
+            {{ totalProducts }} {{ totalProducts === 1 ? 'product' : 'products' }}
+          </p>
+          <div class="sort-box">
+            <select class="sort-select" (change)="onSort($event)">
+              <option value="createdAtDESC">Newest</option>
+              <option value="createdAtASC">Oldest</option>
+              <option value="priceASC">Price: Low to High</option>
+              <option value="priceDESC">Price: High to Low</option>
+              <option value="nameASC">Name: A–Z</option>
+              <option value="nameDESC">Name: Z–A</option>
+              <option value="stockASC">Stock: Low to High</option>
+              <option value="stockDESC">Stock: High to Low</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Table -->
+        @if (products.length === 0) {
+          <div class="empty-state">
+            <div class="empty-icon">∅</div>
+            <h3>No products found</h3>
+            <p>Try adjusting your filters or search term</p>
+            <button class="btn btn-primary" (click)="clearAllFilters()">Clear filters</button>
+          </div>
+        } @else {
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Subcategory</th>
+                  <th class="text-right">Price</th>
+                  <th class="text-right">Stock</th>
+                  <th>Status</th>
+                  <th class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (prod of products; track prod._id) {
+                  <tr class="product-row">
+                    <td data-label="Product">
+                      <div class="product-cell">
+                        <img
+                          [src]="prod.imageUrl"
+                          alt="{{ prod.name }}"
+                          class="cat-thumb"
+                          (error)="$event.target.src = 'assets/images/placeholder.png'"
+                        />
+                        <div class="product-info">
+                          <span class="font-medium">{{ prod.name }}</span>
+                          <span class="text-muted text-small">{{ prod.slug }}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-label="Subcategory">
+                      <span class="parent-badge">{{ getSubCatName(prod.subcategory) }}</span>
+                    </td>
+                    <td data-label="Price" class="text-right font-medium">{{ prod.price | currency }}</td>
+                    <td data-label="Stock" class="text-right">
+                      <span class="stock-badge" [class.critical]="prod.stockQuantity < 5">
+                        {{ prod.stockQuantity }}
+                      </span>
+                    </td>
+                    <td data-label="Status">
+                      @if (!prod.isDeleted) {
+                        <label class="toggle-switch">
+                          <input type="checkbox" [checked]="prod.isActive !== false" (change)="toggleActive(prod._id, $event)" />
+                          <span class="toggle-slider"></span>
+                        </label>
+                      } @else {
+                        <span class="status-pill inactive">Deleted</span>
+                      }
+                    </td>
+                    <td data-label="Actions" class="text-right actions-cell">
+                      <button class="btn-icon edit" title="Edit" (click)="openEditModal(prod)" [disabled]="isDeleting">✏️</button>
+                      @if (!prod.isDeleted) {
+                        <button class="btn-icon delete" title="Delete" (click)="deleteProduct(prod._id)" [disabled]="isDeleting">🗑️</button>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          @if (totalPages > 1) {
+            <div class="pagination">
+              <button class="page-btn" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">←</button>
+              @for (page of getPageNumbers(); track $index) {
+                @if (page === -1) {
+                  <span class="page-ellipsis">…</span>
+                } @else {
+                  <button class="page-btn" [class.active]="page === currentPage" (click)="changePage(page)">{{ page }}</button>
+                }
+              }
+              <button class="page-btn" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">→</button>
+            </div>
+          }
+        }
+      }
+    </div>
   </div>
 
   <!-- Modal -->
@@ -124,12 +228,7 @@
           <div class="form-row">
             <div class="form-group flex-2">
               <label>Product Name</label>
-              <input
-                type="text"
-                formControlName="name"
-                class="form-control"
-                placeholder="e.g. Leather Jacket"
-              />
+              <input type="text" formControlName="name" class="form-control" placeholder="e.g. Leather Jacket" />
               @if (productForm.get('name')?.invalid && productForm.get('name')?.touched) {
                 <span class="error-msg">Name is required (min 2 characters)</span>
               }
@@ -137,15 +236,8 @@
             <div class="form-group flex-2">
               <label>Slug</label>
               <div class="slug-input-group">
-                <input
-                  type="text"
-                  formControlName="slug"
-                  class="form-control"
-                  placeholder="e.g. leather-jacket"
-                />
-                <button type="button" class="btn-generate" title="Auto-generate from name" (click)="generateSlug()">
-                  ⚡ Generate
-                </button>
+                <input type="text" formControlName="slug" class="form-control" placeholder="e.g. leather-jacket" />
+                <button type="button" class="btn-generate" title="Auto-generate from name" (click)="generateSlug()">⚡ Generate</button>
               </div>
               @if (productForm.get('slug')?.invalid && productForm.get('slug')?.touched) {
                 <span class="error-msg">Slug is required (min 2 characters)</span>
@@ -153,32 +245,15 @@
             </div>
             <div class="form-group flex-1">
               <label>Price</label>
-              <input
-                type="number"
-                formControlName="price"
-                class="form-control"
-                placeholder="0.00"
-                min="0"
-                step="0.01"
-              />
+              <input type="number" formControlName="price" class="form-control" placeholder="0.00" min="0" step="0.01" />
               @if (productForm.get('price')?.invalid && productForm.get('price')?.touched) {
                 <span class="error-msg">Valid price required</span>
               }
             </div>
             <div class="form-group flex-1">
               <label>Stock</label>
-              <input
-                type="number"
-                formControlName="stockQuantity"
-                class="form-control"
-                placeholder="0"
-                min="0"
-                step="1"
-              />
-              @if (
-                productForm.get('stockQuantity')?.invalid &&
-                productForm.get('stockQuantity')?.touched
-              ) {
+              <input type="number" formControlName="stockQuantity" class="form-control" placeholder="0" min="0" step="1" />
+              @if (productForm.get('stockQuantity')?.invalid && productForm.get('stockQuantity')?.touched) {
                 <span class="error-msg">Valid stock required</span>
               }
             </div>
@@ -191,9 +266,7 @@
                 <option value="" disabled>Select category</option>
                 @for (cat of categories; track cat._id) {
                   @if (!cat.isDeleted || (editingId && productForm.value.category === cat._id)) {
-                    <option [value]="cat._id">
-                      {{ cat.name }} {{ cat.isDeleted ? '(Deleted)' : '' }}
-                    </option>
+                    <option [value]="cat._id">{{ cat.name }} {{ cat.isDeleted ? '(Deleted)' : '' }}</option>
                   }
                 }
               </select>
@@ -207,15 +280,11 @@
                 <option value="" disabled>Select subcategory</option>
                 @for (sub of filteredSubcategories; track sub._id) {
                   @if (!sub.isDeleted || (editingId && productForm.value.subcategory === sub._id)) {
-                    <option [value]="sub._id">
-                      {{ sub.name }} {{ sub.isDeleted ? '(Deleted)' : '' }}
-                    </option>
+                    <option [value]="sub._id">{{ sub.name }} {{ sub.isDeleted ? '(Deleted)' : '' }}</option>
                   }
                 }
               </select>
-              @if (
-                productForm.get('subcategory')?.invalid && productForm.get('subcategory')?.touched
-              ) {
+              @if (productForm.get('subcategory')?.invalid && productForm.get('subcategory')?.touched) {
                 <span class="error-msg">Subcategory is required</span>
               }
             </div>
@@ -223,15 +292,8 @@
 
           <div class="form-group">
             <label>Description</label>
-            <textarea
-              formControlName="description"
-              class="form-control"
-              rows="3"
-              placeholder="Describe the product..."
-            ></textarea>
-            @if (
-              productForm.get('description')?.invalid && productForm.get('description')?.touched
-            ) {
+            <textarea formControlName="description" class="form-control" rows="3" placeholder="Describe the product..."></textarea>
+            @if (productForm.get('description')?.invalid && productForm.get('description')?.touched) {
               <span class="error-msg">Description is required</span>
             }
           </div>
@@ -248,22 +310,12 @@
                 </div>
               }
             </div>
-            <input
-              type="file"
-              #imageInput
-              class="hidden-input"
-              accept="image/*"
-              (change)="onFileSelected($event)"
-            />
+            <input type="file" #imageInput class="hidden-input" accept="image/*" (change)="onFileSelected($event)" />
           </div>
 
           <div class="modal-actions">
             <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
-            <button
-              type="submit"
-              class="btn btn-primary"
-              [disabled]="productForm.invalid || isSaving || (!editingId && !selectedFile)"
-            >
+            <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid || isSaving || (!editingId && !selectedFile)">
               {{ isSaving ? 'Saving...' : editingId ? 'Update Product' : 'Create Product' }}
             </button>
           </div>
