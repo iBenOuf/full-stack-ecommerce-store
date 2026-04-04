@@ -115,7 +115,7 @@ exports.createSubcategory = async (req, res) => {
         return res.status(404).json({ message: "Parent category not found" });
     }
 
-    const image = req.file.path; // Cloudinary URL
+    const image = req.file.secure_url;
     const subcategory = await Subcategory.create({
         name,
         slug,

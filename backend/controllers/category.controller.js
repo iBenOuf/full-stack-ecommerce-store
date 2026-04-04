@@ -92,7 +92,7 @@ exports.createCategory = async (req, res) => {
             message: "Category with this slug already exists",
         });
     }
-    const imageUrl = req.file.path; // Cloudinary URL
+    const imageUrl = req.file.secure_url;
     const category = await Category.create({
         name,
         slug,

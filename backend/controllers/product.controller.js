@@ -34,7 +34,7 @@ exports.createProduct = async (req, res) => {
             .json({ message: "Product with this slug already exists" });
     }
 
-    const imageUrl = req.file.path; // Cloudinary URL
+    const imageUrl = req.file.secure_url;
     const product = await Product.create({
         name,
         slug,
