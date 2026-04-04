@@ -56,7 +56,7 @@ const seedFAQs = async () => {
             },
             {
                 question: "How do I contact customer support?",
-                answer: "You can reach us via email at hello@maisonco.com or by phone at +20 100 123 4567. Our support team is available Sunday through Thursday, 9am to 6pm.",
+                answer: "You can reach us via email at hello@aura.com or by phone at +20 100 123 4567. Our support team is available Sunday through Thursday, 9am to 6pm.",
                 order: 9,
             },
             {

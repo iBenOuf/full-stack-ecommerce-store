@@ -19,7 +19,7 @@ const seedPages = async () => {
                 title: "Privacy Policy",
                 content: `<h2>Privacy Policy</h2>
 <p>Last updated: April 2026</p>
-<p>At Maison & Co, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or make a purchase.</p>
+<p>At Aura, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or make a purchase.</p>
 
 <h3>Information We Collect</h3>
 <p>We collect information that you provide directly to us, including:</p>
@@ -47,7 +47,7 @@ const seedPages = async () => {
 <p>We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, or destruction.</p>
 
 <h3>Contact Us</h3>
-<p>If you have questions about this Privacy Policy, please contact us at hello@maisonco.com.</p>`,
+<p>If you have questions about this Privacy Policy, please contact us at hello@aura.com.</p>`,
                 order: 1,
             },
             {
@@ -55,7 +55,7 @@ const seedPages = async () => {
                 title: "Terms of Service",
                 content: `<h2>Terms of Service</h2>
 <p>Last updated: April 2026</p>
-<p>By accessing and using the Maison & Co website, you accept and agree to be bound by these Terms of Service.</p>
+<p>By accessing and using the Aura website, you accept and agree to be bound by these Terms of Service.</p>
 
 <h3>Use of Website</h3>
 <p>You may use our website for lawful purposes only. You agree not to:</p>
@@ -78,10 +78,10 @@ const seedPages = async () => {
 <p>Returns are accepted within 14 days of delivery. Items must be in their original condition. Refunds will be processed to the original payment method within 7-10 business days.</p>
 
 <h3>Limitation of Liability</h3>
-<p>Maison & Co shall not be liable for any indirect, incidental, or consequential damages arising from the use of our website or products.</p>
+<p>Aura shall not be liable for any indirect, incidental, or consequential damages arising from the use of our website or products.</p>
 
 <h3>Contact</h3>
-<p>For questions about these terms, contact us at hello@maisonco.com.</p>`,
+<p>For questions about these terms, contact us at hello@aura.com.</p>`,
                 order: 2,
             },
             {
@@ -123,7 +123,7 @@ const seedPages = async () => {
 
 <h3>How to Return</h3>
 <ol>
-<li>Contact us at hello@maisonco.com or call +20 100 123 4567</li>
+<li>Contact us at hello@aura.com or call +20 100 123 4567</li>
 <li>Provide your order number and the items you wish to return</li>
 <li>We'll provide a return shipping label</li>
 <li>Pack the items securely and ship them back</li>

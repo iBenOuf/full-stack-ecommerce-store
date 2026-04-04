@@ -1,4 +1,4 @@
-# Maison & Co — API Reference
+# Aura — API Reference
 
 **Base URL:** `https://your-backend-url.com/api/v1`
 

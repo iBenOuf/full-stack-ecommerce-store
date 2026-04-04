@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Maison & Co E-Commerce API
+  title: Aura E-Commerce API
   description: |
     RESTful API for a modern, full-featured e-commerce platform with admin dashboard,
     real-time notifications, and dynamic content management.

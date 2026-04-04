@@ -1,4 +1,4 @@
-# Frontend - Maison & Co E-Commerce Store
+# Frontend - Aura E-Commerce Store
 
 Modern, mobile-responsive e-commerce storefront built with Angular 21 and TypeScript.
 
@@ -714,6 +714,6 @@ export const authGuard: CanActivateFn = (route, state) => {
 
 **Built with Angular 21 & TypeScript**
 
-[⬆ Back to Top](#frontend---maison--co-e-commerce-store)
+[⬆ Back to Top](#frontend---aura-e-commerce-store)
 
 </div>

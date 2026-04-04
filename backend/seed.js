@@ -20,7 +20,7 @@ function ask(question) {
 }
 
 async function main() {
-    console.log("\n🌱 Maison & Co — Database Seeder\n");
+    console.log("\n🌱 Aura — Database Seeder\n");
     console.log("What would you like to seed?\n");
 
     seeds.forEach((s) => console.log(`  ${s.id}. ${s.name}`));

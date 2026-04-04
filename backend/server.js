@@ -27,7 +27,7 @@ const swaggerDocument = YAML.load(path.join(__dirname, "../docs/api/openapi.yaml
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
     explorer: true,
     customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: "Maison & Co API Documentation",
+    customSiteTitle: "Aura API Documentation",
 }));
 
 app.use("/api/v1/auth", require("./routes/auth.route"));

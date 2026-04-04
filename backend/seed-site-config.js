@@ -15,7 +15,7 @@ const seedSiteConfig = async () => {
 
         const defaults = {
             announcement: "FREE SHIPPING · NEW ARRIVALS EVERY FRIDAY",
-            siteName: "Maison & Co",
+            siteName: "Aura",
             heroSection: {
                 heroSlogan: "Spring / Summer 2026",
                 heroTitle: {
@@ -50,9 +50,9 @@ const seedSiteConfig = async () => {
                     { name: "tiktok", url: "https://tiktok.com" },
                     { name: "pinterest", url: "https://pinterest.com" },
                 ],
-                contactEmail: "hello@maisonco.com",
+                contactEmail: "hello@aura.com",
                 contactPhone: "+20 100 123 4567",
-                copyrightText: "© 2026 Maison & Co. All rights reserved.",
+                copyrightText: "© 2026 Aura. All rights reserved.",
                 paymentMethods: [
                     { name: "visa" },
                     { name: "MASTERCARD" },

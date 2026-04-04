@@ -1,4 +1,4 @@
-# Backend - Maison & Co E-Commerce API
+# Backend - Aura E-Commerce API
 
 RESTful API server built with Node.js, Express, and MongoDB for a full-featured e-commerce platform.
 
@@ -759,6 +759,6 @@ node seed-pages.js
 
 **Built with Node.js, Express & MongoDB**
 
-[⬆ Back to Top](#backend---maison--co-e-commerce-api)
+[⬆ Back to Top](#backend---aura-e-commerce-api)
 
 </div>

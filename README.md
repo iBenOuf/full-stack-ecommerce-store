@@ -1,4 +1,4 @@
-# Maison & Co - Full-Stack E-Commerce Store
+# Aura - Full-Stack E-Commerce Store
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Angular](https://img.shields.io/badge/Angular-21.1.0-red.svg?logo=angular)](https://angular.io/)
@@ -368,6 +368,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Made with Angular 21 & Node.js/Express**
 
-[⬆ Back to Top](#maison--co---full-stack-e-commerce-store)
+[⬆ Back to Top](#aura---full-stack-e-commerce-store)
 
 </div>
