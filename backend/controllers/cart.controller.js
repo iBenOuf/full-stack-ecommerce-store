@@ -11,6 +11,7 @@ const addToCartSchema = Joi.object({
 exports.addToCart = async (req, res) => {
     const { error, value } = addToCartSchema.validate(req.body);
     if (error) {
+        console.log("[ADD TO CART] Validation error:", error.details[0].message, "Body:", JSON.stringify(req.body));
         return res.status(400).json({ message: error.details[0].message });
     }
 
@@ -210,25 +211,31 @@ const mergeCartSchema = Joi.object({
 exports.mergeCart = async (req, res) => {
     const { error, value } = mergeCartSchema.validate(req.body);
     if (error) {
+        console.log("[MERGE CART] Validation error:", error.details[0].message);
         return res.status(400).json({ message: error.details[0].message });
     }
 
-    const { items } = value;
-    const userId = req.user._id;
+    try {
+        const { items } = value;
+        const userId = req.user._id;
 
-    let cart = await Cart.findOne({ user: userId });
+        let cart = await Cart.findOne({ user: userId });
 
-    if (!cart) {
-        cart = new Cart({ user: userId, items: [] });
-    }
-
-    for (const item of items) {
-        let productId = item.productId || item.product;
-        if (typeof productId === "object" && productId._id) {
-            productId = productId._id.toString();
-        } else if (typeof productId === "object") {
-            productId = productId.toString();
+        if (!cart) {
+            cart = new Cart({ user: userId, items: [] });
         }
+
+        for (const item of items) {
+            let productId = item.productId || item.product;
+            if (typeof productId === "object" && productId !== null) {
+                if (productId._id) {
+                    productId = productId._id.toString();
+                } else {
+                    continue;
+                }
+            }
+
+            if (!productId) continue;
 
         const product = await Product.findOne({
             _id: productId,
@@ -242,11 +249,12 @@ exports.mergeCart = async (req, res) => {
         );
 
         if (existingItem) {
-            const combined = existingItem.quantity + quantity;
-            existingItem.quantity = Math.min(combined, product.stockQuantity);
+            // Use the higher quantity from either local or server (not add them together)
+            existingItem.quantity = Math.max(existingItem.quantity, item.quantity);
+            existingItem.quantity = Math.min(existingItem.quantity, product.stockQuantity);
             existingItem.unitPrice = product.price;
         } else {
-            const cappedQty = Math.min(quantity, product.stockQuantity);
+            const cappedQty = Math.min(item.quantity, product.stockQuantity);
             cart.items.push({
                 product: productId,
                 quantity: cappedQty,
@@ -260,4 +268,10 @@ exports.mergeCart = async (req, res) => {
         message: "Cart merged successfully",
         data: cart,
     });
+    } catch (err) {
+        console.error("[MERGE CART] Error:", err);
+        res.status(500).json({
+            message: err.message || "Failed to merge cart",
+        });
+    }
 };

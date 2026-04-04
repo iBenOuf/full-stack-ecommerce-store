@@ -4,7 +4,7 @@ import { environment } from '../../../environments/environment';
 import { ICart, ICartItem, ICartResponse } from '../models/cart.model';
 import { IProduct } from '../models/product.model';
 import { ToastService } from './toast.service';
-import { BehaviorSubject, map, of } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { AuthService } from './auth.service';
 import { ITokenData } from '../models/auth.model';
 
@@ -20,30 +20,16 @@ export class CartService {
     this._authService.getAuthData().subscribe((data) => {
       this.userData = data;
       if (this.userData) {
-        const localCart = this._cart.value;
-        if (localCart.items.length > 0 && !localCart._id) {
-          this.mergeLocalCartToServer().subscribe({
-            next: (res) => {
-              if (res?.data) {
-                this.setLocalCart(res.data);
-              }
-            },
-            error: () => {
-              this._toastService.error('Failed to sync cart with server');
-            },
-          });
-        } else {
-          this.getServerCart().subscribe({
-            next: (res) => {
-              if (res?.data) {
-                this.setLocalCart(res.data);
-              }
-            },
-            error: () => {
-              this._toastService.error('Failed to load cart');
-            },
-          });
-        }
+        this.getServerCart().subscribe({
+          next: (res) => {
+            if (res?.data) {
+              this.setLocalCart(res.data);
+            }
+          },
+          error: () => {
+            this._toastService.error('Failed to load cart');
+          },
+        });
       }
     });
   }
@@ -58,6 +44,9 @@ export class CartService {
   cartCount = this.cartData.pipe(
     map((cart) => cart.items.reduce((acc: number, item: ICartItem) => acc + item.quantity, 0)),
   );
+
+  private pendingCartUpdate: { productId: string; quantity: number } | null = null;
+  private syncTimer: any = null;
 
   private _getInitialCart(): ICart {
     const cart = localStorage.getItem(this.localCartKey);
@@ -106,6 +95,7 @@ export class CartService {
       this._toastService.error('Product is out of stock');
       return;
     }
+
     if (this.userData) {
       this.addToServerCart(product, quantity).subscribe({
         next: (res) => {
@@ -130,7 +120,7 @@ export class CartService {
           }
           item.quantity += quantity;
         } else {
-          cart.items.push({ product: product._id, quantity: 1, unitPrice: product.price });
+          cart.items.push({ product: product._id, quantity, unitPrice: product.price });
         }
         this.setLocalCart(cart);
       } else {
@@ -154,29 +144,47 @@ export class CartService {
       this._toastService.error('Quantity must be at least 1');
       return;
     }
+
+    const cart = this._cart.value;
+    if (!cart) return;
+
+    const item = cart.items.find((item: ICartItem) => {
+      const itemId = typeof item.product === 'object' ? item.product._id : item.product;
+      return itemId === product._id;
+    });
+    if (!item) return;
+
+    item.quantity = quantity;
+    this.pendingCartUpdate = { productId: product._id, quantity };
+    this.setLocalCart(cart);
+
     if (this.userData) {
-      this.updateServerCart(product, quantity).subscribe({
-        next: (res) => {
-          this.setLocalCart(res.data);
-          this._toastService.success('Cart updated');
-        },
-        error: () => {
-          this._toastService.error('Failed to update cart');
-        },
-      });
-    } else {
-      const cart = this._cart.value;
-      if (cart) {
-        const item = cart.items.find((item: ICartItem) => {
-          const itemId = typeof item.product === 'object' ? item.product._id : item.product;
-          return itemId === product._id;
-        });
-        if (item) {
-          item.quantity = quantity;
-        }
-        this.setLocalCart(cart);
-      }
+      if (this.syncTimer) clearTimeout(this.syncTimer);
+      this.syncTimer = setTimeout(() => {
+        this.syncPendingUpdate();
+      }, 300);
     }
+  }
+
+  private syncPendingUpdate() {
+    if (!this.pendingCartUpdate) return;
+
+    const { productId, quantity } = this.pendingCartUpdate;
+    const cart = this._cart.value;
+    const item = cart.items.find((i: ICartItem) => {
+      const itemId = typeof i.product === 'object' ? i.product._id : i.product;
+      return itemId === productId;
+    });
+    const product = item ? (typeof item.product === 'object' ? item.product : { _id: item.product }) : { _id: productId };
+
+    this.updateServerCart(product as IProduct, quantity).subscribe({
+      next: () => {
+        this.pendingCartUpdate = null;
+      },
+      error: () => {
+        this._toastService.error('Failed to update cart');
+      },
+    });
   }
 
   removeLocalCartItem(product: IProduct) {
@@ -206,21 +214,30 @@ export class CartService {
   getServerCart() {
     return this._http.get<ICartResponse>(this.apiURL);
   }
+
   addToServerCart(product: IProduct, quantity: number) {
     return this._http.post<ICartResponse>(this.apiURL, { productId: product._id, quantity });
   }
+
   updateServerCart(product: IProduct, quantity: number) {
     return this._http.put<ICartResponse>(this.apiURL, { productId: product._id, quantity });
   }
+
   removeFromCart(product: IProduct) {
     return this._http.delete<ICartResponse>(this.apiURL + '/item/' + product._id);
   }
+
   clearServerCart() {
     return this._http.delete<ICartResponse>(this.apiURL);
   }
+
   mergeLocalCartToServer() {
     const cart = this._cart.value;
-    return this._http.post<ICartResponse>(this.apiURL + '/merge', cart);
+    const cleanItems = cart.items.map((item) => {
+      const productId = typeof item.product === 'object' ? item.product._id : item.product;
+      return { productId, quantity: item.quantity, unitPrice: item.unitPrice };
+    });
+    return this._http.post<ICartResponse>(this.apiURL + '/merge', { items: cleanItems });
   }
 
   getCartSnapshot(): ICart {
@@ -246,6 +263,7 @@ export class CartService {
       });
     }
   }
+
   getSyncStatus() {
     return localStorage.getItem('cartSyncStatus');
   }

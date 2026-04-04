@@ -51,7 +51,9 @@
               <div class="item-top">
                 <div>
                   @if (item.product) {
-                    <p class="item-cat">{{ item.product.subcategory.name }}</p>
+                    @if (item.product.subcategory) {
+                      <p class="item-cat">{{ item.product.subcategory.name }}</p>
+                    }
                     <h3 class="item-name" [routerLink]="['/product', item.product.slug]">
                       {{ item.product.name }}
                     </h3>

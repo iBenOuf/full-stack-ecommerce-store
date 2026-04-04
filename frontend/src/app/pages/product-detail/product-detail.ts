@@ -72,7 +72,7 @@ export class ProductDetail {
     });
   }
   private loadRelated(): void {
-    if (!this.product) return;
+    if (!this.product || !this.product.subcategory) return;
     this._productService
       .getRelatedProducts(this.product._id, this.product.subcategory._id)
       .subscribe({

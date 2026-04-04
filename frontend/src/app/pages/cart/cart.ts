@@ -23,6 +23,8 @@ export class Cart {
   cartItems: CartDisplayItem[] = [];
   isLoading = true;
   skeletons = ['a', 'b', 'c'];
+  private productCache = new Map<string, IProduct>();
+  private isInitialLoad = true;
 
   get subtotal(): number {
     return this.cartItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
@@ -34,7 +36,11 @@ export class Cart {
 
   ngOnInit(): void {
     this._cartService.cartData.subscribe((cart) => {
-      this.loadCartWithProducts(cart.items);
+      if (this.isInitialLoad) {
+        this.loadCartWithProducts(cart.items);
+      } else {
+        this.updateCartQuantities(cart.items);
+      }
     });
   }
 
@@ -42,6 +48,7 @@ export class Cart {
     if (items.length === 0) {
       this.cartItems = [];
       this.isLoading = false;
+      this.isInitialLoad = false;
       this._cdr.detectChanges();
       return;
     }
@@ -53,6 +60,7 @@ export class Cart {
       const productId = isPopulated ? item.product._id : item.product;
 
       if (isPopulated) {
+        this.productCache.set(productId, item.product as IProduct);
         return of({
           productId: productId,
           quantity: item.quantity,
@@ -61,13 +69,26 @@ export class Cart {
         });
       }
 
-      return this._productService.getProductById(productId).pipe(
-        map((res) => ({
+      const cached = this.productCache.get(productId);
+      if (cached) {
+        return of({
           productId: productId,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
-          product: res.data as IProduct,
-        })),
+          product: cached,
+        });
+      }
+
+      return this._productService.getProductById(productId).pipe(
+        map((res) => {
+          this.productCache.set(productId, res.data);
+          return {
+            productId: productId,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            product: res.data as IProduct,
+          };
+        }),
         catchError(() =>
           of({
             productId: productId,
@@ -82,6 +103,59 @@ export class Cart {
     forkJoin(requests).subscribe((displayItems) => {
       this.cartItems = displayItems;
       this.isLoading = false;
+      this.isInitialLoad = false;
+      this._cdr.detectChanges();
+    });
+  }
+
+  private updateCartQuantities(items: ICartItem[]): void {
+    const missingProducts: string[] = [];
+    
+    this.cartItems = items.map((item) => {
+      const productId = typeof item.product === 'object' ? item.product._id : item.product;
+      let cached = this.productCache.get(productId);
+      
+      if (!cached && !missingProducts.includes(productId)) {
+        missingProducts.push(productId);
+      }
+      
+      return {
+        productId,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        product: cached || null,
+      };
+    });
+
+    if (missingProducts.length > 0) {
+      this.loadMissingProducts(items, missingProducts);
+    } else {
+      this._cdr.detectChanges();
+    }
+  }
+
+  private loadMissingProducts(items: ICartItem[], missingIds: string[]): void {
+    const requests = missingIds.map((id) =>
+      this._productService.getProductById(id).pipe(
+        map((res) => {
+          this.productCache.set(id, res.data);
+          return { id, product: res.data as IProduct };
+        }),
+        catchError(() => of({ id, product: null })),
+      ),
+    );
+
+    forkJoin(requests).subscribe(() => {
+      // Re-render with newly cached products
+      this.cartItems = items.map((item) => {
+        const productId = typeof item.product === 'object' ? item.product._id : item.product;
+        return {
+          productId,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          product: this.productCache.get(productId) || null,
+        };
+      });
       this._cdr.detectChanges();
     });
   }
