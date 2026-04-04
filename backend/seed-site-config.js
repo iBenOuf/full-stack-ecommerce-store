@@ -104,6 +104,8 @@ const seedSiteConfig = async () => {
                         { label: { en: "Track My Order" }, url: "/my-orders" },
                         { label: { en: "FAQs" }, url: "/faq" },
                         { label: { en: "Contact Us" }, url: "/contact" },
+                        { label: { en: "Shipping Policy" }, url: "/p/shipping-policy" },
+                        { label: { en: "Return Policy" }, url: "/p/return-policy" },
                     ],
                 },
                 {
