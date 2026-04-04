@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
 
+const i18nString = {
+    en: { type: String, trim: true },
+};
+
 const siteConfigSchema = new mongoose.Schema(
     {
         announcement: { type: String, trim: true },
@@ -59,6 +63,75 @@ const siteConfigSchema = new mongoose.Schema(
             ],
             copyrightText: { type: String, trim: true },
         },
+        coreValues: [
+            {
+                icon: { type: String, trim: true },
+                title: i18nString,
+                description: i18nString,
+            },
+        ],
+        shippingPolicy: {
+            title: i18nString,
+            freeShipping: i18nString,
+            standardDelivery: i18nString,
+            returnsPolicy: i18nString,
+            returnsDays: { type: Number, default: 14 },
+        },
+        footerLinks: [
+            {
+                section: i18nString,
+                links: [
+                    {
+                        label: i18nString,
+                        url: { type: String, trim: true },
+                    },
+                ],
+            },
+        ],
+        shopPage: {
+            heading: i18nString,
+            subtitle: i18nString,
+        },
+        contactPage: {
+            eyebrow: i18nString,
+            heading: i18nString,
+            subtitle: i18nString,
+            emailHeading: i18nString,
+            emailDesc: i18nString,
+            phoneHeading: i18nString,
+            phoneDesc: i18nString,
+            visitHeading: i18nString,
+            visitDesc: i18nString,
+            socialEyebrow: i18nString,
+            socialHeading: i18nString,
+            faqText: i18nString,
+            faqLinkText: i18nString,
+        },
+        faqPage: {
+            heading: i18nString,
+            subtitle: i18nString,
+            footerText: i18nString,
+            footerButtonText: i18nString,
+        },
+    notFoundPage: {
+        eyebrow: i18nString,
+        heading: i18nString,
+        subtitle: i18nString,
+        suggestionsHeading: i18nString,
+        suggestions: [
+            {
+                label: i18nString,
+                url: { type: String, trim: true },
+            },
+        ],
+    },
+    navLinks: [
+        {
+            label: i18nString,
+            url: { type: String, trim: true },
+            queryParams: { type: mongoose.Schema.Types.Mixed },
+        },
+    ],
     },
     { timestamps: true },
 );

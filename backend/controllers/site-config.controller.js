@@ -76,11 +76,90 @@ const updateSiteConfigSchema = Joi.object({
             })
         ).optional(),
     }).optional(),
+
+    coreValues: Joi.array().items(
+        Joi.object({
+            icon: Joi.string().optional().allow(""),
+            title: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+            description: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        })
+    ).optional(),
+
+    shippingPolicy: Joi.object({
+        title: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        freeShipping: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        standardDelivery: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        returnsPolicy: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        returnsDays: Joi.number().integer().min(0).optional(),
+    }).optional(),
+
+    footerLinks: Joi.array().items(
+        Joi.object({
+            section: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+            links: Joi.array().items(
+                Joi.object({
+                    label: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+                    url: Joi.string().optional().allow(""),
+                })
+            ).optional(),
+        })
+    ).optional(),
+
+    shopPage: Joi.object({
+        heading: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        subtitle: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+    }).optional(),
+
+    contactPage: Joi.object({
+        eyebrow: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        heading: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        subtitle: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        emailHeading: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        emailDesc: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        phoneHeading: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        phoneDesc: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        visitHeading: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        visitDesc: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        socialEyebrow: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        socialHeading: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        faqText: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        faqLinkText: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+    }).optional(),
+
+    faqPage: Joi.object({
+        heading: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        subtitle: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        footerText: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        footerButtonText: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+    }).optional(),
+
+    notFoundPage: Joi.object({
+        eyebrow: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        heading: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        subtitle: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        suggestionsHeading: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+        suggestions: Joi.array().items(
+            Joi.object({
+                label: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+                url: Joi.string().optional().allow(""),
+            })
+        ).optional(),
+    }).optional(),
+
+    navLinks: Joi.array().items(
+        Joi.object({
+            label: Joi.object({ en: Joi.string().optional().allow("") }).optional(),
+            url: Joi.string().optional().allow(""),
+            queryParams: Joi.object().optional(),
+        })
+    ).optional(),
 });
 
 exports.updateSiteConfig = async (req, res) => {
     const { error, value } = updateSiteConfigSchema.validate(req.body);
     if (error) {
+        console.log("Joi validation error:", error.details[0].message);
+        console.log("Received body keys:", Object.keys(req.body));
         return res.status(400).json({ message: error.details[0].message });
     }
 
