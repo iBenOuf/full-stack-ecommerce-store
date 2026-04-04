@@ -1,16 +1,16 @@
 <div class="login-page">
   <div class="login-left">
     <div class="left-top">
-      <a routerLink="/" class="logo">Maison<span>&</span>Co</a>
+      <a routerLink="/" class="logo">{{ siteConfig?.siteName || 'Maison&Co' }}</a>
     </div>
     <div class="left-mid">
       <h2>Style that<br /><em>speaks</em><br />for itself</h2>
       <p>Sign in to access your orders, wishlist, and a wardrobe curated just for you.</p>
     </div>
     <div class="left-bottom">
-      <div class="left-stat"><strong>100%</strong><span>Natural</span></div>
-      <div class="left-stat"><strong>12+</strong><span>Workshops</span></div>
-      <div class="left-stat"><strong>3yr</strong><span>Guarantee</span></div>
+      <div class="left-stat"><strong>{{ siteConfig?.aboutSection?.analytics?.stat1?.value || '100%' }}</strong><span>{{ siteConfig?.aboutSection?.analytics?.stat1?.label || 'Natural' }}</span></div>
+      <div class="left-stat"><strong>{{ siteConfig?.aboutSection?.analytics?.stat2?.value || '12+' }}</strong><span>{{ siteConfig?.aboutSection?.analytics?.stat2?.label || 'Workshops' }}</span></div>
+      <div class="left-stat"><strong>{{ siteConfig?.aboutSection?.analytics?.stat3?.value || '3yr' }}</strong><span>{{ siteConfig?.aboutSection?.analytics?.stat3?.label || 'Guarantee' }}</span></div>
     </div>
   </div>
 
@@ -66,7 +66,7 @@
       <div class="divider"><span>or</span></div>
 
       <p class="register-link">
-        New to Maison & Co? <a routerLink="/register">Create an account</a>
+        New to {{ siteConfig?.siteName || 'Maison & Co' }}? <a routerLink="/register">Create an account</a>
       </p>
     </div>
   </div>

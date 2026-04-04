@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
 import { IRegisterRequest } from '../core/models/auth.model';
+import { SiteConfigService } from '../core/services/site-config.service';
+import { ISiteConfig } from '../core/models/site-config.model';
 
 @Component({
   selector: 'app-register',
@@ -10,9 +12,26 @@ import { IRegisterRequest } from '../core/models/auth.model';
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
-export class Register {
+export class Register implements OnInit {
   loading = false;
   error = '';
+  siteConfig: ISiteConfig | null = null;
+
+  constructor(
+    private _router: Router,
+    private _authService: AuthService,
+    private _siteConfigService: SiteConfigService,
+    private _cdr: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit(): void {
+    this._siteConfigService.getSiteConfigData().subscribe((config) => {
+      if (config) {
+        this.siteConfig = config;
+        this._cdr.detectChanges();
+      }
+    });
+  }
 
   registerForm = new FormGroup({
     firstName: new FormControl('', Validators.required),
@@ -23,11 +42,6 @@ export class Register {
     confirmPassword: new FormControl('', Validators.required),
     gender: new FormControl('female', Validators.required),
   }, { validators: this.passwordMatchValidator });
-
-  constructor(
-    private _router: Router,
-    private _authService: AuthService,
-  ) {}
 
   passwordMatchValidator(group: AbstractControl): { [key: string]: boolean } | null {
     const password = group.get('password')?.value;
