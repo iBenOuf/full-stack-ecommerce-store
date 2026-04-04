@@ -20,6 +20,8 @@
         <button type="button" class="tab-btn" [class.active]="activeTab === 'hero'" (click)="activeTab = 'hero'">Hero Section</button>
         <button type="button" class="tab-btn" [class.active]="activeTab === 'about'" (click)="activeTab = 'about'">About Section</button>
         <button type="button" class="tab-btn" [class.active]="activeTab === 'footer'" (click)="activeTab = 'footer'">Footer & Social</button>
+        <button type="button" class="tab-btn" [class.active]="activeTab === 'content'" (click)="activeTab = 'content'">Content</button>
+        <button type="button" class="tab-btn" [class.active]="activeTab === 'pages'" (click)="activeTab = 'pages'">Pages</button>
       </div>
 
       <!-- ── General ── -->
@@ -186,14 +188,361 @@
             </div>
           </div>
 
-          <h3 class="section-heading" style="margin-top:32px">Social Links</h3>
-          <div class="social-grid">
-            @for (s of [['facebook','Facebook'],['instagram','Instagram'],['twitter','X / Twitter'],['youtube','YouTube'],['tiktok','TikTok'],['pinterest','Pinterest']]; track s[0]) {
-              <div class="form-group">
-                <label>{{ s[1] }}</label>
-                <input type="url" [formControlName]="s[0]" class="form-control" [placeholder]="'https://' + s[0].toLowerCase() + '.com/yourpage'" />
+          <h3 class="section-heading" style="margin-top:32px">Payment Methods</h3>
+          <p class="hint">Payment methods shown in the footer.</p>
+          <div formArrayName="paymentMethods" class="payment-grid">
+            @for (pm of paymentMethods.controls; track $index) {
+              <div [formGroupName]="$index" class="social-link-item">
+                <button type="button" class="btn-remove" (click)="removePaymentMethod($index)">✕</button>
+                <div class="form-group">
+                  <label>Name</label>
+                  <input type="text" formControlName="name" class="form-control" placeholder="e.g. Visa" />
+                </div>
               </div>
             }
+          </div>
+          <button type="button" class="btn btn-secondary" (click)="addPaymentMethod()">+ Add Payment Method</button>
+
+          <h3 class="section-heading" style="margin-top:32px">Social Links</h3>
+          <p class="hint">Add social media links you want to display in the footer.</p>
+          <div class="social-grid" formArrayName="socialLinks">
+            @for (link of socialLinks.controls; track $index) {
+              <div [formGroupName]="$index" class="social-link-item">
+                <button type="button" class="btn-remove" (click)="removeSocialLink($index)">✕</button>
+                <div class="form-group">
+                  <label>Platform Name</label>
+                  <input type="text" formControlName="name" class="form-control" placeholder="e.g. facebook" />
+                </div>
+                <div class="form-group">
+                  <label>URL</label>
+                  <input type="url" formControlName="url" class="form-control" placeholder="https://facebook.com/yourpage" />
+                </div>
+              </div>
+            }
+          </div>
+          <button type="button" class="btn btn-secondary" (click)="addSocialLink()">+ Add Social Link</button>
+        </div>
+      }
+
+      <!-- ── Content (Core Values, Shipping, Footer Links, Shop, Contact) ── -->
+      @if (activeTab === 'content') {
+        <div class="settings-section">
+          <h3 class="section-heading">Core Values (About Page)</h3>
+          <p class="hint">Values displayed on the About page. Each has an icon, title, and description.</p>
+
+          <div formArrayName="coreValues">
+            @for (v of coreValues.controls; track $index) {
+              <div [formGroupName]="$index" class="repeatable-item">
+                <button type="button" class="btn-remove" (click)="removeCoreValue($index)">✕</button>
+                <div class="form-group">
+                  <label>Icon (emoji or short text)</label>
+                  <input type="text" formControlName="icon" class="form-control" placeholder="e.g. 🎨" />
+                </div>
+                <div class="form-group">
+                  <label>Title (EN)</label>
+                  <div formGroupName="title">
+                    <input type="text" formControlName="en" class="form-control" placeholder="e.g. Craftsmanship" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Description (EN)</label>
+                  <div formGroupName="description">
+                    <textarea formControlName="en" class="form-control" rows="2" placeholder="Describe this value..."></textarea>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+          <button type="button" class="btn btn-secondary" (click)="addCoreValue()">+ Add Core Value</button>
+
+          <h3 class="section-heading" style="margin-top: 32px">Shipping Policy (Product Detail)</h3>
+          <div formGroupName="shippingPolicy">
+            <div class="form-group">
+              <label>Section Title (EN)</label>
+              <div formGroupName="title">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. Shipping & Returns" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Free Shipping Text (EN)</label>
+              <div formGroupName="freeShipping">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. Free shipping" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Standard Delivery Text (EN)</label>
+              <div formGroupName="standardDelivery">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. Standard delivery: 3-5 business days" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Returns Policy Text (EN)</label>
+              <div formGroupName="returnsPolicy">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. Returns accepted within 14 days of delivery" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Returns Days (number)</label>
+              <input type="number" formControlName="returnsDays" class="form-control" placeholder="14" />
+            </div>
+          </div>
+
+          <h3 class="section-heading" style="margin-top: 32px">Footer Links</h3>
+          <p class="hint">Manage link sections in the footer (Shop, Help, Company, etc.).</p>
+
+          <div formArrayName="footerLinks">
+            @for (section of footerLinks.controls; track $index) {
+              <div [formGroupName]="$index" class="repeatable-item">
+                <button type="button" class="btn-remove" (click)="removeFooterLinkSection($index)">✕</button>
+                <div class="form-group">
+                  <label>Section Name (EN)</label>
+                  <div formGroupName="section">
+                    <input type="text" formControlName="en" class="form-control" placeholder="e.g. Shop" />
+                  </div>
+                </div>
+                <div formArrayName="links">
+                  @for (link of getSectionLinks($index).controls; track $index) {
+                    <div [formGroupName]="$index" class="sub-item">
+                      <div class="form-group flex-1">
+                        <label>Link Label (EN)</label>
+                        <div formGroupName="label">
+                          <input type="text" formControlName="en" class="form-control" placeholder="e.g. New Arrivals" />
+                        </div>
+                      </div>
+                      <div class="form-group flex-1">
+                        <label>URL</label>
+                        <input type="text" formControlName="url" class="form-control" placeholder="/shop" />
+                      </div>
+                      <button type="button" class="btn-remove" (click)="removeSectionLink($index, $index)">✕</button>
+                    </div>
+                  }
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" (click)="addSectionLink($index)">+ Add Link</button>
+              </div>
+            }
+          </div>
+          <button type="button" class="btn btn-secondary" (click)="addFooterLinkSection()">+ Add Footer Section</button>
+
+          <h3 class="section-heading" style="margin-top: 32px">Navigation Links</h3>
+          <p class="hint">Links shown in the main navbar (between logo and Categories).</p>
+          <div formArrayName="navLinks">
+            @for (link of navLinks.controls; track $index) {
+              <div [formGroupName]="$index" class="sub-item">
+                <button type="button" class="btn-remove" (click)="removeNavLink($index)">✕</button>
+                <div class="form-group flex-1">
+                  <label>Label (EN)</label>
+                  <div formGroupName="label">
+                    <input type="text" formControlName="en" class="form-control" placeholder="e.g. New In" />
+                  </div>
+                </div>
+                <div class="form-group flex-1">
+                  <label>URL</label>
+                  <input type="text" formControlName="url" class="form-control" placeholder="/shop" />
+                </div>
+                <div class="form-group flex-1">
+                  <label>Sort / Filter (optional)</label>
+                  <select formControlName="queryParams" class="form-control">
+                    <option value="">None</option>
+                    <option value='{"sort":"createdAtDESC"}'>Newest first</option>
+                    <option value='{"sort":"createdAtASC"}'>Oldest first</option>
+                    <option value='{"sort":"priceASC"}'>Price: Low to High</option>
+                    <option value='{"sort":"priceDESC"}'>Price: High to Low</option>
+                    <option value='{"filter":"new"}'>New arrivals</option>
+                    <option value='{"sale":true}'>Sale items</option>
+                  </select>
+                </div>
+              </div>
+            }
+          </div>
+          <button type="button" class="btn btn-secondary" (click)="addNavLink()">+ Add Nav Link</button>
+
+          <h3 class="section-heading" style="margin-top: 32px">Shop Page</h3>
+          <div formGroupName="shopPage">
+            <div class="form-group">
+              <label>Page Heading (EN)</label>
+              <div formGroupName="heading">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. The Collection" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Subtitle (EN)</label>
+              <div formGroupName="subtitle">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. Thoughtfully made, designed to last" />
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-heading" style="margin-top: 32px">Contact Page</h3>
+          <div formGroupName="contactPage">
+            <div class="form-group">
+              <label>Eyebrow (EN)</label>
+              <div formGroupName="eyebrow">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. We'd Love to Hear From You" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Heading (EN)</label>
+              <div formGroupName="heading">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. Get in Touch" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Subtitle (EN)</label>
+              <div formGroupName="subtitle">
+                <textarea formControlName="en" class="form-control" rows="2" placeholder="Have a question..."></textarea>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label>Email Heading (EN)</label>
+                <div formGroupName="emailHeading">
+                  <input type="text" formControlName="en" class="form-control" placeholder="e.g. Email Us" />
+                </div>
+              </div>
+              <div class="form-group flex-1">
+                <label>Email Description (EN)</label>
+                <div formGroupName="emailDesc">
+                  <input type="text" formControlName="en" class="form-control" placeholder="e.g. Drop us a line..." />
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label>Phone Heading (EN)</label>
+                <div formGroupName="phoneHeading">
+                  <input type="text" formControlName="en" class="form-control" placeholder="e.g. Call Us" />
+                </div>
+              </div>
+              <div class="form-group flex-1">
+                <label>Phone Description (EN)</label>
+                <div formGroupName="phoneDesc">
+                  <input type="text" formControlName="en" class="form-control" placeholder="e.g. Available Sunday - Thursday..." />
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label>Visit Heading (EN)</label>
+                <div formGroupName="visitHeading">
+                  <input type="text" formControlName="en" class="form-control" placeholder="e.g. Visit Us" />
+                </div>
+              </div>
+              <div class="form-group flex-1">
+                <label>Visit Description (EN)</label>
+                <div formGroupName="visitDesc">
+                  <input type="text" formControlName="en" class="form-control" placeholder="e.g. Our showroom is open..." />
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label>Social Eyebrow (EN)</label>
+                <div formGroupName="socialEyebrow">
+                  <input type="text" formControlName="en" class="form-control" placeholder="e.g. Follow Along" />
+                </div>
+              </div>
+              <div class="form-group flex-1">
+                <label>Social Heading (EN)</label>
+                <div formGroupName="socialHeading">
+                  <input type="text" formControlName="en" class="form-control" placeholder="e.g. Find Us on Social Media" />
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label>FAQ Footer Text (EN)</label>
+                <div formGroupName="faqText">
+                  <input type="text" formControlName="en" class="form-control" placeholder="e.g. Still have questions?" />
+                </div>
+              </div>
+              <div class="form-group flex-1">
+                <label>FAQ Link Text (EN)</label>
+                <div formGroupName="faqLinkText">
+                  <input type="text" formControlName="en" class="form-control" placeholder="e.g. View our FAQs" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ── Pages (FAQ, 404) ── -->
+      @if (activeTab === 'pages') {
+        <div class="settings-section">
+          <h3 class="section-heading">FAQ Page</h3>
+          <div formGroupName="faqPage">
+            <div class="form-group">
+              <label>Page Heading (EN)</label>
+              <div formGroupName="heading">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. Frequently Asked Questions" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Page Subtitle (EN)</label>
+              <div formGroupName="subtitle">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. Find answers to common questions..." />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Footer Text (EN)</label>
+              <div formGroupName="footerText">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. Still have questions?" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Footer Button Text (EN)</label>
+              <div formGroupName="footerButtonText">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. Contact Us" />
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-heading" style="margin-top: 32px">404 Not Found Page</h3>
+          <div formGroupName="notFoundPage">
+            <div class="form-group">
+              <label>Eyebrow (EN)</label>
+              <div formGroupName="eyebrow">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. Page not found" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Heading (EN)</label>
+              <div formGroupName="heading">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. Lost in the wardrobe" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Subtitle (EN)</label>
+              <div formGroupName="subtitle">
+                <textarea formControlName="en" class="form-control" rows="2" placeholder="The page you're looking for..."></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Suggestions Heading (EN)</label>
+              <div formGroupName="suggestionsHeading">
+                <input type="text" formControlName="en" class="form-control" placeholder="e.g. You might be looking for" />
+              </div>
+            </div>
+
+            <h4 class="group-label" style="margin-top: 16px">Suggested Links</h4>
+            <div formArrayName="suggestions">
+              @for (s of notFoundSuggestions.controls; track $index) {
+                <div [formGroupName]="$index" class="sub-item">
+                  <div class="form-group flex-1">
+                    <label>Label (EN)</label>
+                    <div formGroupName="label">
+                      <input type="text" formControlName="en" class="form-control" placeholder="e.g. New Arrivals" />
+                    </div>
+                  </div>
+                  <div class="form-group flex-1">
+                    <label>URL</label>
+                    <input type="text" formControlName="url" class="form-control" placeholder="/shop" />
+                  </div>
+                  <button type="button" class="btn-remove" (click)="removeNotFoundSuggestion($index)">✕</button>
+                </div>
+              }
+            </div>
+            <button type="button" class="btn btn-secondary" (click)="addNotFoundSuggestion()">+ Add Suggestion</button>
           </div>
         </div>
       }

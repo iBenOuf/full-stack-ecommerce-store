@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ISiteConfig } from '../../core/models/site-config.model';
 import { SiteConfigService } from '../../core/services/site-config.service';
@@ -15,7 +15,7 @@ import { ToastService } from '../../core/services/toast.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SiteSettings implements OnInit, OnDestroy {
-  activeTab: 'general' | 'hero' | 'about' | 'footer' = 'general';
+  activeTab: 'general' | 'hero' | 'about' | 'footer' | 'content' | 'pages' = 'general';
   isLoading = true;
   isSaving = false;
   isUploading = false;
@@ -59,19 +59,165 @@ export class SiteSettings implements OnInit, OnDestroy {
       contactPhone: new FormControl(''),
       copyrightText: new FormControl(''),
     }),
-    facebook: new FormControl(''),
-    instagram: new FormControl(''),
-    twitter: new FormControl(''),
-    youtube: new FormControl(''),
-    tiktok: new FormControl(''),
-    pinterest: new FormControl(''),
+    socialLinks: new FormArray([] as any),
+    paymentMethods: new FormArray([] as any),
+    coreValues: new FormArray([] as any),
+    shippingPolicy: new FormGroup({
+      title: new FormGroup({ en: new FormControl('') }),
+      freeShipping: new FormGroup({ en: new FormControl('') }),
+      standardDelivery: new FormGroup({ en: new FormControl('') }),
+      returnsPolicy: new FormGroup({ en: new FormControl('') }),
+      returnsDays: new FormControl(14),
+    }),
+    footerLinks: new FormArray([] as any),
+    shopPage: new FormGroup({
+      heading: new FormGroup({ en: new FormControl('') }),
+      subtitle: new FormGroup({ en: new FormControl('') }),
+    }),
+    contactPage: new FormGroup({
+      eyebrow: new FormGroup({ en: new FormControl('') }),
+      heading: new FormGroup({ en: new FormControl('') }),
+      subtitle: new FormGroup({ en: new FormControl('') }),
+      emailHeading: new FormGroup({ en: new FormControl('') }),
+      emailDesc: new FormGroup({ en: new FormControl('') }),
+      phoneHeading: new FormGroup({ en: new FormControl('') }),
+      phoneDesc: new FormGroup({ en: new FormControl('') }),
+      visitHeading: new FormGroup({ en: new FormControl('') }),
+      visitDesc: new FormGroup({ en: new FormControl('') }),
+      socialEyebrow: new FormGroup({ en: new FormControl('') }),
+      socialHeading: new FormGroup({ en: new FormControl('') }),
+      faqText: new FormGroup({ en: new FormControl('') }),
+      faqLinkText: new FormGroup({ en: new FormControl('') }),
+    }),
+    faqPage: new FormGroup({
+      heading: new FormGroup({ en: new FormControl('') }),
+      subtitle: new FormGroup({ en: new FormControl('') }),
+      footerText: new FormGroup({ en: new FormControl('') }),
+      footerButtonText: new FormGroup({ en: new FormControl('') }),
+    }),
+    notFoundPage: new FormGroup({
+      eyebrow: new FormGroup({ en: new FormControl('') }),
+      heading: new FormGroup({ en: new FormControl('') }),
+      subtitle: new FormGroup({ en: new FormControl('') }),
+      suggestionsHeading: new FormGroup({ en: new FormControl('') }),
+      suggestions: new FormArray([] as any),
+    }),
+    navLinks: new FormArray([] as any),
   });
 
   constructor(
+    private _fb: FormBuilder,
     private _siteConfigService: SiteConfigService,
     private _toastService: ToastService,
     private _cdr: ChangeDetectorRef,
   ) {}
+
+  get coreValues(): FormArray {
+    return this.configForm.get('coreValues') as FormArray;
+  }
+
+  get socialLinks(): FormArray {
+    return this.configForm.get('socialLinks') as FormArray;
+  }
+
+  get paymentMethods(): FormArray {
+    return this.configForm.get('paymentMethods') as FormArray;
+  }
+
+  get navLinks(): FormArray {
+    return this.configForm.get('navLinks') as FormArray;
+  }
+
+  get footerLinks(): FormArray {
+    return this.configForm.get('footerLinks') as FormArray;
+  }
+
+  get notFoundSuggestions(): FormArray {
+    return this.configForm.get('notFoundPage.suggestions') as FormArray;
+  }
+
+  addCoreValue() {
+    this.coreValues.push(this._fb.group({
+      icon: new FormControl(''),
+      title: this._fb.group({ en: new FormControl('') }),
+      description: this._fb.group({ en: new FormControl('') }),
+    }));
+  }
+
+  removeCoreValue(index: number) {
+    this.coreValues.removeAt(index);
+  }
+
+  addSocialLink() {
+    this.socialLinks.push(this._fb.group({
+      name: new FormControl(''),
+      url: new FormControl(''),
+    }));
+  }
+
+  removeSocialLink(index: number) {
+    this.socialLinks.removeAt(index);
+  }
+
+  addPaymentMethod() {
+    this.paymentMethods.push(this._fb.group({
+      name: new FormControl(''),
+    }));
+  }
+
+  removePaymentMethod(index: number) {
+    this.paymentMethods.removeAt(index);
+  }
+
+  addNavLink() {
+    this.navLinks.push(this._fb.group({
+      label: this._fb.group({ en: new FormControl('') }),
+      url: new FormControl(''),
+      queryParams: new FormControl(''),
+    }));
+  }
+
+  removeNavLink(index: number) {
+    this.navLinks.removeAt(index);
+  }
+
+  addFooterLinkSection() {
+    this.footerLinks.push(this._fb.group({
+      section: this._fb.group({ en: new FormControl('') }),
+      links: this._fb.array([]),
+    }));
+  }
+
+  removeFooterLinkSection(index: number) {
+    this.footerLinks.removeAt(index);
+  }
+
+  getSectionLinks(sectionIndex: number): FormArray {
+    return this.footerLinks.at(sectionIndex).get('links') as FormArray;
+  }
+
+  addSectionLink(sectionIndex: number) {
+    const links = this.getSectionLinks(sectionIndex);
+    links.push(this._fb.group({
+      label: this._fb.group({ en: new FormControl('') }),
+      url: new FormControl(''),
+    }));
+  }
+
+  removeSectionLink(sectionIndex: number, linkIndex: number) {
+    this.getSectionLinks(sectionIndex).removeAt(linkIndex);
+  }
+
+  addNotFoundSuggestion() {
+    this.notFoundSuggestions.push(this._fb.group({
+      label: this._fb.group({ en: new FormControl('') }),
+      url: new FormControl(''),
+    }));
+  }
+
+  removeNotFoundSuggestion(index: number) {
+    this.notFoundSuggestions.removeAt(index);
+  }
 
   ngOnInit() {
     this._sub = this._siteConfigService.getSiteConfigData().subscribe((config) => {
@@ -88,15 +234,64 @@ export class SiteSettings implements OnInit, OnDestroy {
     }
   }
 
-  private getSocialUrl(config: ISiteConfig, name: string): string {
-    if (!config.footerSection?.socialLinks) return '';
-    const link = config.footerSection.socialLinks.find(
-      (s) => s.name.toLowerCase() === name.toLowerCase(),
-    );
-    return link ? link.url : '';
-  }
-
   private patchForm(config: ISiteConfig) {
+    this.coreValues.clear();
+    (config.coreValues || []).forEach((v) => {
+      this.coreValues.push(this._fb.group({
+        icon: new FormControl(v.icon || ''),
+        title: this._fb.group({ en: new FormControl(v.title?.en || '') }),
+        description: this._fb.group({ en: new FormControl(v.description?.en || '') }),
+      }));
+    });
+
+    this.socialLinks.clear();
+    (config.footerSection?.socialLinks || []).forEach((link) => {
+      this.socialLinks.push(this._fb.group({
+        name: new FormControl(link.name || ''),
+        url: new FormControl(link.url || ''),
+      }));
+    });
+
+    this.paymentMethods.clear();
+    (config.footerSection?.paymentMethods || []).forEach((pm) => {
+      this.paymentMethods.push(this._fb.group({
+        name: new FormControl(pm.name || ''),
+      }));
+    });
+
+    this.navLinks.clear();
+    (config.navLinks || []).forEach((link) => {
+      this.navLinks.push(this._fb.group({
+        label: this._fb.group({ en: new FormControl(link.label?.en || '') }),
+        url: new FormControl(link.url || ''),
+        queryParams: new FormControl(link.queryParams ? JSON.stringify(link.queryParams) : ''),
+      }));
+    });
+
+    this.footerLinks.clear();
+    (config.footerLinks || []).forEach((section) => {
+      const linksArray = this._fb.array(
+        (section.links || []).map((l) =>
+          this._fb.group({
+            label: this._fb.group({ en: new FormControl(l.label?.en || '') }),
+            url: new FormControl(l.url || ''),
+          })
+        ),
+      );
+      this.footerLinks.push(this._fb.group({
+        section: this._fb.group({ en: new FormControl(section.section?.en || '') }),
+        links: linksArray,
+      }));
+    });
+
+    this.notFoundSuggestions.clear();
+    (config.notFoundPage?.suggestions || []).forEach((s) => {
+      this.notFoundSuggestions.push(this._fb.group({
+        label: this._fb.group({ en: new FormControl(s.label?.en || '') }),
+        url: new FormControl(s.url || ''),
+      }));
+    });
+
     this.configForm.patchValue({
       siteName: config.siteName,
       announcement: config.announcement,
@@ -144,15 +339,46 @@ export class SiteSettings implements OnInit, OnDestroy {
         contactPhone: config.footerSection?.contactPhone,
         copyrightText: config.footerSection?.copyrightText,
       },
-      facebook: this.getSocialUrl(config, 'facebook'),
-      instagram: this.getSocialUrl(config, 'instagram'),
-      twitter: this.getSocialUrl(config, 'twitter'),
-      youtube: this.getSocialUrl(config, 'youtube'),
-      tiktok: this.getSocialUrl(config, 'tiktok'),
-      pinterest: this.getSocialUrl(config, 'pinterest'),
+      shippingPolicy: {
+        title: { en: config.shippingPolicy?.title?.en || '' },
+        freeShipping: { en: config.shippingPolicy?.freeShipping?.en || '' },
+        standardDelivery: { en: config.shippingPolicy?.standardDelivery?.en || '' },
+        returnsPolicy: { en: config.shippingPolicy?.returnsPolicy?.en || '' },
+        returnsDays: config.shippingPolicy?.returnsDays || 14,
+      },
+      shopPage: {
+        heading: { en: config.shopPage?.heading?.en || '' },
+        subtitle: { en: config.shopPage?.subtitle?.en || '' },
+      },
+      contactPage: {
+        eyebrow: { en: config.contactPage?.eyebrow?.en || '' },
+        heading: { en: config.contactPage?.heading?.en || '' },
+        subtitle: { en: config.contactPage?.subtitle?.en || '' },
+        emailHeading: { en: config.contactPage?.emailHeading?.en || '' },
+        emailDesc: { en: config.contactPage?.emailDesc?.en || '' },
+        phoneHeading: { en: config.contactPage?.phoneHeading?.en || '' },
+        phoneDesc: { en: config.contactPage?.phoneDesc?.en || '' },
+        visitHeading: { en: config.contactPage?.visitHeading?.en || '' },
+        visitDesc: { en: config.contactPage?.visitDesc?.en || '' },
+        socialEyebrow: { en: config.contactPage?.socialEyebrow?.en || '' },
+        socialHeading: { en: config.contactPage?.socialHeading?.en || '' },
+        faqText: { en: config.contactPage?.faqText?.en || '' },
+        faqLinkText: { en: config.contactPage?.faqLinkText?.en || '' },
+      },
+      faqPage: {
+        heading: { en: config.faqPage?.heading?.en || '' },
+        subtitle: { en: config.faqPage?.subtitle?.en || '' },
+        footerText: { en: config.faqPage?.footerText?.en || '' },
+        footerButtonText: { en: config.faqPage?.footerButtonText?.en || '' },
+      },
+      notFoundPage: {
+        eyebrow: { en: config.notFoundPage?.eyebrow?.en || '' },
+        heading: { en: config.notFoundPage?.heading?.en || '' },
+        subtitle: { en: config.notFoundPage?.subtitle?.en || '' },
+        suggestionsHeading: { en: config.notFoundPage?.suggestionsHeading?.en || '' },
+      },
     });
 
-    // Set preview for existing hero image (now a full Cloudinary URL)
     if (config.heroSection?.heroImage) {
       this.previewUrl = config.heroSection.heroImage;
     }
@@ -167,10 +393,46 @@ export class SiteSettings implements OnInit, OnDestroy {
     const val = this.configForm.value;
     const snapshot = this._siteConfigService.getConfigSnapshot();
 
-    const socialNames = ['facebook', 'instagram', 'twitter', 'youtube', 'tiktok', 'pinterest'];
-    const socialLinks = socialNames
-      .filter((name) => !!(val as any)[name])
-      .map((name) => ({ name, url: (val as any)[name] as string }));
+    const socialLinks = (val.socialLinks || [])
+      .filter((s: any) => s.url)
+      .map((s: any) => ({ name: s.name, url: s.url }));
+
+    const coreValues = (val.coreValues || []).map((v: any) => ({
+      icon: v.icon || '',
+      title: { en: v.title?.en || '' },
+      description: { en: v.description?.en || '' },
+    }));
+
+    const footerLinks = (val.footerLinks || []).map((section: any) => ({
+      section: { en: section.section?.en || '' },
+      links: (section.links || []).map((l: any) => ({
+        label: { en: l.label?.en || '' },
+        url: l.url || '',
+      })),
+    }));
+
+    const paymentMethods = (val.paymentMethods || [])
+      .filter((pm: any) => pm.name)
+      .map((pm: any) => ({ name: pm.name }));
+
+    const navLinks = (val.navLinks || [])
+      .filter((l: any) => l.label?.en && l.url)
+      .map((l: any) => {
+        let qp: Record<string, any> | undefined;
+        if (l.queryParams && l.queryParams.trim()) {
+          try { qp = JSON.parse(l.queryParams); } catch {}
+        }
+        return {
+          label: { en: l.label?.en || '' },
+          url: l.url || '',
+          queryParams: qp || undefined,
+        };
+      });
+
+    const notFoundSuggestions = (val.notFoundPage?.suggestions || []).map((s: any) => ({
+      label: { en: s.label?.en || '' },
+      url: s.url || '',
+    }));
 
     const updateData = {
       siteName: val.siteName ?? '',
@@ -219,10 +481,50 @@ export class SiteSettings implements OnInit, OnDestroy {
         contactEmail: val.footerSection?.contactEmail ?? '',
         contactPhone: val.footerSection?.contactPhone ?? '',
         copyrightText: val.footerSection?.copyrightText ?? '',
-        paymentMethods: (snapshot?.footerSection?.paymentMethods ?? []).map(({ name }) => ({
-          name,
-        })),
+        paymentMethods,
       },
+      coreValues,
+      shippingPolicy: {
+        title: { en: val.shippingPolicy?.title?.en ?? '' },
+        freeShipping: { en: val.shippingPolicy?.freeShipping?.en ?? '' },
+        standardDelivery: { en: val.shippingPolicy?.standardDelivery?.en ?? '' },
+        returnsPolicy: { en: val.shippingPolicy?.returnsPolicy?.en ?? '' },
+        returnsDays: val.shippingPolicy?.returnsDays ?? 14,
+      },
+      footerLinks,
+      shopPage: {
+        heading: { en: val.shopPage?.heading?.en ?? '' },
+        subtitle: { en: val.shopPage?.subtitle?.en ?? '' },
+      },
+      contactPage: {
+        eyebrow: { en: val.contactPage?.eyebrow?.en ?? '' },
+        heading: { en: val.contactPage?.heading?.en ?? '' },
+        subtitle: { en: val.contactPage?.subtitle?.en ?? '' },
+        emailHeading: { en: val.contactPage?.emailHeading?.en ?? '' },
+        emailDesc: { en: val.contactPage?.emailDesc?.en ?? '' },
+        phoneHeading: { en: val.contactPage?.phoneHeading?.en ?? '' },
+        phoneDesc: { en: val.contactPage?.phoneDesc?.en ?? '' },
+        visitHeading: { en: val.contactPage?.visitHeading?.en ?? '' },
+        visitDesc: { en: val.contactPage?.visitDesc?.en ?? '' },
+        socialEyebrow: { en: val.contactPage?.socialEyebrow?.en ?? '' },
+        socialHeading: { en: val.contactPage?.socialHeading?.en ?? '' },
+        faqText: { en: val.contactPage?.faqText?.en ?? '' },
+        faqLinkText: { en: val.contactPage?.faqLinkText?.en ?? '' },
+      },
+      faqPage: {
+        heading: { en: val.faqPage?.heading?.en ?? '' },
+        subtitle: { en: val.faqPage?.subtitle?.en ?? '' },
+        footerText: { en: val.faqPage?.footerText?.en ?? '' },
+        footerButtonText: { en: val.faqPage?.footerButtonText?.en ?? '' },
+      },
+      notFoundPage: {
+        eyebrow: { en: val.notFoundPage?.eyebrow?.en ?? '' },
+        heading: { en: val.notFoundPage?.heading?.en ?? '' },
+        subtitle: { en: val.notFoundPage?.subtitle?.en ?? '' },
+        suggestionsHeading: { en: val.notFoundPage?.suggestionsHeading?.en ?? '' },
+        suggestions: notFoundSuggestions,
+      },
+      navLinks,
     };
 
     this._siteConfigService.updateConfig(updateData as any).subscribe({
@@ -264,7 +566,6 @@ export class SiteSettings implements OnInit, OnDestroy {
 
     this.selectedFile = file;
     
-    // Create preview URL
     if (this.previewUrl) {
       URL.revokeObjectURL(this.previewUrl);
     }
