@@ -23,7 +23,7 @@ export class UserService {
     return this.http.get<any>(`${this.apiUrl}/all`);
   }
 
-  changeUserStatus(id: string, data: { status: boolean }) {
+  changeUserStatus(id: string, data: { isActive: boolean }) {
     return this.http.put<IUserResponse>(`${this.apiUrl}/${id}/status`, data);
   }
 

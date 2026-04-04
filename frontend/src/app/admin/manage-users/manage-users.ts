@@ -42,7 +42,7 @@ export class ManageUsers implements OnInit {
   toggleStatus(user: IUser) {
     this.isProcessing = true;
     const newStatus = !user.isActive;
-    this._userService.changeUserStatus(user._id, { status: newStatus }).subscribe({
+    this._userService.changeUserStatus(user._id, { isActive: newStatus }).subscribe({
       next: () => {
         setTimeout(() => {
           this._toastService.success(`User ${newStatus ? 'activated' : 'deactivated'} successfully`);
