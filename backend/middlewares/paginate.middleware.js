@@ -13,6 +13,8 @@ module.exports =
             subcategorySlug,
             categorySlug,
             inStock,
+            status,
+            stockStatus,
             page,
             limit,
         } = req.query;
@@ -35,6 +37,12 @@ module.exports =
                 break;
             case "nameDESC":
                 sortField = { name: -1 };
+                break;
+            case "stockASC":
+                sortField = { stockQuantity: 1 };
+                break;
+            case "stockDESC":
+                sortField = { stockQuantity: -1 };
                 break;
             default:
                 sortField = { createdAt: -1 };
@@ -68,7 +76,13 @@ module.exports =
                 ],
             }),
             ...(!adminOnly && { isActive: true, isDeleted: false }),
+            ...(adminOnly && status === "active" && { isDeleted: false }),
+            ...(adminOnly && status === "deleted" && { isDeleted: true }),
+            ...(adminOnly && status === "enabled" && { isActive: true }),
+            ...(adminOnly && status === "disabled" && { isActive: false }),
             ...(inStock === "true" && { stockQuantity: { $gt: 0 } }),
+            ...(stockStatus === "low" && { stockQuantity: { $gt: 0, $lte: 5 } }),
+            ...(stockStatus === "out" && { stockQuantity: 0 }),
         };
 
         let mongooseQuery = Model.find(filterConditions)

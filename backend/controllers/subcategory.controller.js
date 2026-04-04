@@ -145,8 +145,6 @@ const updateSubcategorySchema = Joi.object({
 exports.updateSubcategory = async (req, res) => {
     const { error, value } = updateSubcategorySchema.validate(req.body);
     if (error) {
-        console.log("Subcategory update validation error:", error.details[0].message);
-        console.log("Received body:", req.body);
         return res.status(400).json({ message: error.details[0].message });
     }
     if (Object.keys(value).length === 0 && !req.file) {
