@@ -13,14 +13,14 @@
     </a>
 
     <nav class="nav-links desktop-only">
-      <a routerLink="/shop" [queryParams]="{ sort: 'createdAtDESC' }">New In</a>
+      @for (link of siteConfig?.navLinks; track $index) {
+        <a routerLink="{{ link.url }}" [queryParams]="link.queryParams">{{ link.label?.en }}</a>
+      }
       @for (category of categories; track $index) {
         <a routerLink="/shop" [queryParams]="{ categorySlug: category.slug }">{{
           category.name
         }}</a>
       }
-      <a routerLink="/shop">Collections</a>
-      <!-- <a routerLink="/shop" [queryParams]="{ sale: true }">Sale</a> -->
     </nav>
 
     <div class="nav-icons">
@@ -90,13 +90,14 @@
         </button>
       </div>
       <nav class="mobile-nav-links">
-        <a routerLink="/shop" [queryParams]="{ sort: 'createdAtDESC' }" (click)="closeMobileMenu()">New In</a>
+        @for (link of siteConfig?.navLinks; track $index) {
+          <a routerLink="{{ link.url }}" [queryParams]="link.queryParams" (click)="closeMobileMenu()">{{ link.label?.en }}</a>
+        }
         @for (category of categories; track $index) {
           <a routerLink="/shop" [queryParams]="{ categorySlug: category.slug }" (click)="closeMobileMenu()">{{
             category.name
           }}</a>
         }
-        <a routerLink="/shop" (click)="closeMobileMenu()">Collections</a>
         @if (userData) {
           <a routerLink="/my-account" (click)="closeMobileMenu()">My Account</a>
         } @else {
