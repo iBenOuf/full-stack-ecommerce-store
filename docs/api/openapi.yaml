@@ -1,0 +1,4018 @@
+openapi: 3.0.3
+info:
+  title: Maison & Co E-Commerce API
+  description: |
+    RESTful API for a modern, full-featured e-commerce platform with admin dashboard,
+    real-time notifications, and dynamic content management.
+
+    ## Authentication
+    Most endpoints require a JWT token passed in the `Authorization` header:
+    ```
+    Authorization: Bearer <token>
+    ```
+    Tokens are obtained via the `/auth/login` or `/auth/register` endpoints and expire after 1 day.
+
+    ## Roles
+    - **customer** — Browse, purchase, manage own data
+    - **moderator** — Customer + manage testimonials, FAQs
+    - **admin** — Full access to all endpoints
+
+    ## Base URL
+    ```
+    https://your-backend-url.com/api/v1
+    ```
+
+    ## Pagination
+    List endpoints support pagination via query parameters:
+    - `page` — Page number (default: 1)
+    - `limit` — Items per page (default: 10)
+    - `sort` — Sort field (e.g., `createdAtDESC`, `priceASC`)
+    - `filter` — Search term
+  version: 1.0.0
+  contact:
+    name: API Support
+    url: https://github.com/iBenOuf/full-stack-ecommerce-store
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Development
+  - url: https://your-backend-url.com/api/v1
+    description: Production
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Health
+    description: API health check
+  - name: Auth
+    description: User authentication and registration
+  - name: Users
+    description: User management (admin)
+  - name: Products
+    description: Product catalog and management
+  - name: Orders
+    description: Order creation and tracking
+  - name: Cart
+    description: Shopping cart operations
+  - name: Categories
+    description: Product categories
+  - name: Subcategories
+    description: Product subcategories
+  - name: Addresses
+    description: User shipping addresses
+  - name: Testimonials
+    description: Customer reviews and testimonials
+  - name: FAQs
+    description: Frequently asked questions
+  - name: Pages
+    description: Dynamic content pages
+  - name: Notifications
+    description: Real-time admin notifications
+  - name: Site Config
+    description: Site customization and configuration
+  - name: Reports
+    description: Sales analytics and reports
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Validation error message"
+      required:
+        - message
+
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        gender:
+          type: string
+          enum: [male, female]
+        role:
+          type: string
+          enum: [customer, moderator, admin]
+        isActive:
+          type: boolean
+        isDeleted:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        stockQuantity:
+          type: integer
+        imageUrl:
+          type: string
+        subcategory:
+          $ref: '#/components/schemas/Subcategory'
+        isActive:
+          type: boolean
+        isDeleted:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Category:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        imageUrl:
+          type: string
+        isActive:
+          type: boolean
+        isDeleted:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Subcategory:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        category:
+          oneOf:
+            - type: string
+            - $ref: '#/components/schemas/Category'
+        image:
+          type: string
+        isActive:
+          type: boolean
+        isDeleted:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Order:
+      type: object
+      properties:
+        _id:
+          type: string
+        user:
+          oneOf:
+            - type: string
+            - $ref: '#/components/schemas/User'
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                oneOf:
+                  - type: string
+                  - $ref: '#/components/schemas/Product'
+              snapshot:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  imageUrl:
+                    type: string
+              quantity:
+                type: integer
+              unitPrice:
+                type: number
+        shippingAddress:
+          type: object
+          properties:
+            street:
+              type: string
+            city:
+              type: string
+            governorate:
+              type: string
+        deliveryPhone:
+          type: string
+        status:
+          type: string
+          enum: [pending, preparing, shipped, delivered, canceled_by_client, canceled_by_admin, rejected, returned]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+        user:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                oneOf:
+                  - type: string
+                  - $ref: '#/components/schemas/Product'
+              quantity:
+                type: integer
+              unitPrice:
+                type: number
+
+    Address:
+      type: object
+      properties:
+        _id:
+          type: string
+        user:
+          type: string
+        label:
+          type: string
+        street:
+          type: string
+        city:
+          type: string
+        governorate:
+          type: string
+        isDefault:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Testimonial:
+      type: object
+      properties:
+        _id:
+          type: string
+        user:
+          type: object
+          properties:
+            firstName:
+              type: string
+            lastName:
+              type: string
+            email:
+              type: string
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        isDeleted:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    FAQ:
+      type: object
+      properties:
+        _id:
+          type: string
+        question:
+          type: string
+        answer:
+          type: string
+        order:
+          type: integer
+        isActive:
+          type: boolean
+        isDeleted:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Page:
+      type: object
+      properties:
+        _id:
+          type: string
+        pageSlug:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        isActive:
+          type: boolean
+        isDeleted:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Notification:
+      type: object
+      properties:
+        _id:
+          type: string
+        type:
+          type: string
+          enum: [new_order, low_stock, new_testimonial, order_canceled]
+        title:
+          type: string
+        message:
+          type: string
+        isRead:
+          type: boolean
+        ref:
+          type: string
+        refModel:
+          type: string
+          enum: [Order, Product, Testimonial]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    SiteConfig:
+      type: object
+      properties:
+        _id:
+          type: string
+        announcement:
+          type: string
+        siteName:
+          type: string
+        heroSection:
+          type: object
+          properties:
+            heroSlogan:
+              type: string
+            heroTitle:
+              type: object
+              properties:
+                line1:
+                  type: string
+                line2:
+                  type: string
+                line3:
+                  type: string
+            heroDescription:
+              type: string
+            heroImage:
+              type: string
+            season:
+              type: string
+        aboutSection:
+          type: object
+          properties:
+            aboutSlogan:
+              type: string
+            aboutTitle:
+              type: object
+              properties:
+                line1:
+                  type: string
+                line2:
+                  type: string
+                line3:
+                  type: string
+            aboutDescription:
+              type: string
+            analytics:
+              type: object
+              properties:
+                stat1:
+                  type: object
+                  properties:
+                    value:
+                      type: string
+                    label:
+                      type: string
+                stat2:
+                  type: object
+                  properties:
+                    value:
+                      type: string
+                    label:
+                      type: string
+                stat3:
+                  type: object
+                  properties:
+                    value:
+                      type: string
+                    label:
+                      type: string
+                stat4:
+                  type: object
+                  properties:
+                    value:
+                      type: string
+                    label:
+                      type: string
+        footerSection:
+          type: object
+          properties:
+            footerText:
+              type: string
+            socialLinks:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  url:
+                    type: string
+            contactEmail:
+              type: string
+            contactPhone:
+              type: string
+            copyrightText:
+              type: string
+            paymentMethods:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+        coreValues:
+          type: array
+          items:
+            type: object
+            properties:
+              icon:
+                type: string
+              title:
+                type: object
+                properties:
+                  en:
+                    type: string
+              description:
+                type: object
+                properties:
+                  en:
+                    type: string
+        shippingPolicy:
+          type: object
+          properties:
+            title:
+              type: object
+              properties:
+                en:
+                  type: string
+            freeShipping:
+              type: object
+              properties:
+                en:
+                  type: string
+            standardDelivery:
+              type: object
+              properties:
+                en:
+                  type: string
+            returnsPolicy:
+              type: object
+              properties:
+                en:
+                  type: string
+            returnsDays:
+              type: integer
+        footerLinks:
+          type: array
+          items:
+            type: object
+            properties:
+              section:
+                type: object
+                properties:
+                  en:
+                    type: string
+              links:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    label:
+                      type: object
+                      properties:
+                        en:
+                          type: string
+                    url:
+                      type: string
+        shopPage:
+          type: object
+          properties:
+            heading:
+              type: object
+              properties:
+                en:
+                  type: string
+            subtitle:
+              type: object
+              properties:
+                en:
+                  type: string
+        contactPage:
+          type: object
+          properties:
+            eyebrow:
+              type: object
+              properties:
+                en:
+                  type: string
+            heading:
+              type: object
+              properties:
+                en:
+                  type: string
+            subtitle:
+              type: object
+              properties:
+                en:
+                  type: string
+            emailHeading:
+              type: object
+              properties:
+                en:
+                  type: string
+            emailDesc:
+              type: object
+              properties:
+                en:
+                  type: string
+            phoneHeading:
+              type: object
+              properties:
+                en:
+                  type: string
+            phoneDesc:
+              type: object
+              properties:
+                en:
+                  type: string
+            visitHeading:
+              type: object
+              properties:
+                en:
+                  type: string
+            visitDesc:
+              type: object
+              properties:
+                en:
+                  type: string
+            socialEyebrow:
+              type: object
+              properties:
+                en:
+                  type: string
+            socialHeading:
+              type: object
+              properties:
+                en:
+                  type: string
+            faqText:
+              type: object
+              properties:
+                en:
+                  type: string
+            faqLinkText:
+              type: object
+              properties:
+                en:
+                  type: string
+        faqPage:
+          type: object
+          properties:
+            heading:
+              type: object
+              properties:
+                en:
+                  type: string
+            subtitle:
+              type: object
+              properties:
+                en:
+                  type: string
+            footerText:
+              type: object
+              properties:
+                en:
+                  type: string
+            footerButtonText:
+              type: object
+              properties:
+                en:
+                  type: string
+        notFoundPage:
+          type: object
+          properties:
+            eyebrow:
+              type: object
+              properties:
+                en:
+                  type: string
+            heading:
+              type: object
+              properties:
+                en:
+                  type: string
+            subtitle:
+              type: object
+              properties:
+                en:
+                  type: string
+            suggestionsHeading:
+              type: object
+              properties:
+                en:
+                  type: string
+            suggestions:
+              type: array
+              items:
+                type: object
+                properties:
+                  label:
+                    type: object
+                    properties:
+                      en:
+                        type: string
+                  url:
+                    type: string
+        navLinks:
+          type: array
+          items:
+            type: object
+            properties:
+              label:
+                type: object
+                properties:
+                  en:
+                    type: string
+              url:
+                type: string
+              queryParams:
+                type: object
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+  parameters:
+    pagination:
+      in: query
+      name: page
+      schema:
+        type: integer
+        default: 1
+      description: Page number
+    limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        default: 10
+      description: Items per page
+    sort:
+      in: query
+      name: sort
+      schema:
+        type: string
+        enum: [createdAtASC, createdAtDESC, priceASC, priceDESC, nameASC, nameDESC, stockASC, stockDESC]
+        default: createdAtDESC
+      description: Sort order
+    filter:
+      in: query
+      name: filter
+      schema:
+        type: string
+      description: Search term (searches name and description)
+    categorySlug:
+      in: query
+      name: categorySlug
+      schema:
+        type: string
+      description: Filter by category slug
+    subcategorySlug:
+      in: query
+      name: subcategorySlug
+      schema:
+        type: string
+      description: Filter by subcategory slug
+    inStock:
+      in: query
+      name: inStock
+      schema:
+        type: string
+        enum: ['true']
+      description: Filter to show only in-stock items
+    status:
+      in: query
+      name: status
+      schema:
+        type: string
+      description: Filter by status
+    stockStatus:
+      in: query
+      name: stockStatus
+      schema:
+        type: string
+        enum: [in, low, out]
+      description: Filter by stock status
+    startDate:
+      in: query
+      name: startDate
+      schema:
+        type: string
+        format: date
+      description: Start date for reports (ISO format)
+    endDate:
+      in: query
+      name: endDate
+      schema:
+        type: string
+        format: date
+      description: End date for reports (ISO format)
+    pathId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: MongoDB ObjectId
+    pathSlug:
+      in: path
+      name: slug
+      required: true
+      schema:
+        type: string
+      description: URL slug
+    pathProductId:
+      in: path
+      name: productId
+      required: true
+      schema:
+        type: string
+      description: Product MongoDB ObjectId
+
+paths:
+  /:
+    get:
+      tags:
+        - Health
+      summary: API health check
+      description: Returns API status and timestamp
+      security: []
+      responses:
+        '200':
+          description: API is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "API is running"
+                  status:
+                    type: string
+                    example: "ok"
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new customer
+      description: Creates a new customer account and returns user data
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - firstName
+                - lastName
+                - email
+                - password
+              properties:
+                firstName:
+                  type: string
+                  minLength: 1
+                  maxLength: 30
+                lastName:
+                  type: string
+                  minLength: 1
+                  maxLength: 30
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 32
+                phone:
+                  type: string
+                gender:
+                  type: string
+                  enum: [male, female]
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Registered successfully"
+                  data:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/register/moderator:
+    post:
+      tags:
+        - Auth
+      summary: Register a new moderator
+      description: Creates a new moderator account (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - firstName
+                - lastName
+                - email
+                - password
+              properties:
+                firstName:
+                  type: string
+                  minLength: 1
+                  maxLength: 30
+                lastName:
+                  type: string
+                  minLength: 1
+                  maxLength: 30
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 32
+                phone:
+                  type: string
+                gender:
+                  type: string
+                  enum: [male, female]
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Registered successfully"
+                  data:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/register/admin:
+    post:
+      tags:
+        - Auth
+      summary: Register a new admin
+      description: Creates a new admin account (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - firstName
+                - lastName
+                - email
+                - password
+              properties:
+                firstName:
+                  type: string
+                  minLength: 1
+                  maxLength: 30
+                lastName:
+                  type: string
+                  minLength: 1
+                  maxLength: 30
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 32
+                phone:
+                  type: string
+                gender:
+                  type: string
+                  enum: [male, female]
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Registered successfully"
+                  data:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login
+      description: Authenticates user and returns JWT token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 32
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logged in successfully"
+                  token:
+                    type: string
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/me:
+    get:
+      tags:
+        - Auth
+      summary: Get current user
+      description: Returns the authenticated user's profile
+      responses:
+        '200':
+          description: User fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/User'
+
+  /user/all:
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      description: Returns all users (admin only)
+      responses:
+        '200':
+          description: Users fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Users fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+
+  /user/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get user by ID
+      description: Users can fetch themselves; admins can fetch any user
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        '200':
+          description: User fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/User'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Users
+      summary: Update user
+      description: Users can only update themselves
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  minLength: 1
+                  maxLength: 30
+                lastName:
+                  type: string
+                  minLength: 1
+                  maxLength: 30
+                phone:
+                  type: string
+                gender:
+                  type: string
+                  enum: [male, female]
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User updated successfully"
+                  data:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Users
+      summary: Delete user
+      description: Soft-delete a user (admin only)
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User deleted successfully"
+                  data:
+                    $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /user/{id}/password:
+    patch:
+      tags:
+        - Users
+      summary: Update user password
+      description: Users can only update their own password
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - currentPassword
+                - newPassword
+              properties:
+                currentPassword:
+                  type: string
+                newPassword:
+                  type: string
+                  minLength: 8
+                  maxLength: 32
+      responses:
+        '200':
+          description: Password updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Password updated successfully"
+                  data:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Incorrect password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /user/{id}/status:
+    put:
+      tags:
+        - Users
+      summary: Change user status
+      description: Change user active status (admin only)
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - isActive
+              properties:
+                isActive:
+                  type: boolean
+      responses:
+        '200':
+          description: User status changed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User status changed successfully"
+                  data:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /product:
+    post:
+      tags:
+        - Products
+      summary: Create product
+      description: Create a new product (admin only)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - slug
+                - description
+                - price
+                - stockQuantity
+                - subcategoryId
+                - image
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                slug:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                description:
+                  type: string
+                  minLength: 1
+                  maxLength: 2000
+                price:
+                  type: number
+                  minimum: 0
+                stockQuantity:
+                  type: integer
+                  minimum: 0
+                subcategoryId:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product created successfully"
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Slug already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /product/{id}:
+    put:
+      tags:
+        - Products
+      summary: Update product
+      description: Update a product by ID (admin only)
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                slug:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                description:
+                  type: string
+                  minLength: 1
+                  maxLength: 2000
+                price:
+                  type: number
+                  minimum: 0
+                stockQuantity:
+                  type: integer
+                  minimum: 0
+                subcategoryId:
+                  type: string
+                isActive:
+                  type: boolean
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Slug already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Products
+      summary: Delete product
+      description: Soft-delete a product (admin only)
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        '200':
+          description: Product deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product deleted successfully"
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /product/related:
+    get:
+      tags:
+        - Products
+      summary: Get related products
+      description: Get related products by subcategory (public)
+      security: []
+      parameters:
+        - in: query
+          name: productId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: subcategoryId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Related products fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Related products fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        '400':
+          description: Missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No related products found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /product/admin:
+    get:
+      tags:
+        - Products
+      summary: Get products (admin view)
+      description: Get paginated products with admin view (includes deleted/inactive)
+      parameters:
+        - $ref: '#/components/parameters/pagination'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/filter'
+        - $ref: '#/components/parameters/categorySlug'
+        - $ref: '#/components/parameters/subcategorySlug'
+        - $ref: '#/components/parameters/inStock'
+        - $ref: '#/components/parameters/status'
+        - $ref: '#/components/parameters/stockStatus'
+      responses:
+        '200':
+          description: Products fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Products fetched successfully"
+                  data:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Product'
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      totalPages:
+                        type: integer
+
+  /product/best-sellers:
+    get:
+      tags:
+        - Products
+      summary: Get best sellers
+      description: Get best-selling products ordered by total sold (public)
+      security: []
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Best sellers fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Best seller products fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: '#/components/schemas/Product'
+                        - type: object
+                          properties:
+                            totalSold:
+                              type: integer
+
+  /product/list:
+    get:
+      tags:
+        - Products
+      summary: Get products (public)
+      description: Get paginated products (public, active only)
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/pagination'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/filter'
+        - $ref: '#/components/parameters/categorySlug'
+        - $ref: '#/components/parameters/subcategorySlug'
+        - $ref: '#/components/parameters/inStock'
+      responses:
+        '200':
+          description: Products fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Products fetched successfully"
+                  data:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Product'
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      totalPages:
+                        type: integer
+
+  /product/admin/{slug}:
+    get:
+      tags:
+        - Products
+      summary: Get product by slug (admin view)
+      description: Get product by slug with admin view (admin only)
+      parameters:
+        - $ref: '#/components/parameters/pathSlug'
+      responses:
+        '200':
+          description: Product fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /product/slug/{slug}:
+    get:
+      tags:
+        - Products
+      summary: Get product by slug
+      description: Get product by slug (public, active only)
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/pathSlug'
+      responses:
+        '200':
+          description: Product fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /product/id/{id}:
+    get:
+      tags:
+        - Products
+      summary: Get product by ID
+      description: Get product by ID (public)
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        '200':
+          description: Product fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /order:
+    post:
+      tags:
+        - Orders
+      summary: Create order
+      description: Create a new order from cart items
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - shippingAddress
+                - deliveryPhone
+              properties:
+                shippingAddress:
+                  type: object
+                  required:
+                    - street
+                    - city
+                    - governorate
+                  properties:
+                    street:
+                      type: string
+                    city:
+                      type: string
+                    governorate:
+                      type: string
+                deliveryPhone:
+                  type: string
+      responses:
+        '201':
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Order created successfully"
+                  data:
+                    $ref: '#/components/schemas/Order'
+                  unavailableItems:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        productId:
+                          type: string
+                        reason:
+                          type: string
+        '400':
+          description: Validation error or cart empty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags:
+        - Orders
+      summary: Get all orders
+      description: Get all orders (admin/moderator only)
+      responses:
+        '200':
+          description: Orders retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Orders retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+
+  /order/user/{id}:
+    get:
+      tags:
+        - Orders
+      summary: Get user orders
+      description: Get orders by user ID (users can only view their own)
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        '200':
+          description: Orders retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Orders retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /order/details/{id}:
+    get:
+      tags:
+        - Orders
+      summary: Get order details
+      description: Get order by ID (users can only view their own)
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        '200':
+          description: Order retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Order retrieved successfully"
+                  data:
+                    $ref: '#/components/schemas/Order'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /order/{id}:
+    patch:
+      tags:
+        - Orders
+      summary: Update order status
+      description: Update order status (customers can only cancel; admins can set any status)
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [pending, preparing, canceled_by_client, canceled_by_admin, shipped, delivered, rejected, returned]
+      responses:
+        '200':
+          description: Order updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Order updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Order'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /order/reorder/{id}:
+    post:
+      tags:
+        - Orders
+      summary: Re-order
+      description: Re-order from a previous order (adds items to cart)
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        '200':
+          description: Re-order processed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Re-order processed. Items added to cart."
+                  data:
+                    type: object
+                    properties:
+                      cart:
+                        $ref: '#/components/schemas/Cart'
+                      skippedItems:
+                        type: array
+                        items:
+                          type: string
+                      addedItems:
+                        type: array
+                        items:
+                          type: string
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cart:
+    get:
+      tags:
+        - Cart
+      summary: Get cart
+      description: Get current user's cart
+      responses:
+        '200':
+          description: Cart fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Cart fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/Cart'
+    post:
+      tags:
+        - Cart
+      summary: Add to cart
+      description: Add item to cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - quantity
+              properties:
+                productId:
+                  type: string
+                product:
+                  type: string
+                quantity:
+                  type: integer
+                  minimum: 1
+      responses:
+        '201':
+          description: Product added to cart successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product added to cart successfully"
+                  data:
+                    $ref: '#/components/schemas/Cart'
+        '400':
+          description: Validation error or out of stock
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Cart
+      summary: Update cart item
+      description: Update quantity of an item in cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - quantity
+              properties:
+                productId:
+                  type: string
+                product:
+                  type: string
+                quantity:
+                  type: integer
+                  minimum: 1
+      responses:
+        '200':
+          description: Cart updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Cart updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Cart'
+        '400':
+          description: Validation error or out of stock
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Cart/item/product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Cart
+      summary: Clear cart
+      description: Clear all items from cart
+      responses:
+        '200':
+          description: Cart cleared successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Cart cleared successfully"
+
+  /cart/item/{productId}:
+    delete:
+      tags:
+        - Cart
+      summary: Remove from cart
+      description: Remove a specific item from cart
+      parameters:
+        - $ref: '#/components/parameters/pathProductId'
+      responses:
+        '200':
+          description: Product removed from cart successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product removed from cart successfully"
+                  data:
+                    $ref: '#/components/schemas/Cart'
+        '404':
+          description: Cart/item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cart/merge:
+    post:
+      tags:
+        - Cart
+      summary: Merge guest cart
+      description: Merge local cart items with server cart (for guest-to-authenticated user transition)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - items
+              properties:
+                items:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required:
+                      - quantity
+                    properties:
+                      productId:
+                        type: string
+                      product:
+                        type: string
+                      quantity:
+                        type: integer
+                        minimum: 1
+                      unitPrice:
+                        type: number
+      responses:
+        '200':
+          description: Cart merged successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Cart merged successfully"
+                  data:
+                    $ref: '#/components/schemas/Cart'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /category/add:
+    post:
+      tags:
+        - Categories
+      summary: Create category
+      description: Create a new category (admin only)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - slug
+                - image
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                slug:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                isActive:
+                  type: boolean
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Category created successfully"
+                  data:
+                    $ref: '#/components/schemas/Category'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Slug already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /category/update/{id}:
+    put:
+      tags:
+        - Categories
+      summary: Update category
+      description: Update a category by ID (admin only)
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                slug:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                isActive:
+                  type: boolean
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Category updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Category updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Category'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Slug already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /category/delete/{id}:
+    delete:
+      tags:
+        - Categories
+      summary: Delete category
+      description: Soft-delete a category (admin only)
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        '200':
+          description: Category deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Category deleted successfully"
+                  data:
+                    $ref: '#/components/schemas/Category'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /category/by-id/admin/{id}:
+    get:
+      tags:
+        - Categories
+      summary: Get category by ID (admin view)
+      description: Get category by ID with admin view (admin only)
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        '200':
+          description: Category fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Category fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/Category'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /category/by-id/{id}:
+    get:
+      tags:
+        - Categories
+      summary: Get category by ID
+      description: Get category by ID (public, active only)
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        '200':
+          description: Category fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Category fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/Category'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /category/by-slug/admin/{slug}:
+    get:
+      tags:
+        - Categories
+      summary: Get category by slug (admin view)
+      description: Get category by slug with admin view (admin only)
+      parameters:
+        - $ref: '#/components/parameters/pathSlug'
+      responses:
+        '200':
+          description: Category fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Category fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/Category'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /category/by-slug/{slug}:
+    get:
+      tags:
+        - Categories
+      summary: Get category by slug
+      description: Get category by slug (public, active only)
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/pathSlug'
+      responses:
+        '200':
+          description: Category fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Category fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/Category'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /category/all/admin:
+    get:
+      tags:
+        - Categories
+      summary: Get all categories (admin view)
+      description: Get all categories with admin view (admin only)
+      responses:
+        '200':
+          description: Categories fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Categories fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+
+  /category/all:
+    get:
+      tags:
+        - Categories
+      summary: Get all categories
+      description: Get all active categories (public)
+      security: []
+      responses:
+        '200':
+          description: Categories fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Categories fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+  /subcategory:
+    post:
+      tags:
+        - Subcategories
+      summary: Create subcategory
+      description: Create a new subcategory (admin only)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - slug
+                - categoryId
+                - image
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                slug:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                categoryId:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Subcategory created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Subcategory created successfully"
+                  data:
+                    $ref: '#/components/schemas/Subcategory'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Slug already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags:
+        - Subcategories
+      summary: Get all subcategories
+      description: Get all active subcategories (public)
+      security: []
+      responses:
+        '200':
+          description: Subcategories fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Subcategories fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Subcategory'
+
+  /subcategory/{id}:
+    put:
+      tags:
+        - Subcategories
+      summary: Update subcategory
+      description: Update a subcategory by ID (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                slug:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                categoryId:
+                  type: string
+                isActive:
+                  type: boolean
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Subcategory updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Subcategory updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Subcategory'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Subcategory not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Slug already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Subcategories
+      summary: Delete subcategory
+      description: Soft-delete a subcategory (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Subcategory deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Subcategory deleted successfully"
+                  data:
+                    $ref: '#/components/schemas/Subcategory'
+        '404':
+          description: Subcategory not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /subcategory/{slug}:
+    get:
+      tags:
+        - Subcategories
+      summary: Get subcategory by slug
+      description: Get subcategory by slug (public, active only)
+      security: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Subcategory fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Subcategory fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/Subcategory'
+        '404':
+          description: Subcategory not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /subcategory/admin:
+    get:
+      tags:
+        - Subcategories
+      summary: Get all subcategories (admin view)
+      description: Get all subcategories with admin view (admin only)
+      responses:
+        '200':
+          description: Subcategories fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Subcategories fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Subcategory'
+
+  /subcategory/admin/{slug}:
+    get:
+      tags:
+        - Subcategories
+      summary: Get subcategory by slug (admin view)
+      description: Get subcategory by slug with admin view (admin only)
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Subcategory fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Subcategory fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/Subcategory'
+        '404':
+          description: Subcategory not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /subcategory/category:
+    get:
+      tags:
+        - Subcategories
+      summary: Get subcategories by category
+      description: Get subcategories by category slug (public, active only)
+      security: []
+      parameters:
+        - name: slug
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Category slug
+      responses:
+        '200':
+          description: Subcategories fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Subcategories fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Subcategory'
+        '400':
+          description: Missing slug parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /subcategory/admin/category:
+    get:
+      tags:
+        - Subcategories
+      summary: Get subcategories by category (admin view)
+      description: Get subcategories by category slug with admin view (admin only)
+      parameters:
+        - name: slug
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Category slug
+      responses:
+        '200':
+          description: Subcategories fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Subcategories fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Subcategory'
+        '400':
+          description: Missing slug parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /address/add:
+    post:
+      tags:
+        - Addresses
+      summary: Add address
+      description: Add a new address
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - street
+                - city
+                - governorate
+              properties:
+                label:
+                  type: string
+                  maxLength: 30
+                street:
+                  type: string
+                city:
+                  type: string
+                governorate:
+                  type: string
+                isDefault:
+                  type: boolean
+      responses:
+        '201':
+          description: Address added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Address added successfully"
+                  data:
+                    $ref: '#/components/schemas/Address'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /address/my-addresses:
+    get:
+      tags:
+        - Addresses
+      summary: Get my addresses
+      description: Get all addresses for the current user
+      responses:
+        '200':
+          description: Addresses fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Addresses fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Address'
+
+  /address/by-id/{id}:
+    get:
+      tags:
+        - Addresses
+      summary: Get address by ID
+      description: Get a specific address by ID (owned by current user)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Address fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Address fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/Address'
+        '404':
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /address/update/{id}:
+    put:
+      tags:
+        - Addresses
+      summary: Update address
+      description: Update an address by ID (owned by current user)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - street
+                - city
+                - governorate
+              properties:
+                label:
+                  type: string
+                  maxLength: 30
+                street:
+                  type: string
+                city:
+                  type: string
+                governorate:
+                  type: string
+                isDefault:
+                  type: boolean
+      responses:
+        '200':
+          description: Address updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Address updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Address'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /address/delete/{id}:
+    delete:
+      tags:
+        - Addresses
+      summary: Delete address
+      description: Delete an address by ID (owned by current user)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Address deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Address deleted successfully"
+                  data:
+                    $ref: '#/components/schemas/Address'
+        '404':
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /address/default/{id}:
+    patch:
+      tags:
+        - Addresses
+      summary: Set default address
+      description: Set an address as the default address
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Default address updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Default address updated"
+                  data:
+                    $ref: '#/components/schemas/Address'
+        '404':
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /testimonial:
+    get:
+      tags:
+        - Testimonials
+      summary: Get testimonials
+      description: Get all approved testimonials (public)
+      security: []
+      responses:
+        '200':
+          description: Testimonials fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Testimonials fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Testimonial'
+    post:
+      tags:
+        - Testimonials
+      summary: Submit testimonial
+      description: Submit a new testimonial (requires auth)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - rating
+                - comment
+              properties:
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                comment:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+      responses:
+        '201':
+          description: Testimonial submitted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Testimonial submitted successfully"
+                  data:
+                    $ref: '#/components/schemas/Testimonial'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /testimonial/admin:
+    get:
+      tags:
+        - Testimonials
+      summary: Get all testimonials (admin view)
+      description: Get all testimonials with optional status filter (admin/moderator only)
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+          description: Filter by status
+      responses:
+        '200':
+          description: Testimonials fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Testimonials fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Testimonial'
+
+  /testimonial/{id}/status:
+    patch:
+      tags:
+        - Testimonials
+      summary: Update testimonial status
+      description: Update testimonial approval status (admin/moderator only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [approved, rejected]
+      responses:
+        '200':
+          description: Testimonial status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Testimonial status updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Testimonial'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Testimonial not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /testimonial/{id}:
+    put:
+      tags:
+        - Testimonials
+      summary: Update testimonial (alias)
+      description: Update testimonial status (alias for PATCH /:id/status) (admin/moderator only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [approved, rejected]
+      responses:
+        '200':
+          description: Testimonial status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Testimonial status updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Testimonial'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Testimonial not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Testimonials
+      summary: Delete testimonial
+      description: Soft-delete a testimonial (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Testimonial deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Testimonial deleted successfully"
+                  data:
+                    $ref: '#/components/schemas/Testimonial'
+        '404':
+          description: Testimonial not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /faq:
+    get:
+      tags:
+        - FAQs
+      summary: Get FAQs
+      description: Get all active FAQs (public)
+      security: []
+      responses:
+        '200':
+          description: FAQs fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "FAQs fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FAQ'
+    post:
+      tags:
+        - FAQs
+      summary: Create FAQ
+      description: Create a new FAQ (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - question
+                - answer
+              properties:
+                question:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                answer:
+                  type: string
+                  minLength: 1
+                  maxLength: 2000
+                order:
+                  type: integer
+                  minimum: 0
+                isActive:
+                  type: boolean
+      responses:
+        '201':
+          description: FAQ created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "FAQ created successfully"
+                  data:
+                    $ref: '#/components/schemas/FAQ'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /faq/admin:
+    get:
+      tags:
+        - FAQs
+      summary: Get all FAQs (admin view)
+      description: Get all FAQs including inactive (admin only)
+      responses:
+        '200':
+          description: FAQs fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "FAQs fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FAQ'
+
+  /faq/{id}:
+    put:
+      tags:
+        - FAQs
+      summary: Update FAQ
+      description: Update a FAQ by ID (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                answer:
+                  type: string
+                  minLength: 1
+                  maxLength: 2000
+                order:
+                  type: integer
+                  minimum: 0
+                isActive:
+                  type: boolean
+      responses:
+        '200':
+          description: FAQ updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "FAQ updated successfully"
+                  data:
+                    $ref: '#/components/schemas/FAQ'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: FAQ not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - FAQs
+      summary: Delete FAQ
+      description: Soft-delete a FAQ (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: FAQ deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "FAQ deleted successfully"
+                  data:
+                    $ref: '#/components/schemas/FAQ'
+        '404':
+          description: FAQ not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /page/{slug}:
+    get:
+      tags:
+        - Pages
+      summary: Get page by slug
+      description: Get a page by its slug (public)
+      security: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Page fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Page fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/Page'
+        '404':
+          description: Page not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /page:
+    get:
+      tags:
+        - Pages
+      summary: Get all pages
+      description: Get all non-deleted pages (admin only)
+      responses:
+        '200':
+          description: Pages fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Pages fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Page'
+    post:
+      tags:
+        - Pages
+      summary: Create page
+      description: Create a new page (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pageSlug
+                - title
+                - content
+              properties:
+                pageSlug:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                content:
+                  type: string
+                  minLength: 1
+                isActive:
+                  type: boolean
+      responses:
+        '201':
+          description: Page created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Page created successfully"
+                  data:
+                    $ref: '#/components/schemas/Page'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Slug already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /page/{id}:
+    put:
+      tags:
+        - Pages
+      summary: Update page
+      description: Update a page by ID (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                content:
+                  type: string
+                  minLength: 1
+                isActive:
+                  type: boolean
+      responses:
+        '200':
+          description: Page updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Page updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Page'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Page not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Pages
+      summary: Delete page
+      description: Soft-delete a page (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Page deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Page deleted successfully"
+                  data:
+                    $ref: '#/components/schemas/Page'
+        '404':
+          description: Page not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /notification:
+    get:
+      tags:
+        - Notifications
+      summary: Get all notifications
+      description: Get all notifications (latest 50) (admin/moderator only)
+      responses:
+        '200':
+          description: Notifications fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Notifications fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notification'
+
+  /notification/unread-count:
+    get:
+      tags:
+        - Notifications
+      summary: Get unread count
+      description: Get count of unread notifications (admin/moderator only)
+      responses:
+        '200':
+          description: Unread count fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unread count fetched successfully"
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+
+  /notification/read-all:
+    patch:
+      tags:
+        - Notifications
+      summary: Mark all as read
+      description: Mark all notifications as read (admin/moderator only)
+      responses:
+        '200':
+          description: All notifications marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "All notifications marked as read"
+
+  /notification/{id}/read:
+    patch:
+      tags:
+        - Notifications
+      summary: Mark notification as read
+      description: Mark a single notification as read (admin/moderator only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Notification marked as read"
+                  data:
+                    $ref: '#/components/schemas/Notification'
+        '404':
+          description: Notification not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /notification/{id}:
+    delete:
+      tags:
+        - Notifications
+      summary: Delete notification
+      description: Delete a notification (admin/moderator only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Notification deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Notification deleted successfully"
+                  data:
+                    $ref: '#/components/schemas/Notification'
+        '404':
+          description: Notification not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /site-config:
+    get:
+      tags:
+        - Site Config
+      summary: Get site configuration
+      description: Get site configuration (public, cached 24h)
+      security: []
+      responses:
+        '200':
+          description: Site config fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Site config fetched successfully"
+                  data:
+                    $ref: '#/components/schemas/SiteConfig'
+    put:
+      tags:
+        - Site Config
+      summary: Update site configuration
+      description: Update site configuration (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteConfig'
+      responses:
+        '200':
+          description: Site config updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Site config updated successfully"
+                  data:
+                    $ref: '#/components/schemas/SiteConfig'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /site-config/upload-hero:
+    post:
+      tags:
+        - Site Config
+      summary: Upload hero image
+      description: Upload a hero image (admin only)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                heroImage:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Hero image uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Hero image uploaded successfully"
+                  data:
+                    $ref: '#/components/schemas/SiteConfig'
+        '400':
+          description: No file uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /report:
+    get:
+      tags:
+        - Reports
+      summary: Get sales report
+      description: Get comprehensive sales report (admin only)
+      parameters:
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Start date for reports (ISO format)
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: End date for reports (ISO format)
+      responses:
+        '200':
+          description: Sales report generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Sales report generated successfully"
+                  data:
+                    type: object
+                    properties:
+                      summary:
+                        type: object
+                        properties:
+                          totalSales:
+                            type: number
+                          totalOrders:
+                            type: integer
+                          totalItemsSold:
+                            type: integer
+                          totalCustomers:
+                            type: integer
+                          totalProducts:
+                            type: integer
+                      topProducts:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            name:
+                              type: string
+                            totalSold:
+                              type: integer
+                            revenue:
+                              type: number
+                      salesTrends:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            dailySales:
+                              type: number
+                            orderCount:
+                              type: integer
+                      recentOrders:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            user:
+                              type: string
+                            status:
+                              type: string
+                            totalAmount:
+                              type: number
+                            createdAt:
+                              type: string
+                              format: date-time
+                      lowStockProducts:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            stockQuantity:
+                              type: integer
+                            price:
+                              type: number
+                      categoryDistribution:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            revenue:
+                              type: number
+                            count:
+                              type: integer
