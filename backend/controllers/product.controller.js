@@ -73,7 +73,10 @@ exports.getProductBySlug = ({ adminOnly = false } = {}) => {
         const product = await Product.findOne({
             slug,
             ...(!adminOnly && { isActive: true, isDeleted: false }),
-        }).populate("subcategory");
+        }).populate({
+            path: "subcategory",
+            match: { isActive: true, isDeleted: false },
+        });
         if (!product) {
             return res.status(404).json({
                 message: "Product not found",
@@ -88,7 +91,10 @@ exports.getProductBySlug = ({ adminOnly = false } = {}) => {
 
 exports.getProductById = async (req, res) => {
     const productId = req.params.id;
-    const product = await Product.findById(productId).populate("subcategory");
+    const product = await Product.findById(productId).populate({
+        path: "subcategory",
+        match: { isActive: true, isDeleted: false },
+    });
     if (!product) {
         return res.status(404).json({
             message: "Product not found",
@@ -182,7 +188,10 @@ exports.getRelatedProducts = async (req, res) => {
         isDeleted: false,
     })
         .limit(4)
-        .populate("subcategory");
+        .populate({
+            path: "subcategory",
+            match: { isActive: true, isDeleted: false },
+        });
     if (relatedProducts.length === 0) {
         return res.status(404).json({
             message: "Related products not found",

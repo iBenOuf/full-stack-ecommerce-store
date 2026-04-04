@@ -27,7 +27,9 @@
       <!-- Right: Info -->
       <div class="pd-info">
         <div class="pd-meta">
-          <span class="pd-cat">{{ product.subcategory.name }}</span>
+          @if (product.subcategory) {
+            <span class="pd-cat">{{ product.subcategory.name }}</span>
+          }
           @if (product.stockQuantity > 0 && product.stockQuantity <= 5) {
             <span class="pd-low-stock">Only {{ product.stockQuantity }} left</span>
           }
