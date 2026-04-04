@@ -2,11 +2,10 @@
 
   <!-- Header -->
   <section class="contact-hero">
-    <p class="contact-eyebrow">We'd Love to Hear From You</p>
-    <h1 class="contact-title">Get in <em>Touch</em></h1>
+    <p class="contact-eyebrow">{{ siteConfig?.contactPage?.eyebrow?.en || "We'd Love to Hear From You" }}</p>
+    <h1 class="contact-title">{{ siteConfig?.contactPage?.heading?.en || 'Get in' }} <em>{{ siteConfig?.contactPage?.heading?.en ? '' : 'Touch' }}</em></h1>
     <p class="contact-subtitle">
-      Have a question about your order, our products, or just want to say hello?
-      We're here to help.
+      {{ siteConfig?.contactPage?.subtitle?.en || "Have a question about your order, our products, or just want to say hello? We're here to help." }}
     </p>
   </section>
 
@@ -15,8 +14,8 @@
     @if (siteConfig?.footerSection?.contactEmail) {
       <div class="contact-card">
         <div class="contact-card-icon">✉</div>
-        <h3>Email Us</h3>
-        <p>Drop us a line anytime, we aim to respond within 24 hours.</p>
+        <h3>{{ siteConfig?.contactPage?.emailHeading?.en || 'Email Us' }}</h3>
+        <p>{{ siteConfig?.contactPage?.emailDesc?.en || 'Drop us a line anytime, we aim to respond within 24 hours.' }}</p>
         <a [href]="'mailto:' + siteConfig!.footerSection.contactEmail" class="contact-link">
           {{ siteConfig!.footerSection.contactEmail }}
         </a>
@@ -26,8 +25,8 @@
     @if (siteConfig?.footerSection?.contactPhone) {
       <div class="contact-card">
         <div class="contact-card-icon">☎</div>
-        <h3>Call Us</h3>
-        <p>Available Sunday – Thursday, 9am – 6pm.</p>
+        <h3>{{ siteConfig?.contactPage?.phoneHeading?.en || 'Call Us' }}</h3>
+        <p>{{ siteConfig?.contactPage?.phoneDesc?.en || 'Available Sunday – Thursday, 9am – 6pm.' }}</p>
         <a [href]="'tel:' + siteConfig!.footerSection.contactPhone" class="contact-link">
           {{ siteConfig!.footerSection.contactPhone }}
         </a>
@@ -36,16 +35,16 @@
 
     <div class="contact-card">
       <div class="contact-card-icon">◎</div>
-      <h3>Visit Us</h3>
-      <p>{{ siteConfig?.footerSection?.footerText || 'Our showroom is open by appointment.' }}</p>
+      <h3>{{ siteConfig?.contactPage?.visitHeading?.en || 'Visit Us' }}</h3>
+      <p>{{ siteConfig?.contactPage?.visitDesc?.en || siteConfig?.footerSection?.footerText || 'Our showroom is open by appointment.' }}</p>
     </div>
   </section>
 
   <!-- Social Links -->
   @if (siteConfig?.footerSection?.socialLinks?.length) {
     <section class="contact-social">
-      <p class="about-eyebrow">Follow Along</p>
-      <h2 class="contact-social-title">Find Us on <em>Social Media</em></h2>
+      <p class="about-eyebrow">{{ siteConfig?.contactPage?.socialEyebrow?.en || 'Follow Along' }}</p>
+      <h2 class="contact-social-title">{{ siteConfig?.contactPage?.socialHeading?.en || 'Find Us on' }} <em>{{ siteConfig?.contactPage?.socialHeading?.en ? '' : 'Social Media' }}</em></h2>
       <div class="social-links">
         @for (s of siteConfig!.footerSection.socialLinks; track s.name) {
           <a [href]="s.url" target="_blank" rel="noopener noreferrer" class="social-link">
@@ -59,8 +58,8 @@
 
   <!-- FAQ Link -->
   <section class="contact-faq">
-    <p>Got a quick question?</p>
-    <a routerLink="/faq" class="btn-outline">View our FAQs</a>
+    <p>{{ siteConfig?.contactPage?.faqText?.en || 'Got a quick question?' }}</p>
+    <a routerLink="/faq" class="btn-outline">{{ siteConfig?.contactPage?.faqLinkText?.en || 'View our FAQs' }}</a>
   </section>
 
 </div>

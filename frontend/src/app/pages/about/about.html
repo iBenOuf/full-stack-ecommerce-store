@@ -43,12 +43,20 @@
       <h2 class="values-title">Our <em>Core Values</em></h2>
     </div>
     <div class="values-grid">
-      @for (v of values; track v.title) {
+      @for (v of siteConfig?.coreValues; track $index) {
         <div class="value-card">
           <div class="value-icon">{{ v.icon }}</div>
-          <h3 class="value-title">{{ v.title }}</h3>
-          <p class="value-desc">{{ v.desc }}</p>
+          <h3 class="value-title">{{ v.title?.en }}</h3>
+          <p class="value-desc">{{ v.description?.en }}</p>
         </div>
+      } @empty {
+        @for (v of [{ icon: '✦', title: { en: 'Craftsmanship' }, description: { en: 'Every piece is crafted with care and precision, honoring traditional techniques while embracing modern aesthetics.' } }, { icon: '♻', title: { en: 'Sustainability' }, description: { en: 'We are committed to sustainable practices — from responsible sourcing to eco-conscious packaging.' } }, { icon: '◈', title: { en: 'Timelessness' }, description: { en: 'We design for longevity. Our collections transcend trends and are built to be worn for years to come.' } }, { icon: '◎', title: { en: 'Inclusivity' }, description: { en: 'Fashion is for everyone. We celebrate diverse bodies, styles, and stories in everything we do.' } }]; track v.title.en) {
+          <div class="value-card">
+            <div class="value-icon">{{ v.icon }}</div>
+            <h3 class="value-title">{{ v.title.en }}</h3>
+            <p class="value-desc">{{ v.description.en }}</p>
+          </div>
+        }
       }
     </div>
   </section>

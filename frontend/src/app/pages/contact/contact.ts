@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ISiteConfig } from '../../core/models/site-config.model';
 import { SiteConfigService } from '../../core/services/site-config.service';
+import { I18nPipe } from '../../core/pipes/i18n.pipe';
 
 @Component({
   selector: 'app-contact',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, I18nPipe],
   templateUrl: './contact.html',
   styleUrl: './contact.css',
 })

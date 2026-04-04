@@ -1,8 +1,8 @@
 <div class="faq-page">
   <div class="faq-container">
     <div class="faq-header">
-      <h1>Frequently Asked Questions</h1>
-      <p>Find answers to common questions about our products, shipping, and returns.</p>
+      <h1>{{ siteConfig?.faqPage?.heading?.en || 'Frequently Asked Questions' }}</h1>
+      <p>{{ siteConfig?.faqPage?.subtitle?.en || 'Find answers to common questions about our products, shipping, and returns.' }}</p>
     </div>
 
     @if (isLoading) {
@@ -34,8 +34,8 @@
     }
     
     <div class="faq-footer">
-      <p>Still have questions?</p>
-      <a href="/contact" class="btn-outline">Contact Us</a>
+      <p>{{ siteConfig?.faqPage?.footerText?.en || 'Still have questions?' }}</p>
+      <a routerLink="/contact" class="btn-outline">{{ siteConfig?.faqPage?.footerButtonText?.en || 'Contact Us' }}</a>
     </div>
   </div>
 </div>
