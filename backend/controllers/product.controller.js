@@ -3,6 +3,7 @@ const Order = require("../models/order.model");
 const Joi = require("joi");
 const { clearPrefix } = require("../utils/cache.utils");
 const { deleteFromCloudinary, extractPublicIdFromUrl } = require("../utils/cloudinary");
+const { createNotification } = require("../utils/notification.utils");
 
 const PRODUCT_LIST_CACHE_PREFIX = "products_list_";
 
@@ -47,6 +48,16 @@ exports.createProduct = async (req, res) => {
     const populatedProduct = await Product.findById(product._id).populate(
         "subcategory",
     );
+
+    if (stockQuantity <= 5) {
+        await createNotification(
+            "low_stock",
+            "Low Stock Alert",
+            `Product ${name} has low stock (${stockQuantity} left).`,
+            product._id,
+            "Product",
+        );
+    }
 
     clearPrefix(PRODUCT_LIST_CACHE_PREFIX);
 
@@ -280,6 +291,17 @@ exports.updateProductById = async (req, res) => {
             message: "Product not found",
         });
     }
+
+    if (stockQuantity !== undefined && stockQuantity <= 5) {
+        await createNotification(
+            "low_stock",
+            "Low Stock Alert",
+            `Product ${product.name} has low stock (${stockQuantity} left).`,
+            product._id,
+            "Product",
+        );
+    }
+
     clearPrefix(PRODUCT_LIST_CACHE_PREFIX);
     res.status(200).json({
         message: "Product updated successfully",

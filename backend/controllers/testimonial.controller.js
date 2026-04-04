@@ -23,6 +23,7 @@ exports.createTestimonial = async (req, res) => {
 
     await createNotification(
         "new_testimonial",
+        "New Testimonial",
         `New ${rating}-star testimonial submitted.`,
         testimonial._id,
         "Testimonial"

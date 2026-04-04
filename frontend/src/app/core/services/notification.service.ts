@@ -26,7 +26,7 @@ export class NotificationService {
   }
 
   getUnreadCount() {
-    return this._http.get<{ message: string; count: number }>(`${this.apiURL}/unread-count`);
+    return this._http.get<{ message: string; data: { count: number } }>(`${this.apiURL}/unread-count`);
   }
 
   markAsRead(id: string) {
@@ -45,6 +45,7 @@ export class NotificationService {
     if (this.socket) {
       if (this.socket.connected) return;
       this.socket.disconnect();
+      this.socket = null;
     }
 
     const parsedUrl = new URL(environment.apiURL);
@@ -54,6 +55,9 @@ export class NotificationService {
       auth: {
         token: token,
       },
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionAttempts: 10,
     });
 
     this.socket.on('connect', () => {
@@ -64,10 +68,18 @@ export class NotificationService {
       console.error('Socket connection error:', err.message);
     });
 
-    this.socket.on('new_order', (data: any) => this.handleIncoming('new_order', data));
-    this.socket.on('low_stock', (data: any) => this.handleIncoming('low_stock', data));
-    this.socket.on('new_testimonial', (data: any) => this.handleIncoming('new_testimonial', data));
-    this.socket.on('system', (data: any) => this.handleIncoming('system', data));
+    this.socket.on('reconnect', (attemptNumber) => {
+      console.log(`Reconnected to notification server after ${attemptNumber} attempts`);
+    });
+
+    this.socket.on('reconnect_error', (err) => {
+      console.error('Socket reconnection error:', err.message);
+    });
+
+    this.socket.on('new_order', (data: any) => this.handleIncoming(data));
+    this.socket.on('low_stock', (data: any) => this.handleIncoming(data));
+    this.socket.on('new_testimonial', (data: any) => this.handleIncoming(data));
+    this.socket.on('order_canceled', (data: any) => this.handleIncoming(data));
   }
 
   disconnect() {
@@ -77,16 +89,14 @@ export class NotificationService {
     }
   }
 
-  private handleIncoming(type: string, data: any) {
+  private handleIncoming(data: any) {
     const notification: INotification = {
-      _id: Math.random().toString(36).substring(7),
-      type: type as any,
+      _id: data._id,
+      type: data.type,
       title: data.title || 'New Notification',
       message: data.message || '',
-      link: data.link,
-      isRead: false,
-      createdAt: new Date().toISOString(),
-      data: data,
+      isRead: data.isRead || false,
+      createdAt: data.createdAt || new Date().toISOString(),
     };
 
     this.newNotificationSubject.next(notification);

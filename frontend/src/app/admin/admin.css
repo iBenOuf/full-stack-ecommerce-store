@@ -276,6 +276,9 @@
   padding: 12px 16px;
   border-bottom: 1px solid var(--border-color);
   background: var(--bg-panel);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .dropdown-header h4 {
@@ -283,6 +286,21 @@
   font-size: 0.95rem;
   font-weight: 500;
   color: var(--charcoal);
+}
+
+.mark-all-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: opacity 0.2s;
+}
+
+.mark-all-btn:hover {
+  opacity: 0.7;
 }
 
 .notification-list {
@@ -302,6 +320,8 @@
   padding: 12px 16px;
   border-bottom: 1px solid var(--border-color);
   transition: background 0.2s;
+  cursor: pointer;
+  position: relative;
 }
 
 .notif-item:last-child {
@@ -314,6 +334,24 @@
 
 .notif-item.unread {
   background: #f4f6f8;
+}
+
+.notif-item.unread::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.notif-item.unread .notif-title,
+.notif-item.unread .notif-msg,
+.notif-item.unread .notif-time {
+  padding-left: 14px;
 }
 
 .notif-title {

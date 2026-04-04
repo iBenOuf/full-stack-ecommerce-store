@@ -4,18 +4,20 @@ import { DatePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { NotificationService } from '../core/services/notification.service';
+import { NotificationToastService } from '../core/services/notification-toast.service';
+import { NotificationToast } from '../shared/components/notification-toast/notification-toast';
 import { AuthService } from '../core/services/auth.service';
 import { INotification, INotificationsResponse } from '../core/models/notification.model';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, DatePipe],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, DatePipe, NotificationToast],
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
 export class Admin implements OnInit, AfterViewInit, OnDestroy {
-  isSidebarCollapsed = true; // Start collapsed (hidden on mobile)
+  isSidebarCollapsed = true;
   isSidebarOpen = false;
   showNotifications = false;
 
@@ -27,6 +29,7 @@ export class Admin implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private _notificationService: NotificationService,
+    private _notifToastService: NotificationToastService,
     private _authService: AuthService,
     private _cdr: ChangeDetectorRef,
     private _router: Router,
@@ -46,6 +49,12 @@ export class Admin implements OnInit, AfterViewInit, OnDestroy {
         if (notif) {
           this.notifications.unshift(notif);
           this.unreadCount++;
+          this._notifToastService.add({
+            type: notif.type,
+            title: notif.title,
+            message: notif.message,
+            createdAt: notif.createdAt,
+          });
           this._cdr.detectChanges();
         }
       },
@@ -53,7 +62,6 @@ export class Admin implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    // Scroll .admin-content to top on every navigation
     this._routerSub = this._router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe(() => {
@@ -69,17 +77,35 @@ export class Admin implements OnInit, AfterViewInit, OnDestroy {
     });
     this._notificationService
       .getUnreadCount()
-      .subscribe((res: { message: string; count: number }) => {
-        this.unreadCount = res.count;
+      .subscribe((res) => {
+        this.unreadCount = res.data.count;
         this._cdr.detectChanges();
       });
+  }
+
+  markAsRead(id: string) {
+    this._notificationService.markAsRead(id).subscribe(() => {
+      const notif = this.notifications.find((n) => n._id === id);
+      if (notif && !notif.isRead) {
+        notif.isRead = true;
+        this.unreadCount = Math.max(0, this.unreadCount - 1);
+      }
+      this._cdr.detectChanges();
+    });
+  }
+
+  markAllAsRead() {
+    this._notificationService.markAllAsRead().subscribe(() => {
+      this.unreadCount = 0;
+      this.notifications.forEach((n) => (n.isRead = true));
+      this._cdr.detectChanges();
+    });
   }
 
   toggleSidebar() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
     this.isSidebarOpen = !this.isSidebarOpen;
     
-    // On mobile, also prevent body scroll when sidebar is open
     if (window.innerWidth <= 768) {
       if (this.isSidebarOpen) {
         document.body.style.overflow = 'hidden';
@@ -96,7 +122,6 @@ export class Admin implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onNavClick() {
-    // Auto-close sidebar on mobile when navigating
     if (window.innerWidth <= 768) {
       this.closeSidebar();
     }
@@ -104,13 +129,6 @@ export class Admin implements OnInit, AfterViewInit, OnDestroy {
 
   toggleNotifications() {
     this.showNotifications = !this.showNotifications;
-    if (this.showNotifications && this.unreadCount > 0) {
-      this._notificationService.markAllAsRead().subscribe(() => {
-        this.unreadCount = 0;
-        this.notifications.forEach((n) => (n.isRead = true));
-        this._cdr.detectChanges();
-      });
-    }
   }
 
   closeNotificationsOnOutsideClick(event: MouseEvent) {

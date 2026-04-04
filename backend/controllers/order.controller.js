@@ -67,6 +67,7 @@ exports.createOrder = async (req, res) => {
 
         await createNotification(
             "new_order",
+            "New Order",
             `New order #${order._id.toString().slice(-6)} placed.`,
             order._id,
             "Order",
@@ -77,6 +78,7 @@ exports.createOrder = async (req, res) => {
             if (prod && prod.stockQuantity <= 5) {
                 await createNotification(
                     "low_stock",
+                    "Low Stock Alert",
                     `Product ${prod.name} has low stock (${prod.stockQuantity} left).`,
                     prod._id,
                     "Product",
@@ -232,21 +234,26 @@ exports.updateOrderStatus = async (req, res) => {
             }
             order.status = status;
             await order.save();
-
-            return res.status(200).json({
-                message: "Order updated successfully",
-                data: order,
-            });
         } catch (err) {
             console.error("UPDATE ORDER STATUS ERROR:", err);
             return res.status(500).json({
                 message: err.message || "Failed to update order",
             });
         }
+    } else {
+        order.status = status;
+        await order.save();
     }
 
-    order.status = status;
-    await order.save();
+    if (status === "canceled_by_client") {
+        await createNotification(
+            "order_canceled",
+            "Order Canceled",
+            `Order #${order._id.toString().slice(-6)} was canceled by the customer.`,
+            order._id,
+            "Order",
+        );
+    }
 
     res.status(200).json({
         message: "Order updated successfully",

@@ -1,0 +1,21 @@
+<div class="notif-toast-container">
+  @for (toast of _toastService.toasts(); track trackById($index, toast)) {
+    <div
+      class="notif-toast"
+      [style.border-left-color]="getBorderColor(toast.type)"
+      [style.background]="getBgColor(toast.type)"
+    >
+      <span class="notif-toast-icon">{{ getIcon(toast.type) }}</span>
+      <div class="notif-toast-body">
+        <strong class="notif-toast-title">{{ toast.title }}</strong>
+        <span class="notif-toast-message">{{ toast.message }}</span>
+      </div>
+      <button class="notif-toast-close" (click)="_toastService.remove(toast.id)">
+        <svg viewBox="0 0 24 24">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+  }
+</div>

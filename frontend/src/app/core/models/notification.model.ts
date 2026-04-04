@@ -1,4 +1,4 @@
-export type NotificationType = 'new_order' | 'low_stock' | 'new_testimonial' | 'system';
+export type NotificationType = 'new_order' | 'low_stock' | 'new_testimonial' | 'order_canceled';
 
 export interface INotification {
   _id: string;

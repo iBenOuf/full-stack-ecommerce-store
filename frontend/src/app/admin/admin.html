@@ -49,13 +49,16 @@
             <div class="notification-dropdown">
               <div class="dropdown-header">
                 <h4>Notifications</h4>
+                @if (unreadCount > 0) {
+                  <button class="mark-all-btn" (click)="markAllAsRead()">Mark all read</button>
+                }
               </div>
               <div class="notification-list">
                 @if (notifications.length === 0) {
                   <p class="empty-notifs">No notifications available.</p>
                 } @else {
                   @for (n of notifications; track n._id) {
-                     <div class="notif-item" [class.unread]="!n.isRead">
+                     <div class="notif-item" [class.unread]="!n.isRead" (click)="markAsRead(n._id)">
                        <p class="notif-title">{{ n.title }}</p>
                        <p class="notif-msg">{{ n.message }}</p>
                        <span class="notif-time">{{ n.createdAt | date:'short' }}</span>
@@ -74,3 +77,5 @@
     </main>
   </div>
 </div>
+
+<app-notification-toast />
